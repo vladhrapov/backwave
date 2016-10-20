@@ -1,9 +1,14 @@
-import "./components/Settings/index.js";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import 'bootstrap/dist/css/bootstrap.css';
+import Root from "./Root.jsx";
 
-class MyClass {
-  constructor() {
-    this.name = name;
-  }
-}
+
+
+injectTapEventPlugin();
+
+ReactDOM.render(
+  <Root />,
+  document.getElementById('root')
+);

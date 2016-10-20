@@ -12,7 +12,7 @@ module.exports = {
     filename: "bundle.js"
   },
   resolve: {
-    extensions: ["", ".js"]
+    extensions: ["", ".js", ".scss"]
   },
   devtool: 'source-map',
   module: {
@@ -25,7 +25,7 @@ module.exports = {
         test: /\.jsx?$/,
         query: {
           plugins: ['transform-runtime'],
-          presets: ['es2015', 'stage-0']
+          presets: ['es2015', 'stage-0', "react"]
         }
       },
       {
