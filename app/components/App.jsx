@@ -12,6 +12,8 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
+import Canvas from "./Canvas/Canvas.jsx";
+
 import "./Shared/assets/_reset-default.scss";
 
 const styles = {
@@ -73,18 +75,17 @@ export default class DrawerSimpleExample extends React.Component {
         <AppBar
           title="Title"
           iconClassNameRight="muidocs-icon-navigation-expand-more"
-          onTouchTap={this.handleToggle}
-        />
-      <Drawer
-        open={this.state.open}
-        docked={false}
-        onRequestChange={this.handleRequestChange}
-        width={350}>
+          onTouchTap={this.handleToggle}/>
+        <Canvas />
+        <Drawer
+          open={this.state.open}
+          docked={false}
+          onRequestChange={this.handleRequestChange}
+          width={350}>
           <AppBar
             title="Title"
             iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-            onTouchTap={this.handleToggle}
-          />
+            onTouchTap={this.handleToggle}/>
           <MenuItem>Menu Item</MenuItem>
           <MenuItem>Menu Item 2</MenuItem>
           <MenuItem
@@ -95,37 +96,31 @@ export default class DrawerSimpleExample extends React.Component {
               <MenuItem primaryText="lowercase" />,
               <MenuItem primaryText="CamelCase" />,
               <MenuItem primaryText="Propercase" />,
-            ]}
-          />
+            ]}/>
           <Divider />
           <Checkbox
             label="Simple"
-            style={styles.checkbox}
-          />
+            style={styles.checkbox}/>
           <Checkbox
             checkedIcon={<Visibility />}
             uncheckedIcon={<VisibilityOff />}
             label="Custom icon of different shapes"
-            style={styles.checkbox}
-          />
+            style={styles.checkbox}/>
           <Checkbox
             label="Label on the left"
             labelPosition="left"
-            style={styles.checkbox}
-          />
+            style={styles.checkbox}/>
           <Divider />
           <p>Some text</p>
           <p>Some text</p>
           <Divider />
           <Toggle
             label="Simple"
-            style={styles.toggle}
-          />
+            style={styles.toggle}/>
           <Toggle
             label="Toggled by default"
             defaultToggled={true}
-            style={styles.toggle}
-          />
+            style={styles.toggle}/>
         </Drawer>
       </div>
     );
