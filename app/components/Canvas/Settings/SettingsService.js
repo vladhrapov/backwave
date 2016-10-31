@@ -35,8 +35,11 @@ export default class SettingsService {
     var group = new fabric.Group([ circle, text ], {
       left: this.getRandomInt(20, 900),
       // selectable: false,
-      top: this.getRandomInt(20, 600)//,
+      top: this.getRandomInt(20, 600),//,
       // selectable: false
+      customProps: {
+        type: "vertex"
+      }
     });
 
     this.setObjectMigration(group, false);
@@ -97,8 +100,9 @@ export default class SettingsService {
           originX: 'center',
           originY: 'center'
         });
-        //linkTwoVertex(line);
+
         canvas.add(line);
+        canvas.sendToBack(line);
       }
     });
 
@@ -111,7 +115,7 @@ export default class SettingsService {
       canvas.renderAll();
       if (o.target && o.target.type == "group") {
         line.set({ x2: o.target.left + 30, y2: o.target.top + 30 });
-        //linkTwoVertex(line);
+
         canvas.renderAll();
       }
     });
@@ -121,26 +125,6 @@ export default class SettingsService {
       isDown = false;
     });
 
-    // function linkTwoVertex(line) {
-    //   // console.log(line);
-    //   for (var i = 0; i < canvas._objects.length; i++) {
-    //     if (Math.abs(canvas._objects[i].top - line.x1) < 30 && Math.abs(canvas._objects[i].left - line.y1) < 30) {
-    //       line.set({ x1: canvas._objects[i].top, y1: canvas._objects[i].left });
-    //       console.log("----------------1------------");
-    //       console.log(line);
-    //       console.log(canvas._objects[i]);
-    //       console.log("-----------------------------");
-    //     }
-    //     else if (Math.abs(canvas._objects[i].top - line.x2) < 30 && Math.abs(canvas._objects[i].left - line.y2) < 30) {
-    //       line.set({ x2: canvas._objects[i].top, y2: canvas._objects[i].left });
-    //       console.log("----------------2------------");
-    //       console.log(line);
-    //       console.log(canvas._objects[i]);
-    //       console.log("-----------------------------");
-    //     }
-    //   }
-    // }
-
     function applySelection(selection) {
       canvas._objects.forEach(function(item) {
         item.selectable = selection;
@@ -149,17 +133,15 @@ export default class SettingsService {
   }
 
   disableConnectionMode() {
-    let canvas = CanvasService.getCanvas(),
-        shapesCollection = canvas._objects;
+    let canvas = CanvasService.getCanvas();
 
     canvas.off("mouse:down");
     canvas.off("mouse:move");
     canvas.off("mouse:up");
 
-    for (let i = 0; i < shapesCollection.length; i++) {
-      this.setObjectMigration(shapesCollection[i], false);
-      console.log(shapesCollection[i].lockMovementX);
-    }
+    canvas._objects.forEach((item) => {
+      this.setObjectMigration(item, false);
+    });
   }
 
   enableMigrationMode() {
@@ -189,15 +171,32 @@ export default class SettingsService {
     // canvas.on('mouse:up', function(o){
     //   isDown = false;
     // });
+
+    // let canvas = CanvasService.getCanvas(),
+    //     shapesCollection = canvas._objects;
+    //
+    // shapesCollection.forEach((item) => {
+    //   if (item.customProps && item.customProps.type == "vertex") {
+    //     // console.log("Type: ", item._objects[0].type);
+    //     // console.log(shapesCollection[i].customProps.type);
+    //     canvas.bringToFront(item);
+    //   }
+    // });
+    // for (let i = 0; i < shapesCollection.length; i++) {
+    //   // this.setObjectMigration(shapesCollection[i], true);
+    //
+    //   if (shapesCollection[i].customProps && shapesCollection[i].customProps.type == "vertex") {
+    //     console.log("Type: ", shapesCollection[i]._objects[0].type);
+    //     console.log(shapesCollection[i].customProps.type);
+    //     canvas.bringToFront(shapesCollection[i]);
+    //   }
+    // }
   }
 
   disableMigrationMode() {
-    let canvas = CanvasService.getCanvas(),
-        shapesCollection = canvas._objects;
-
-    for (let i = 0; i < shapesCollection.length; i++) {
-      this.setObjectMigration(shapesCollection[i], true);
-    }
+    CanvasService.getCanvas()._objects.forEach((item) => {
+      this.setObjectMigration(item, true);
+    });
   }
 
   setObjectMigration(obj, isEnabled) {

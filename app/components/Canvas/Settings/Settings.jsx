@@ -39,7 +39,7 @@ export default class Settings extends React.Component {
     // this.settingsService.
     console.log("handleMigrationMode");
     this.settingsService.disableConnectionMode();
-    // this.settingsService.enableMigrationMode();
+    this.settingsService.enableMigrationMode();
   }
 
   handleConnectionMode = () => {
