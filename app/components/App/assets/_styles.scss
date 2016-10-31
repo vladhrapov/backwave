@@ -1,0 +1,43 @@
+.checkbox {
+  margin: 15px;
+  max-width: 97%;
+
+  &-left {
+    margin-left: 5px;
+  }
+}
+
+.toggle {
+  margin: 15px;
+  max-width: 92%;
+}
+
+.block {
+  max-width: 250px;
+}
+
+.thumb {
+
+  &-off {
+    background-color: #ffcccc;
+  }
+
+  &-switched {
+    background-color: red;
+  }
+}
+
+.track {
+
+  &-off {
+    background-color: #ff9d9d;
+  }
+
+  &-switched {
+    background-color: #ff9d9d;
+  }
+}
+
+.label-style {
+  color: red;
+}
