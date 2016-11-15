@@ -1,9 +1,7 @@
 import { fabric } from "fabric";
 
 export default class BaseCanvas {
-  constructor() {
-
-  }
+  constructor() {}
 
   static getCanvas() {
     if (this.canvas) {
@@ -22,6 +20,7 @@ export default class BaseCanvas {
 
     return this.canvas;
   }
+
 
   static refreshCanvas() {
     var objects = [];

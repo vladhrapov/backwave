@@ -6,39 +6,38 @@ import CanvasService from "../CanvasService.js";
 export default class SettingsService {
   constructor() {}
 
+  static shapesCounter = 0
+  static lineCounter = 0
+
   getRandomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
   addNewVertex() {
-    var canvas = CanvasService.getCanvas();
+    let canvas = CanvasService.getCanvas();
 
-    window.cs = CanvasService.getCanvas();
+    SettingsService.shapesCounter++;
 
     var circle = new fabric.Circle({
-      // left: 100,
-      // top: 100,
       strokeWidth: 3,
       radius: 30,
       fill: '#fff',
       stroke: '#666',
       originX: 'center',
-      originY: 'center'//,
-      // selectable: false
+      originY: 'center'
     });
 
-    var text = new fabric.Text("A" + canvas._objects.length, {
+    var text = new fabric.Text(`A${SettingsService.shapesCounter}`, {
       fontSize: 25,
       originX: 'center',
-      originY: 'center'//,
-      // selectable: false
+      originY: 'center'
     });
 
     var group = new fabric.Group([ circle, text ], {
       left: this.getRandomInt(20, 900),
-      // selectable: false,
-      top: this.getRandomInt(20, 600),//,
-      // selectable: false
+      top: this.getRandomInt(20, 600),
       customProps: {
-        type: "vertex"
+        type: "vertex",
+        name: `A${SettingsService.shapesCounter}`,
+        lines: []
       }
     });
 
@@ -81,24 +80,26 @@ export default class SettingsService {
   }
 
   enableConnectionMode() {
-    var line, isDown;
-    var canvas = CanvasService.getCanvas();
+    let x1, y1, x2, y2, vertexFrom, vertexTo,
+        line, text, isDown,
+        canvas = CanvasService.getCanvas();
 
-    canvas.on('mouse:down', function(o){
-      // applySelection(false);
+    canvas.on("mouse:down", (o) => {
+      let pointer = canvas.getPointer(o.e);
       isDown = true;
-      var pointer = canvas.getPointer(o.e);
 
       if (o.target && o.target.type == "group") {
-        var points = [ o.target.left + 30, o.target.top + 30, o.target.left + 30, o.target.top + 30 ];
-        console.log("mouse:down ", pointer);
+        x1 = o.target.left + 30;
+        y1 = o.target.top + 30;
+        vertexFrom = o.target;
+        let points = [ x1, y1, x1, y1 ];
 
         line = new fabric.Line(points, {
           strokeWidth: 5,
-          fill: 'red',
-          stroke: 'red',
-          originX: 'center',
-          originY: 'center'
+          fill: "red",
+          stroke: "red",
+          originX: "center",
+          originY: "center"
         });
 
         canvas.add(line);
@@ -106,30 +107,81 @@ export default class SettingsService {
       }
     });
 
-    canvas.on('mouse:move', function(o){
+    canvas.on("mouse:move", (o) => {
       if (!isDown) return;
+      let pointer = canvas.getPointer(o.e);
 
-      var pointer = canvas.getPointer(o.e);
-      console.log("mouse:move ", pointer);
       line.set({ x2: pointer.x, y2: pointer.y });
       canvas.renderAll();
+
       if (o.target && o.target.type == "group") {
         line.set({ x2: o.target.left + 30, y2: o.target.top + 30 });
-
+        x2 = o.target.left + 30;
+        y2 = o.target.top + 30;
         canvas.renderAll();
       }
     });
 
-    canvas.on('mouse:up', function(o){
-      // applySelection(true);
+    canvas.on("mouse:up", (o) => {
       isDown = false;
+
+      if (o.target && o.target.type == "group") {
+        canvas.remove(line);
+        vertexTo = o.target;
+
+        SettingsService.lineCounter++;
+
+        text = new fabric.Text(`Line${SettingsService.lineCounter}`, {
+          left: ((x1 + x2) / 2),
+          top: ((y1 + y2) / 2),
+          fontSize: 25,
+          originX: 'center',
+          originY: 'center',
+          customProps: {
+            type: "label",
+            name: `Line${SettingsService.lineCounter}`,
+            weight: 0
+          }
+        });
+
+        line = new fabric.Line([x1, y1, x2, y2], {
+          strokeWidth: 5,
+          fill: "red",
+          stroke: "red",
+          originX: "center",
+          originY: "center",
+          customProps: {
+            type: "line",
+            name: `Line${SettingsService.lineCounter}`,
+            vertex: {
+              from: {
+                name: vertexFrom.customProps.name,
+                link: vertexFrom
+              },
+              to: {
+                name: vertexTo.customProps.name,
+                link: vertexTo
+              }
+            },
+            label: text
+          }
+        });
+
+        canvas.add(line);
+        canvas.add(text);
+        canvas.sendToBack(line);
+
+        line.customProps.vertex.from.link.customProps.lines.push(line);
+        line.customProps.vertex.to.link.customProps.lines.push(line);
+
+        canvas.renderAll();
+      }
+      else {
+        canvas.remove(line);
+        canvas.renderAll();
+      }
     });
 
-    function applySelection(selection) {
-      canvas._objects.forEach(function(item) {
-        item.selectable = selection;
-      })
-    }
   }
 
   disableConnectionMode() {
@@ -145,52 +197,39 @@ export default class SettingsService {
   }
 
   enableMigrationMode() {
-    // var line, isDown;
-    //
-    // canvas.on('mouse:down', function(o){
-    //   isDown = true;
-    //   var pointer = canvas.getPointer(o.e);
-    //   var points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
-    //   line = new fabric.Line(points, {
-    //     strokeWidth: 5,
-    //     fill: 'red',
-    //     stroke: 'red',
-    //     originX: 'center',
-    //     originY: 'center'
-    //   });
-    //   canvas.add(line);
-    // });
-    //
-    // canvas.on('mouse:move', function(o){
-    //   if (!isDown) return;
-    //   var pointer = canvas.getPointer(o.e);
-    //   line.set({ x2: pointer.x, y2: pointer.y });
-    //   canvas.renderAll();
-    // });
-    //
-    // canvas.on('mouse:up', function(o){
-    //   isDown = false;
-    // });
+    let canvas = CanvasService.getCanvas();
 
-    // let canvas = CanvasService.getCanvas(),
-    //     shapesCollection = canvas._objects;
-    //
-    // shapesCollection.forEach((item) => {
-    //   if (item.customProps && item.customProps.type == "vertex") {
-    //     // console.log("Type: ", item._objects[0].type);
-    //     // console.log(shapesCollection[i].customProps.type);
-    //     canvas.bringToFront(item);
-    //   }
-    // });
-    // for (let i = 0; i < shapesCollection.length; i++) {
-    //   // this.setObjectMigration(shapesCollection[i], true);
-    //
-    //   if (shapesCollection[i].customProps && shapesCollection[i].customProps.type == "vertex") {
-    //     console.log("Type: ", shapesCollection[i]._objects[0].type);
-    //     console.log(shapesCollection[i].customProps.type);
-    //     canvas.bringToFront(shapesCollection[i]);
-    //   }
-    // }
+    canvas.on("object:moving", (o) => {
+      let { left, top, type, customProps, ...props } = o.target;
+
+      if (type && type == "group" && customProps && customProps.type == "vertex") {
+        
+        customProps.lines.forEach((line) => {
+          if (line.customProps.vertex.from.name == o.target.customProps.name) {
+            line.set({
+              x1: (o.target.left + 30),
+              y1: (o.target.top + 30)
+            });
+            line.customProps.label.set({
+              left: ((line.x1 + line.x2) / 2),
+              top: ((line.y1 + line.y2) / 2),
+            });
+          }
+          else {
+            line.set({
+              x2: (o.target.left + 30),
+              y2: (o.target.top + 30)
+            });
+            line.customProps.label.set({
+              left: ((line.x1 + line.x2) / 2),
+              top: ((line.y1 + line.y2) / 2)
+            });
+          }
+        });
+
+        canvas.renderAll();
+      }
+    });
   }
 
   disableMigrationMode() {
