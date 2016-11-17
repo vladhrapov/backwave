@@ -1,4 +1,9 @@
 import React from 'react';
+
+import ReactFire from "reactfire";
+
+import ReactMixin from "react-mixin";
+
 import AppBar from 'material-ui/AppBar';
 import Checkbox from 'material-ui/Checkbox';
 import Drawer from 'material-ui/Drawer';
@@ -11,7 +16,6 @@ import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
-
 import IconMenu from 'material-ui/IconMenu';
 import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -19,14 +23,19 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 import Canvas from "../Canvas/Canvas.jsx";
 
+import FirebaseService from "../FirebaseService";
+import CanvasService from "../Canvas/CanvasService";
+
 import "./assets/_styles.scss";
 import "../Shared/assets/_reset-default.scss";
 
 let styles = {};
+const ROOT_URL = "https://diploma-dd819.firebaseio.com/";
 
-export default class DrawerSimpleExample extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
+    this.firebaseService = new FirebaseService();
   }
 
   state = {
@@ -39,6 +48,40 @@ export default class DrawerSimpleExample extends React.Component {
 
   handleRequestChange = (open) => {
     this.setState({open});
+  }
+
+  handleRefreshClick = (event) => {
+
+  }
+
+  handleLoadClick = (event) => {
+    CanvasService.refreshCanvas();
+
+    console.log(this.state.canvasCollection);
+
+    let cnvs = JSON.parse(this.state.canvasCollection[0].canvas);
+    console.log("cnvs: ", cnvs);
+
+    CanvasService.setCanvas(cnvs);
+    // for (let key in this.state.canvasCollection) {
+    //   if (this.state.canvasCollection[key].canvas) {
+    //   }
+    // }
+  }
+
+  handleSaveClick = (event) => {
+    console.log(this.firebaseRefs);
+    this.firebaseService.saveCanvas("some name", this.firebaseRef);
+  }
+
+  componentWillMount() {
+    this.firebaseRef = this.props.firebase.database().ref("canvasCollection");
+    this.bindAsArray(this.firebaseRef, "canvasCollection");
+    //this.firebaseRef.on('value', this.handleDataLoaded.bind(this));
+    // this.fb = new Firebase(ROOT_URL + "items/");
+    // bindAsObject is a method from ReactFire that sets: this.state.items = {...}
+    // this.bindAsObject(this.fb, "items");
+    // this.fb.on('value', this.handleDataLoaded.bind(this));
   }
 
   renderHeader = () => {
@@ -54,8 +97,9 @@ export default class DrawerSimpleExample extends React.Component {
             targetOrigin={{horizontal: 'right', vertical: 'top'}}
             anchorOrigin={{horizontal: 'right', vertical: 'top'}}
           >
-          <MenuItem primaryText="Refresh" />
-          <MenuItem primaryText="Help" />
+          <MenuItem primaryText="Refresh" onClick={this.handleRefreshClick} />
+          <MenuItem primaryText="Load" onClick={this.handleLoadClick} />
+          <MenuItem primaryText="Save" onClick={this.handleSaveClick} />
           <MenuItem primaryText="Sign out" />
         </IconMenu>
         }
@@ -132,5 +176,9 @@ export default class DrawerSimpleExample extends React.Component {
     );
   }
 }
+
+ReactMixin(App.prototype, ReactFire);
+
+export default App;
 
 // iconElementLeft={<IconButton><NavigationClose /></IconButton>}

@@ -21,16 +21,31 @@ export default class BaseCanvas {
     return this.canvas;
   }
 
+  static setCanvas(canvas) {
+    for (var i = 0; i < canvas.objects.length; i++) {
+      this.canvas._objects.push(canvas.objects[i]);
+    }
 
-  static refreshCanvas() {
-    var objects = [];
-    Array.prototype.forEach.call(this.canvas._objects, (item) => {
-      objects.push(item);
-    });
-    this.canvas.clear();
-    this.canvas._objects = objects;
+    this.canvas.renderAll();
+    this.canvas.renderAll();
     this.canvas.renderAll();
   }
+
+  static refreshCanvas() {
+    this.canvas.clear();
+    this.canvas.renderAll();
+  }
+
+
+  // static refreshCanvas() {
+  //   var objects = [];
+  //   Array.prototype.forEach.call(this.canvas._objects, (item) => {
+  //     objects.push(item);
+  //   });
+  //   this.canvas.clear();
+  //   this.canvas._objects = objects;
+  //   this.canvas.renderAll();
+  // }
 
   handleDblClick = (event) => {
 
