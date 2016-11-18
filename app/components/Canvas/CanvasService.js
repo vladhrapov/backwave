@@ -1,7 +1,10 @@
 import { fabric } from "fabric";
+import FirebaseService from "../FirebaseService";
 
 export default class BaseCanvas {
-  constructor() {}
+  constructor() {
+    this.firebaseService = new FirebaseService();
+  }
 
   static getCanvas() {
     if (this.canvas) {
@@ -21,19 +24,14 @@ export default class BaseCanvas {
     return this.canvas;
   }
 
-  static setCanvas(canvas) {
-    for (var i = 0; i < canvas.objects.length; i++) {
-      this.canvas._objects.push(canvas.objects[i]);
-    }
-
-    this.canvas.renderAll();
-    this.canvas.renderAll();
+  static loadCanvas() {
+    this.canvas.clear();
+    this.firebaseService.loadCanvasFromFirebase();
     this.canvas.renderAll();
   }
 
   static refreshCanvas() {
     this.canvas.clear();
-    this.canvas.renderAll();
   }
 
 

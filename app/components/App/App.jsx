@@ -51,27 +51,16 @@ class App extends React.Component {
   }
 
   handleRefreshClick = (event) => {
-
+    CanvasService.refreshCanvas();
   }
 
   handleLoadClick = (event) => {
-    CanvasService.refreshCanvas();
-
-    console.log(this.state.canvasCollection);
-
-    let cnvs = JSON.parse(this.state.canvasCollection[0].canvas);
-    console.log("cnvs: ", cnvs);
-
-    CanvasService.setCanvas(cnvs);
-    // for (let key in this.state.canvasCollection) {
-    //   if (this.state.canvasCollection[key].canvas) {
-    //   }
-    // }
+    CanvasService.loadCanvas();
   }
 
   handleSaveClick = (event) => {
-    console.log(this.firebaseRefs);
-    this.firebaseService.saveCanvas("some name", this.firebaseRef);
+    // console.log(this.firebaseRefs);
+    this.firebaseService.saveCanvasToFirebase("some name", this.firebaseRef);
   }
 
   componentWillMount() {
