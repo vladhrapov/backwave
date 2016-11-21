@@ -18,7 +18,9 @@ import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import IconMenu from 'material-ui/IconMenu';
 import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 // import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 import Canvas from "../Canvas/Canvas.jsx";
@@ -41,7 +43,8 @@ class App extends React.Component {
   }
 
   state = {
-    open: false
+    open: false,
+    loadPopupOpened: false
   }
 
   handleToggle = () => {
@@ -57,9 +60,27 @@ class App extends React.Component {
   }
 
   handleLoadClick = (event) => {
-    CanvasService.loadCanvas("myBestCollection2", this.firebaseRef);
-    this.settingsService.disableConnectionMode();
-    this.settingsService.enableMigrationMode();
+    this.setState({loadPopupOpened: true});
+
+    // ToDo implement call from firebase service
+    this.firebaseRef.once("value").then((data) => {
+      //console.log(Object.keys(data.val()));
+      //let keys = Object.keys(data.val());
+      let firebaseDb = data.val();
+
+      for (var key in firebaseDb) {
+        if (firebaseDb.hasOwnProperty(key)) {
+          console.log("key: ", key);
+          console.log(data.child(`/${key}/name`).val());
+        }
+      }
+    });
+
+
+    //ToDo: uncomment these
+    //CanvasService.loadCanvas("myBestCollection2", this.firebaseRef);
+    //this.settingsService.disableConnectionMode();
+    //this.settingsService.enableMigrationMode();
   }
 
   handleSaveClick = (event) => {
@@ -70,7 +91,6 @@ class App extends React.Component {
   componentWillMount() {
     this.firebaseRef = this.props.firebase.database().ref("canvasCollection");
     this.bindAsArray(this.firebaseRef, "canvasCollection");
-    console.log(this.firebaseRef);
 
     // console.log(this.firebaseRef.val());
     //this.firebaseRef.on('value', this.handleDataLoaded.bind(this));
@@ -78,6 +98,58 @@ class App extends React.Component {
     // bindAsObject is a method from ReactFire that sets: this.state.items = {...}
     // this.bindAsObject(this.fb, "items");
     // this.fb.on('value', this.handleDataLoaded.bind(this));
+  }
+
+  // handleLoadCollectionPopupOpen = () => {
+  //   this.setState({loadPopupOpened: true});
+  // };
+
+  handleLoadCollectionPopupClose = () => {
+    this.setState({loadPopupOpened: false});
+  }
+
+  renderLoadCollectionPopup = () => {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={this.handleLoadCollectionPopupClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleLoadCollectionPopupClose}
+      />,
+    ];
+
+
+    let radios = [];
+    for (let i = 0; i < 30; i++) {
+      radios.push(
+        <RadioButton
+          key={i}
+          value={`value${i + 1}`}
+          label={`Option ${i + 1}`}
+          style={styles.radioButton}
+        />
+      );
+    }
+
+    return (
+      <Dialog
+        title="Scrollable Dialog"
+        actions={actions}
+        modal={false}
+        open={this.state.loadPopupOpened}
+        onRequestClose={this.handleLoadCollectionPopupClose}
+        autoScrollBodyContent={true}
+      >
+        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
+          {radios}
+        </RadioButtonGroup>
+      </Dialog>
+    );
   }
 
   renderHeader = () => {
@@ -168,6 +240,7 @@ class App extends React.Component {
         {this.renderHeader()}
         <Canvas />
         {this.renderLeftMenu()}
+        {this.renderLoadCollectionPopup()}
       </div>
     );
   }
