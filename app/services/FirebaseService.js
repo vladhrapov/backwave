@@ -202,4 +202,27 @@ export default class FirebaseService {
       // });
     });
   }
+
+  loadCanvasListFromFirebase(databaseCollection) {
+    
+    return databaseCollection.once("value").then((data) => {
+      //console.log(Object.keys(data.val()));
+      //let keys = Object.keys(data.val());
+      let firebaseDb = data.val();
+      let canvasList = [];
+
+      for (let key in firebaseDb) {
+        if (firebaseDb.hasOwnProperty(key)) {
+          console.log("key: ", key);
+          console.log(data.child(`/${key}/name`).val());
+          canvasList.push({
+            key,
+            name: data.child(`/${key}/name`).val()
+          });
+        }
+      }
+
+      return canvasList;
+    });
+  }
 }

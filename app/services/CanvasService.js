@@ -22,6 +22,10 @@ export default class CanvasService {
     return this.canvas;
   }
 
+  static loadCanvasList(databaseCollection) {
+    return new FirebaseService().loadCanvasListFromFirebase(databaseCollection);
+  }
+
   static loadCanvas(name, databaseCollection) {
     CanvasService.refreshCanvas();
     new FirebaseService().loadCanvasFromFirebase(name, databaseCollection);

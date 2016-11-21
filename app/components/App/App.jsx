@@ -44,7 +44,9 @@ class App extends React.Component {
 
   state = {
     open: false,
-    loadPopupOpened: false
+    loadPopupOpened: false,
+    selectedRadio: null,
+    radiosCollection: []
   }
 
   handleToggle = () => {
@@ -62,25 +64,13 @@ class App extends React.Component {
   handleLoadClick = (event) => {
     this.setState({loadPopupOpened: true});
 
-    // ToDo implement call from firebase service
-    this.firebaseRef.once("value").then((data) => {
-      //console.log(Object.keys(data.val()));
-      //let keys = Object.keys(data.val());
-      let firebaseDb = data.val();
+    let canvasList = CanvasService
+      .loadCanvasList(this.firebaseRef)
+      .then((array) => {
+        console.log(array);
+        this.setState({radiosCollection: array});
+      });
 
-      for (var key in firebaseDb) {
-        if (firebaseDb.hasOwnProperty(key)) {
-          console.log("key: ", key);
-          console.log(data.child(`/${key}/name`).val());
-        }
-      }
-    });
-
-
-    //ToDo: uncomment these
-    //CanvasService.loadCanvas("myBestCollection2", this.firebaseRef);
-    //this.settingsService.disableConnectionMode();
-    //this.settingsService.enableMigrationMode();
   }
 
   handleSaveClick = (event) => {
@@ -104,8 +94,43 @@ class App extends React.Component {
   //   this.setState({loadPopupOpened: true});
   // };
 
-  handleLoadCollectionPopupClose = () => {
+  handleCheckRadio = (event) => {
+    //console.log("val: ", event.target.value);
+    this.setState({selectedRadio: event.target.value});
+  }
+
+  handleLoadCollectionPopupClose = (event) => {
     this.setState({loadPopupOpened: false});
+  }
+
+  handleLoadCollectionPopupSubmit = (event) => {
+    console.log("submit");
+
+    //ToDo: uncomment these
+    CanvasService.loadCanvas(this.state.selectedRadio, this.firebaseRef);
+    this.settingsService.disableConnectionMode();
+    this.settingsService.enableMigrationMode();
+    this.setState({loadPopupOpened: false});
+  }
+
+  renderRadios = () => {
+    let { radiosCollection } = this.state;
+
+    if (radiosCollection) {
+      return radiosCollection.map((item, index) => {
+        return (
+          <RadioButton
+            key={index}
+            value={item.key}
+            label={item.name}
+            style={styles.radioButton}
+            onClick={this.handleCheckRadio}
+          />
+        );
+      });
+    }
+
+    return;
   }
 
   renderLoadCollectionPopup = () => {
@@ -119,22 +144,9 @@ class App extends React.Component {
         label="Submit"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.handleLoadCollectionPopupClose}
+        onTouchTap={this.handleLoadCollectionPopupSubmit}
       />,
     ];
-
-
-    let radios = [];
-    for (let i = 0; i < 30; i++) {
-      radios.push(
-        <RadioButton
-          key={i}
-          value={`value${i + 1}`}
-          label={`Option ${i + 1}`}
-          style={styles.radioButton}
-        />
-      );
-    }
 
     return (
       <Dialog
@@ -146,7 +158,7 @@ class App extends React.Component {
         autoScrollBodyContent={true}
       >
         <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-          {radios}
+          {this.renderRadios()}
         </RadioButtonGroup>
       </Dialog>
     );
