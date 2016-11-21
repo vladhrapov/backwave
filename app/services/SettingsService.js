@@ -1,10 +1,13 @@
 import { fabric } from "fabric";
 
-import CanvasService from "../CanvasService.js";
+import CanvasService from "./CanvasService";
+import ShapesService from "./ShapesService";
 
 
 export default class SettingsService {
-  constructor() {}
+  constructor() {
+    this.shapesService = new ShapesService();
+  }
 
   static shapesCounter = 0
   static lineCounter = 0
@@ -16,34 +19,15 @@ export default class SettingsService {
 
     SettingsService.shapesCounter++;
 
-    var circle = new fabric.Circle({
-      strokeWidth: 3,
-      radius: 30,
-      fill: '#fff',
-      stroke: '#666',
-      originX: 'center',
-      originY: 'center'
-    });
-
-    var text = new fabric.Text(`A${SettingsService.shapesCounter}`, {
-      fontSize: 25,
-      originX: 'center',
-      originY: 'center'
-    });
-
-    var group = new fabric.Group([ circle, text ], {
+    let vertex = this.shapesService.createVertex({
       left: this.getRandomInt(20, 900),
       top: this.getRandomInt(20, 600),
-      customProps: {
-        type: "vertex",
-        name: `A${SettingsService.shapesCounter}`,
-        lines: []
-      }
+      name: `A${SettingsService.shapesCounter}`
     });
 
-    this.setObjectMigration(group, false);
+    this.setObjectMigration(vertex, false);
 
-    canvas.add(group);
+    canvas.add(vertex);
   }
 
   removeVertex() {
@@ -81,7 +65,7 @@ export default class SettingsService {
 
   enableConnectionMode() {
     let x1, y1, x2, y2, vertexFrom, vertexTo,
-        line, text, isDown,
+        line, label, isDown,
         canvas = CanvasService.getCanvas();
 
     canvas.on("mouse:down", (o) => {
@@ -94,12 +78,9 @@ export default class SettingsService {
         vertexFrom = o.target;
         let points = [ x1, y1, x1, y1 ];
 
-        line = new fabric.Line(points, {
-          strokeWidth: 5,
-          fill: "red",
-          stroke: "red",
-          originX: "center",
-          originY: "center"
+        line = this.shapesService.createLine({
+          isCustom: false,
+          points,
         });
 
         canvas.add(line);
@@ -131,44 +112,26 @@ export default class SettingsService {
 
         SettingsService.lineCounter++;
 
-        text = new fabric.Text(`Line${SettingsService.lineCounter}`, {
+        label = this.shapesService.createLabel({
           left: ((x1 + x2) / 2),
           top: ((y1 + y2) / 2),
-          fontSize: 25,
-          originX: 'center',
-          originY: 'center',
-          customProps: {
-            type: "label",
-            name: `Line${SettingsService.lineCounter}`,
-            weight: 0
-          }
+          name: `Line${SettingsService.lineCounter}`,
+          weight: 0
         });
 
-        line = new fabric.Line([x1, y1, x2, y2], {
-          strokeWidth: 5,
-          fill: "red",
-          stroke: "red",
-          originX: "center",
-          originY: "center",
-          customProps: {
-            type: "line",
-            name: `Line${SettingsService.lineCounter}`,
-            vertex: {
-              from: {
-                name: vertexFrom.customProps.name,
-                link: vertexFrom
-              },
-              to: {
-                name: vertexTo.customProps.name,
-                link: vertexTo
-              }
-            },
-            label: text
-          }
+        line = this.shapesService.createLine({
+          isCustom: true,
+          points: [x1, y1, x2, y2],
+          name: `Line${SettingsService.lineCounter}`,
+          vertexFromName: vertexFrom.customProps.name,
+          vertexFromLink: vertexFrom,
+          vertexToName: vertexTo.customProps.name,
+          vertexToLink: vertexTo,
+          label
         });
 
         canvas.add(line);
-        canvas.add(text);
+        canvas.add(label);
         canvas.sendToBack(line);
 
         line.customProps.vertex.from.link.customProps.lines.push(line);
@@ -203,7 +166,7 @@ export default class SettingsService {
       let { left, top, type, customProps, ...props } = o.target;
 
       if (type && type == "group" && customProps && customProps.type == "vertex") {
-        
+
         customProps.lines.forEach((line) => {
           if (line.customProps.vertex.from.name == o.target.customProps.name) {
             line.set({

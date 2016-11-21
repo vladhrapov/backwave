@@ -1,10 +1,8 @@
 import { fabric } from "fabric";
-import FirebaseService from "../FirebaseService";
+import FirebaseService from "./FirebaseService";
 
-export default class BaseCanvas {
-  constructor() {
-    this.firebaseService = new FirebaseService();
-  }
+export default class CanvasService {
+  constructor() {}
 
   static getCanvas() {
     if (this.canvas) {
@@ -19,19 +17,25 @@ export default class BaseCanvas {
       color: "black"
     });
 
-    BaseCanvas.init();
+    CanvasService.init();
 
     return this.canvas;
   }
 
-  static loadCanvas() {
-    this.canvas.clear();
-    this.firebaseService.loadCanvasFromFirebase();
-    this.canvas.renderAll();
+  static loadCanvas(name, databaseCollection) {
+    CanvasService.refreshCanvas();
+    new FirebaseService().loadCanvasFromFirebase(name, databaseCollection);
+    CanvasService.getCanvas().renderAll();
+  }
+
+  static saveCanvas(name, databaseCollection) {
+    new FirebaseService().saveCanvasToFirebase(name, databaseCollection);
   }
 
   static refreshCanvas() {
-    this.canvas.clear();
+    if (CanvasService.getCanvas()._objects && CanvasService.getCanvas()._objects.length) {
+      CanvasService.getCanvas().clear();
+    }
   }
 
 
@@ -50,11 +54,11 @@ export default class BaseCanvas {
   }
 
   static init() {
-    let canvas = BaseCanvas.getCanvas(),
+    let canvas = CanvasService.getCanvas(),
         that = this;
     console.log("done");
 
-    fabric.util.addListener(BaseCanvas.getCanvas().upperCanvasEl, 'dblclick', function (event, self) {
+    fabric.util.addListener(CanvasService.getCanvas().upperCanvasEl, 'dblclick', function (event, self) {
 
       // that.handleDblClick(event);
       console.log(event);

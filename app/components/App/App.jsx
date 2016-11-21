@@ -23,8 +23,9 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 import Canvas from "../Canvas/Canvas.jsx";
 
-import FirebaseService from "../FirebaseService";
-import CanvasService from "../Canvas/CanvasService";
+import FirebaseService from "../../services/FirebaseService";
+import CanvasService from "../../services/CanvasService";
+import SettingsService from "../../services/SettingsService";
 
 import "./assets/_styles.scss";
 import "../Shared/assets/_reset-default.scss";
@@ -36,6 +37,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.firebaseService = new FirebaseService();
+    this.settingsService = new SettingsService();
   }
 
   state = {
@@ -55,17 +57,22 @@ class App extends React.Component {
   }
 
   handleLoadClick = (event) => {
-    CanvasService.loadCanvas();
+    CanvasService.loadCanvas("myBestCollection2", this.firebaseRef);
+    this.settingsService.disableConnectionMode();
+    this.settingsService.enableMigrationMode();
   }
 
   handleSaveClick = (event) => {
     // console.log(this.firebaseRefs);
-    this.firebaseService.saveCanvasToFirebase("some name", this.firebaseRef);
+    CanvasService.saveCanvas("myBestCollection2", this.firebaseRef);
   }
 
   componentWillMount() {
     this.firebaseRef = this.props.firebase.database().ref("canvasCollection");
     this.bindAsArray(this.firebaseRef, "canvasCollection");
+    console.log(this.firebaseRef);
+
+    // console.log(this.firebaseRef.val());
     //this.firebaseRef.on('value', this.handleDataLoaded.bind(this));
     // this.fb = new Firebase(ROOT_URL + "items/");
     // bindAsObject is a method from ReactFire that sets: this.state.items = {...}
