@@ -1,5 +1,6 @@
 import CanvasService from "./CanvasService";
 import ShapesService from "./ShapesService";
+import SettingsService from "./SettingsService";
 
 
 export default class FirebaseService {
@@ -105,6 +106,8 @@ export default class FirebaseService {
         this.shapesService.createVertex({ left, top, name, lines: [] })
       );
     });
+
+    SettingsService.shapesCounter = vertices.length;
   }
 
   restoreLines(lines) {
@@ -113,8 +116,7 @@ export default class FirebaseService {
       let { x1, x2, y1, y2 } = line.helperProps,
           { name, label, vertex } = line.customProps;
 
-      CanvasService.getCanvas().add(
-        this.shapesService.createLine({
+      let restoredLine = this.shapesService.createLine({
           isCustom: true,
           points: [x1, y1, x2, y2],
           name,
@@ -123,9 +125,14 @@ export default class FirebaseService {
           vertexToName: vertex.to.name,
           vertexToLink: null,
           label: null
-        })
-      );
+        });
+
+      CanvasService.getCanvas().add(restoredLine);
+
+      CanvasService.getCanvas().sendToBack(restoredLine);
     });
+
+    SettingsService.lineCounter = lines.length;
   }
 
   restoreLabels(labels) {
@@ -193,7 +200,6 @@ export default class FirebaseService {
       this.restoreVertices(this.filterCollectionByType("vertex", canvasObjects));
       this.restoreLines(this.filterCollectionByType("line", canvasObjects));
       this.restoreLabels(this.filterCollectionByType("label", canvasObjects));
-
       this.restoreLinks();
 
       console.log("CANVAS: ", CanvasService.getCanvas()._objects);
@@ -204,7 +210,7 @@ export default class FirebaseService {
   }
 
   loadCanvasListFromFirebase(databaseCollection) {
-    
+
     return databaseCollection.once("value").then((data) => {
       //console.log(Object.keys(data.val()));
       //let keys = Object.keys(data.val());

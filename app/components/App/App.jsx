@@ -19,6 +19,7 @@ import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import IconMenu from 'material-ui/IconMenu';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 // import NavigationClose from 'material-ui/svg-icons/navigation/close';
@@ -44,7 +45,7 @@ class App extends React.Component {
 
   state = {
     open: false,
-    loadPopupOpened: false,
+    popupOpened: false,
     selectedRadio: null,
     radiosCollection: []
   }
@@ -62,7 +63,9 @@ class App extends React.Component {
   }
 
   handleLoadClick = (event) => {
-    this.setState({loadPopupOpened: true});
+    // this.setState({ popupType: "load"});
+    this.popupType = "load";
+    this.setState({ popupOpened: true });
 
     let canvasList = CanvasService
       .loadCanvasList(this.firebaseRef)
@@ -74,8 +77,9 @@ class App extends React.Component {
   }
 
   handleSaveClick = (event) => {
-    // console.log(this.firebaseRefs);
-    CanvasService.saveCanvas("myBestCollection2", this.firebaseRef);
+    // this.setState({ popupType: "save"});
+    this.popupType = "save";
+    this.setState({ popupOpened: true });
   }
 
   componentWillMount() {
@@ -90,17 +94,20 @@ class App extends React.Component {
     // this.fb.on('value', this.handleDataLoaded.bind(this));
   }
 
-  // handleLoadCollectionPopupOpen = () => {
-  //   this.setState({loadPopupOpened: true});
-  // };
-
   handleCheckRadio = (event) => {
     //console.log("val: ", event.target.value);
     this.setState({selectedRadio: event.target.value});
   }
 
-  handleLoadCollectionPopupClose = (event) => {
-    this.setState({loadPopupOpened: false});
+  handleCanvasNameInputChange = (event) => {
+    // console.log(event.target.value);
+    this.setState({ canvasName: event.target.value });
+  }
+
+  handlePopupClose = (event) => {
+    this.setState({ popupOpened: false});
+    this.setState({ errorMessage: "" });
+    this.setState({ canvasName: "" });
   }
 
   handleLoadCollectionPopupSubmit = (event) => {
@@ -110,14 +117,26 @@ class App extends React.Component {
     CanvasService.loadCanvas(this.state.selectedRadio, this.firebaseRef);
     this.settingsService.disableConnectionMode();
     this.settingsService.enableMigrationMode();
-    this.setState({loadPopupOpened: false});
+    this.setState({ popupOpened: false });
   }
 
-  renderRadios = () => {
-    let { radiosCollection } = this.state;
+  handleSaveCollectionPopupSubmit = () => {
+    if (this.state.canvasName) {
+      CanvasService.saveCanvas(this.state.canvasName, this.firebaseRef);
+      this.setState({ errorMessage: "" });
+      this.setState({ popupOpened: false });
+    }
+    else {
+      this.setState({ errorMessage: "This field is required" });
+    }
+  }
+
+  renderLoadPopupBody = () => {
+    let { radiosCollection } = this.state,
+        radios;
 
     if (radiosCollection) {
-      return radiosCollection.map((item, index) => {
+      radios = radiosCollection.map((item, index) => {
         return (
           <RadioButton
             key={index}
@@ -130,36 +149,74 @@ class App extends React.Component {
       });
     }
 
-    return;
+    return (
+      <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
+        {radios}
+      </RadioButtonGroup>
+    );
   }
 
-  renderLoadCollectionPopup = () => {
-    const actions = [
+  renderSavePopupBody = () => {
+    return (
+      <TextField
+        hintText="Hint Text"
+        floatingLabelText="Floating Label Text"
+        defaultValue={this.state.canvasName}
+        errorText={this.state.errorMessage}
+        onChange={this.handleCanvasNameInputChange}
+      />
+    );
+  }
+
+  renderPopupControls = (handler, submitText) => {
+    return [
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.handleLoadCollectionPopupClose}
+        onTouchTap={this.handlePopupClose}
       />,
       <FlatButton
-        label="Submit"
+        label={submitText}
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.handleLoadCollectionPopupSubmit}
+        onTouchTap={handler}
       />,
     ];
+  }
+
+  renderPopupByType = () => {
+    let popupBody, popupControls;
+
+    if (this.popupType) {
+      switch (this.popupType) {
+        case "load":
+          popupBody = this.renderLoadPopupBody();
+          popupControls = this.renderPopupControls(this.handleLoadCollectionPopupSubmit, "Submit");
+        break;
+        case "save":
+          popupBody = this.renderSavePopupBody();
+          popupControls = this.renderPopupControls(this.handleSaveCollectionPopupSubmit, "Save");
+        break;
+        case "line":
+
+        break;
+        default:
+        throw new Error("Not supported type of popup");
+        break;
+      }
+
+    }
 
     return (
       <Dialog
-        title="Scrollable Dialog"
-        actions={actions}
-        modal={false}
-        open={this.state.loadPopupOpened}
-        onRequestClose={this.handleLoadCollectionPopupClose}
-        autoScrollBodyContent={true}
+      title="Scrollable Dialog"
+      actions={popupControls || null}
+      modal={false}
+      open={this.state.popupOpened}
+      onRequestClose={this.handlePopupClose}
+      autoScrollBodyContent={true}
       >
-        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-          {this.renderRadios()}
-        </RadioButtonGroup>
+        {popupBody || null}
       </Dialog>
     );
   }
@@ -252,7 +309,7 @@ class App extends React.Component {
         {this.renderHeader()}
         <Canvas />
         {this.renderLeftMenu()}
-        {this.renderLoadCollectionPopup()}
+        {this.renderPopupByType()}
       </div>
     );
   }
