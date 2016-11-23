@@ -87,9 +87,9 @@ export default class FirebaseService {
     return canvasObjectsCollection;
   }
 
-  saveCanvasToFirebase(name, databaseCollection) {
-    console.log(databaseCollection);
-    databaseCollection.child(name).set({
+  saveCanvasToFirebase(name, database) {
+    console.log(database);
+    database.ref("canvasCollection").child(name).set({
       name: name,
       canvasObjects: this.getCanvasObjectsCollection()
     });
@@ -190,8 +190,8 @@ export default class FirebaseService {
     });
   }
 
-  loadCanvasFromFirebase(name, databaseCollection) {
-    databaseCollection.once("value").then((data) => {
+  loadCanvasFromFirebase(name, database) {
+    database.ref("canvasCollection").once("value").then((data) => {
       console.log(data.child(name + "/canvasObjects").val());
       console.log(data.child(name + "/name").val());
       let canvasObjects = data.child(name + "/canvasObjects").val();
@@ -209,9 +209,9 @@ export default class FirebaseService {
     });
   }
 
-  loadCanvasListFromFirebase(databaseCollection) {
+  loadCanvasListFromFirebase(database) {
 
-    return databaseCollection.once("value").then((data) => {
+    return database.ref("canvasCollection").once("value").then((data) => {
       //console.log(Object.keys(data.val()));
       //let keys = Object.keys(data.val());
       let firebaseDb = data.val();
@@ -231,4 +231,9 @@ export default class FirebaseService {
       return canvasList;
     });
   }
+
+  removeCanvasFromFirebase(name, database) {
+    database.ref(`canvasCollection/${name}`).remove();
+  }
+
 }

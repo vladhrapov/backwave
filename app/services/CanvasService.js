@@ -22,18 +22,22 @@ export default class CanvasService {
     return this.canvas;
   }
 
-  static loadCanvasList(databaseCollection) {
-    return new FirebaseService().loadCanvasListFromFirebase(databaseCollection);
+  static loadCanvasList(database) {
+    return new FirebaseService().loadCanvasListFromFirebase(database);
   }
 
-  static loadCanvas(name, databaseCollection) {
+  static loadCanvas(name, database) {
     CanvasService.refreshCanvas();
-    new FirebaseService().loadCanvasFromFirebase(name, databaseCollection);
+    new FirebaseService().loadCanvasFromFirebase(name, database);
     CanvasService.getCanvas().renderAll();
   }
 
-  static saveCanvas(name, databaseCollection) {
-    new FirebaseService().saveCanvasToFirebase(name, databaseCollection);
+  static saveCanvas(name, database) {
+    new FirebaseService().saveCanvasToFirebase(name, database);
+  }
+
+  static removeCanvas(name, database) {
+    new FirebaseService().removeCanvasFromFirebase(name, database);
   }
 
   static refreshCanvas() {

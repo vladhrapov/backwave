@@ -82,9 +82,21 @@ class App extends React.Component {
     this.setState({ popupOpened: true });
   }
 
+  handleRemoveClick = (event) => {
+    this.popupType = "remove";
+    this.setState({ popupOpened: true });
+
+    let canvasList = CanvasService
+      .loadCanvasList(this.firebaseRef)
+      .then((array) => {
+        console.log(array);
+        this.setState({radiosCollection: array});
+      });
+  }
+
   componentWillMount() {
-    this.firebaseRef = this.props.firebase.database().ref("canvasCollection");
-    this.bindAsArray(this.firebaseRef, "canvasCollection");
+    this.firebaseRef = this.props.firebase.database();
+    this.bindAsArray(this.firebaseRef.ref("canvasCollection"), "canvasCollection");
 
     // console.log(this.firebaseRef.val());
     //this.firebaseRef.on('value', this.handleDataLoaded.bind(this));
@@ -120,6 +132,13 @@ class App extends React.Component {
     this.setState({ popupOpened: false });
   }
 
+  handleRemoveCollectionPopupSubmit = () => {
+    CanvasService.removeCanvas(this.state.selectedRadio, this.firebaseRef);
+    this.settingsService.disableConnectionMode();
+    this.settingsService.enableMigrationMode();
+    this.setState({ popupOpened: false });
+  }
+
   handleSaveCollectionPopupSubmit = () => {
     if (this.state.canvasName) {
       CanvasService.saveCanvas(this.state.canvasName, this.firebaseRef);
@@ -131,7 +150,7 @@ class App extends React.Component {
     }
   }
 
-  renderLoadPopupBody = () => {
+  renderLoadOrRemovePopupBody = () => {
     let { radiosCollection } = this.state,
         radios;
 
@@ -190,13 +209,17 @@ class App extends React.Component {
     if (this.popupType) {
       switch (this.popupType) {
         case "load":
-          popupBody = this.renderLoadPopupBody();
+          popupBody = this.renderLoadOrRemovePopupBody();
           popupControls = this.renderPopupControls(this.handleLoadCollectionPopupSubmit, "Submit");
         break;
         case "save":
           popupBody = this.renderSavePopupBody();
           popupControls = this.renderPopupControls(this.handleSaveCollectionPopupSubmit, "Save");
         break;
+        case "remove":
+          popupBody = this.renderLoadOrRemovePopupBody();
+          popupControls = this.renderPopupControls(this.handleRemoveCollectionPopupSubmit, "Submit");
+          break;
         case "line":
 
         break;
@@ -237,7 +260,7 @@ class App extends React.Component {
           <MenuItem primaryText="Refresh" onClick={this.handleRefreshClick} />
           <MenuItem primaryText="Load" onClick={this.handleLoadClick} />
           <MenuItem primaryText="Save" onClick={this.handleSaveClick} />
-          <MenuItem primaryText="Sign out" />
+          <MenuItem primaryText="Remove" onClick={this.handleRemoveClick}/>
         </IconMenu>
         }
         onLeftIconButtonTouchTap={this.handleToggle}/>
