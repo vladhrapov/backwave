@@ -192,33 +192,26 @@ export default class FirebaseService {
 
   loadCanvasFromFirebase(name, database) {
     database.ref("canvasCollection").once("value").then((data) => {
-      console.log(data.child(name + "/canvasObjects").val());
-      console.log(data.child(name + "/name").val());
       let canvasObjects = data.child(name + "/canvasObjects").val();
       let canvasName = data.child(name + "/name").val();
 
-      this.restoreVertices(this.filterCollectionByType("vertex", canvasObjects));
-      this.restoreLines(this.filterCollectionByType("line", canvasObjects));
-      this.restoreLabels(this.filterCollectionByType("label", canvasObjects));
-      this.restoreLinks();
-
-      console.log("CANVAS: ", CanvasService.getCanvas()._objects);
-      // data.forEach((item) => {
-      //   console.log(item);
-      // });
+      if (canvasObjects) {
+        this.restoreVertices(this.filterCollectionByType("vertex", canvasObjects));
+        this.restoreLines(this.filterCollectionByType("line", canvasObjects));
+        this.restoreLabels(this.filterCollectionByType("label", canvasObjects));
+        this.restoreLinks();
+      }
     });
   }
 
   loadCanvasListFromFirebase(database) {
 
     return database.ref("canvasCollection").once("value").then((data) => {
-      //console.log(Object.keys(data.val()));
-      //let keys = Object.keys(data.val());
-      let firebaseDb = data.val();
+      let firebaseCanvasList = data.val();
       let canvasList = [];
 
-      for (let key in firebaseDb) {
-        if (firebaseDb.hasOwnProperty(key)) {
+      for (let key in firebaseCanvasList) {
+        if (firebaseCanvasList.hasOwnProperty(key)) {
           console.log("key: ", key);
           console.log(data.child(`/${key}/name`).val());
           canvasList.push({
