@@ -45,7 +45,7 @@ class App extends React.Component {
 
   state = {
     open: false,
-    popupOpened: false,
+    dialogOpened: false,
     selectedRadio: null,
     radiosCollection: []
   }
@@ -63,9 +63,9 @@ class App extends React.Component {
   }
 
   handleLoadClick = (event) => {
-    // this.setState({ popupType: "load"});
-    this.popupType = "load";
-    this.setState({ popupOpened: true });
+    // this.setState({ dialogType: "load"});
+    this.dialogType = "load";
+    this.setState({ dialogOpened: true });
 
     let canvasList = CanvasService
       .loadCanvasList(this.firebaseRef)
@@ -77,14 +77,14 @@ class App extends React.Component {
   }
 
   handleSaveClick = (event) => {
-    // this.setState({ popupType: "save"});
-    this.popupType = "save";
-    this.setState({ popupOpened: true });
+    // this.setState({ dialogType: "save"});
+    this.dialogType = "save";
+    this.setState({ dialogOpened: true });
   }
 
   handleRemoveClick = (event) => {
-    this.popupType = "remove";
-    this.setState({ popupOpened: true });
+    this.dialogType = "remove";
+    this.setState({ dialogOpened: true });
 
     let canvasList = CanvasService
       .loadCanvasList(this.firebaseRef)
@@ -116,41 +116,41 @@ class App extends React.Component {
     this.setState({ canvasName: event.target.value });
   }
 
-  handlePopupClose = (event) => {
-    this.setState({ popupOpened: false});
+  handleDialogClose = (event) => {
+    this.setState({ dialogOpened: false});
     this.setState({ errorMessage: "" });
     this.setState({ canvasName: "" });
   }
 
-  handleLoadCollectionPopupSubmit = (event) => {
+  handleLoadCollectionDialogSubmit = (event) => {
     console.log("submit");
 
     //ToDo: uncomment these
     CanvasService.loadCanvas(this.state.selectedRadio, this.firebaseRef);
     this.settingsService.disableConnectionMode();
     this.settingsService.enableMigrationMode();
-    this.setState({ popupOpened: false });
+    this.setState({ dialogOpened: false });
   }
 
-  handleRemoveCollectionPopupSubmit = () => {
+  handleRemoveCollectionDialogSubmit = () => {
     CanvasService.removeCanvas(this.state.selectedRadio, this.firebaseRef);
     this.settingsService.disableConnectionMode();
     this.settingsService.enableMigrationMode();
-    this.setState({ popupOpened: false });
+    this.setState({ dialogOpened: false });
   }
 
-  handleSaveCollectionPopupSubmit = () => {
+  handleSaveCollectionDialogSubmit = () => {
     if (this.state.canvasName) {
       CanvasService.saveCanvas(this.state.canvasName, this.firebaseRef);
       this.setState({ errorMessage: "" });
-      this.setState({ popupOpened: false });
+      this.setState({ dialogOpened: false });
     }
     else {
       this.setState({ errorMessage: "This field is required" });
     }
   }
 
-  renderLoadOrRemovePopupBody = () => {
+  renderLoadOrRemoveDialogBody = () => {
     let { radiosCollection } = this.state,
         radios;
 
@@ -175,7 +175,7 @@ class App extends React.Component {
     );
   }
 
-  renderSavePopupBody = () => {
+  renderSaveDialogBody = () => {
     return (
       <TextField
         hintText="Hint Text"
@@ -187,12 +187,12 @@ class App extends React.Component {
     );
   }
 
-  renderPopupControls = (handler, submitText) => {
+  renderDialogControls = (handler, submitText) => {
     return [
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.handlePopupClose}
+        onTouchTap={this.handleDialogClose}
       />,
       <FlatButton
         label={submitText}
@@ -203,28 +203,28 @@ class App extends React.Component {
     ];
   }
 
-  renderPopupByType = () => {
-    let popupBody, popupControls;
+  renderDialogByType = () => {
+    let dialogBody, dialogControls;
 
-    if (this.popupType) {
-      switch (this.popupType) {
+    if (this.dialogType) {
+      switch (this.dialogType) {
         case "load":
-          popupBody = this.renderLoadOrRemovePopupBody();
-          popupControls = this.renderPopupControls(this.handleLoadCollectionPopupSubmit, "Submit");
+          dialogBody = this.renderLoadOrRemoveDialogBody();
+          dialogControls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
         break;
         case "save":
-          popupBody = this.renderSavePopupBody();
-          popupControls = this.renderPopupControls(this.handleSaveCollectionPopupSubmit, "Save");
+          dialogBody = this.renderSaveDialogBody();
+          dialogControls = this.renderDialogControls(this.handleSaveCollectionDialogSubmit, "Save");
         break;
         case "remove":
-          popupBody = this.renderLoadOrRemovePopupBody();
-          popupControls = this.renderPopupControls(this.handleRemoveCollectionPopupSubmit, "Submit");
+          dialogBody = this.renderLoadOrRemoveDialogBody();
+          dialogControls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");
           break;
         case "line":
 
         break;
         default:
-        throw new Error("Not supported type of popup");
+        throw new Error("Not supported type of dialog");
         break;
       }
 
@@ -232,14 +232,14 @@ class App extends React.Component {
 
     return (
       <Dialog
-      title="Scrollable Dialog"
-      actions={popupControls || null}
-      modal={false}
-      open={this.state.popupOpened}
-      onRequestClose={this.handlePopupClose}
-      autoScrollBodyContent={true}
+        title="Scrollable Dialog"
+        actions={dialogControls || null}
+        modal={false}
+        open={this.state.dialogOpened}
+        onRequestClose={this.handleDialogClose}
+        autoScrollBodyContent={true}
       >
-        {popupBody || null}
+        {dialogBody || null}
       </Dialog>
     );
   }
@@ -332,7 +332,7 @@ class App extends React.Component {
         {this.renderHeader()}
         <Canvas />
         {this.renderLeftMenu()}
-        {this.renderPopupByType()}
+        {this.renderDialogByType()}
       </div>
     );
   }
