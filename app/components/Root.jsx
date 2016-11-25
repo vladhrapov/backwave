@@ -1,7 +1,9 @@
 import React from "react";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {Provider} from "react-redux";
 
 import App from "./App/App.jsx";
+import Store from "../store/Store";
 
 import * as firebase from "firebase";
 
@@ -12,10 +14,15 @@ let config = {
 
 firebase.initializeApp(config);
 
+const store = new Store();
+
 const Root = () => (
-  <MuiThemeProvider>
-    <App firebase={firebase}/>
-  </MuiThemeProvider>
+  <Provider store={store}>
+    <MuiThemeProvider>
+      <App firebase={firebase}/>
+    </MuiThemeProvider>
+  </Provider>
 );
+// {Routes}
 
 export default Root;

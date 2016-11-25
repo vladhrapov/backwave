@@ -5,23 +5,28 @@ import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as DialogActions from "../../actions/DialogActions";
+import * as CanvasActions from "../../actions/CanvasActions";
+
 
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
 let styles = {};
 
-export default class CustomDialog extends React.Component {
+class CustomDialog extends React.Component {
   constructor(props) {
     super(props);
     // this.settingsService = new SettingsService();
   }
 
   state = {
+    // dialogOpened: false
     selectedRadio: null,
     canvasName: "",
-    errorMessage: "",
-    dialogOpened: false
+    errorMessage: ""
   }
 
   handleCheckRadio = (event) => {
@@ -35,37 +40,56 @@ export default class CustomDialog extends React.Component {
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    console.log("submit");
+    // console.log("submit");
+    let { dialog, dialogActions, canvasActions } = this.props,
+        isDialogOpened = !dialog.isDialogOpened;
+
+
 
     //ToDo: uncomment these
     CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
     this.props.settingsService.disableConnectionMode();
     this.props.settingsService.enableMigrationMode();
-    this.setState({ dialogOpened: false });
+    // this.setState({ dialogOpened: false });
+    dialogActions.toggleDialog({ isDialogOpened: false });
   }
 
   handleRemoveCollectionDialogSubmit = () => {
+    let { dialog, dialogActions } = this.props,
+        isDialogOpened = !dialog.isDialogOpened;
+
     CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
     this.props.settingsService.disableConnectionMode();
     this.props.settingsService.enableMigrationMode();
-    this.setState({ dialogOpened: false });
+    // this.setState({ dialogOpened: false });
+    dialogActions.toggleDialog({ isDialogOpened: false });
   }
 
   handleSaveCollectionDialogSubmit = () => {
+    let { dialog, dialogActions } = this.props,
+        isDialogOpened = !dialog.isDialogOpened;
+
     if (this.state.canvasName) {
+
       CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
-      this.setState({ dialogOpened: false });
+      dialogActions.toggleDialog({ isDialogOpened: false });
+      // this.setState({ dialogOpened: false });
     }
     else {
       this.setState({ errorMessage: "This field is required" });
+      dialogActions.toggleDialog({ isDialogOpened: true });
     }
   }
 
   handleDialogClose = (event) => {
-    this.setState({ dialogOpened: false});
+    let { dialog, dialogActions } = this.props,
+        isDialogOpened = !dialog.isDialogOpened;
+
+    // this.setState({ dialogOpened: false});
     this.setState({ errorMessage: "" });
     this.setState({ canvasName: "" });
+    dialogActions.toggleDialog({ isDialogOpened: false });
   }
 
 
@@ -75,7 +99,7 @@ export default class CustomDialog extends React.Component {
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.props.handleDialogClose}
+        onTouchTap={this.handleDialogClose}
       />,
       <FlatButton
         label={submitText}
@@ -87,6 +111,7 @@ export default class CustomDialog extends React.Component {
   }
 
   renderLoadOrRemoveDialogBody = () => {
+    console.log("PROPS IN RENDER RADIO: ", this.props);
     let { radiosCollection } = this.props,
         radios;
 
@@ -127,8 +152,11 @@ export default class CustomDialog extends React.Component {
     let dialogBody, dialogControls;
     console.log(this.props);
 
-    if (this.props.dialogType) {
-      switch (this.props.dialogType) {
+    // this.dialogType = this.dialogType || this.props.dialog.dialogType;
+    console.log("DIALOG TYPE: --- ", this.props.dialog.dialogType);
+
+    if (this.props.dialog.dialogType) {
+      switch (this.props.dialog.dialogType) {
         case "load":
           dialogBody = this.renderLoadOrRemoveDialogBody();
           dialogControls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
@@ -156,7 +184,7 @@ export default class CustomDialog extends React.Component {
         title="Scrollable Dialog"
         actions={dialogControls || null}
         modal={false}
-        open={this.state.dialogOpened || this.props.dialogOpened}
+        open={this.props.dialog.isDialogOpened || false}
         onRequestClose={this.handleDialogClose}
         autoScrollBodyContent={true}
       >
@@ -165,9 +193,41 @@ export default class CustomDialog extends React.Component {
     );
   }
 
+  componentWillMount() {
+    this.props.canvasActions.loadCanvasList(this.props.firebaseRef);
+    // this.setState({dialogType: this.props.dialog.dialogType});
+    // this.setState({isDialogOpened: this.props.dialog.isDialogOpened});
+  }
+
   render() {
     return (
       this.renderDialogByType()
     );
   }
 }
+
+
+function mapStateToProps(state, ownProps) {
+  console.log("STATE: ============= ", state, ownProps);
+  return {
+    dialog: state.dialog,
+    canvas: state.canvasList
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    // createCourse: course => dispatch(CourseActions.createCourse(course))
+    dialogActions: bindActionCreators(DialogActions, dispatch),
+    canvasActions: bindActionCreators(CanvasActions, dispatch)
+  }
+}
+
+// Courses.propTypes = {
+//   //dispatch: PropTypes.func.isRequired,
+//   // createCourse: PropTypes.func.isRequired,
+//   // actions: PropTypes.object.isRequired,
+//   courses: PropTypes.array.isRequired
+// };
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDialog);

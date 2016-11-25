@@ -34,54 +34,14 @@ class App extends React.Component {
   }
 
   state = {
-    open: false,
-    dialogOpened: false,
-    radiosCollection: []
+    // open: false,
+    // dialogOpened: false,
+    // radiosCollection: []
   }
 
-  handleToggle = () => {
-    this.setState({open: !this.state.open});
-  }
 
-  handleRequestChange = (open) => {
-    this.setState({open});
-  }
 
-  handleRefreshClick = (event) => {
-    CanvasService.refreshCanvas();
-  }
 
-  handleLoadClick = (event) => {
-    // this.setState({ dialogType: "load"});
-    this.dialogType = "load";
-    this.setState({ dialogOpened: true });
-
-    let canvasList = CanvasService
-      .loadCanvasList(this.firebaseRef)
-      .then((array) => {
-        console.log(array);
-        this.setState({radiosCollection: array});
-      });
-
-  }
-
-  handleSaveClick = (event) => {
-    // this.setState({ dialogType: "save"});
-    this.dialogType = "save";
-    this.setState({ dialogOpened: true });
-  }
-
-  handleRemoveClick = (event) => {
-    this.dialogType = "remove";
-    this.setState({ dialogOpened: true });
-
-    let canvasList = CanvasService
-      .loadCanvasList(this.firebaseRef)
-      .then((array) => {
-        console.log(array);
-        this.setState({radiosCollection: array});
-      });
-  }
 
   componentWillMount() {
     this.firebaseRef = this.props.firebase.database();
@@ -117,21 +77,23 @@ class App extends React.Component {
           handleLoadClick={this.handleLoadClick}
           handleSaveClick={this.handleSaveClick}
           handleRemoveClick={this.handleRemoveClick}
+          firebaseRef={this.firebaseRef}
         />
         <Canvas />
         <LeftDrawer
-          open={this.state.open}
         />
         <CustomDialog
           firebaseRef={this.firebaseRef}
           settingsService={this.settingsService}
-          dialogType={this.dialogType}
-          dialogOpened={this.state.dialogOpened}
-          radiosCollection={this.state.radiosCollection}
-          handleDialogClose={this.handleDialogClose}
         />
       </div>
+      // handleDialogClose={this.handleDialogClose}
 
+      // dialogType={this.dialogType}
+      // dialogOpened={this.state.dialogOpened}
+      // radiosCollection={this.state.radiosCollection}
+
+      // open={this.state.open}
       // {this.renderHeader()}
       // {this.renderLeftMenu()}
       // errorMessage={this.state.errorMessage}

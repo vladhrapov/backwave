@@ -16,20 +16,36 @@ import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 // import IconMenu from 'material-ui/IconMenu';
 // import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as DrawerActions from "../../actions/DrawerActions";
+
+
 let styles = {};
 
-export default class LeftDrawer extends React.Component {
+class LeftDrawer extends React.Component {
   constructor(props) {
     super(props);
   }
 
+  handleToggle = () => {
+    let { drawer, actions } = this.props,
+        isDrawerOpened = !drawer.isDrawerOpened;
+
+    actions.toggleDrawer({ isDrawerOpened });
+  }
+
+  componentWillMount() {
+    console.log(this.props);
+  }
 
   render() {
     return (
       <Drawer
-        open={this.props.open}
+        open={this.props.drawer.isDrawerOpened}
         docked={false}
-        onRequestChange={this.handleRequestChange}
+        onRequestChange={this.handleToggle}
         width={350}>
         <AppBar
           title="Title"
@@ -82,3 +98,26 @@ export default class LeftDrawer extends React.Component {
     );
   }
 }
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    drawer: state.drawer
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    // createCourse: course => dispatch(CourseActions.createCourse(course))
+    actions: bindActionCreators(DrawerActions, dispatch)
+  }
+}
+
+// Courses.propTypes = {
+//   //dispatch: PropTypes.func.isRequired,
+//   // createCourse: PropTypes.func.isRequired,
+//   // actions: PropTypes.object.isRequired,
+//   courses: PropTypes.array.isRequired
+// };
+
+export default connect(mapStateToProps, mapDispatchToProps)(LeftDrawer);
