@@ -205,7 +205,6 @@ export default class FirebaseService {
   }
 
   loadCanvasListFromFirebase(database) {
-
     return database.ref("canvasCollection").once("value").then((data) => {
       let firebaseCanvasList = data.val();
       let canvasList = [];

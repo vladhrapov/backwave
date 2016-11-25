@@ -32,7 +32,6 @@ export default class ShapesService {
     });
   }
 
-
   createLabel(props) {
     let { left, top, name, weight } = props;
 

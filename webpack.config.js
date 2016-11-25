@@ -24,7 +24,7 @@ module.exports = {
         ],
         test: /\.jsx?$/,
         query: {
-          plugins: ['transform-runtime'],
+          plugins: ["transform-runtime", "transform-decorators-legacy"],
           presets: ['es2015', 'stage-0', "react"]
         }
       },

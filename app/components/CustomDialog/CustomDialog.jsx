@@ -1,84 +1,93 @@
 import React from "react";
-
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+// Actions
 import * as DialogActions from "../../actions/DialogActions";
 import * as CanvasActions from "../../actions/CanvasActions";
 
-
+// Services
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
-let styles = {};
+// Styles
+import "../Shared/assets/_styles.scss";
 
-class CustomDialog extends React.Component {
+
+function mapStateToProps(state, ownProps) {
+  console.log("STATE: ============= ", state, ownProps);
+  return {
+    dialog: state.dialog,
+    canvas: state.canvas
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dialogActions: bindActionCreators(DialogActions, dispatch),
+    canvasActions: bindActionCreators(CanvasActions, dispatch)
+  }
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class CustomDialog extends React.Component {
   constructor(props) {
     super(props);
-    // this.settingsService = new SettingsService();
   }
 
   state = {
-    // dialogOpened: false
     selectedRadio: null,
     canvasName: "",
     errorMessage: ""
   }
 
   handleCheckRadio = (event) => {
-    //console.log("val: ", event.target.value);
     this.setState({selectedRadio: event.target.value});
   }
 
-  handleCanvasNameInputChange = (event) => {
-    // console.log(event.target.value);
+  handleInputChange = (event) => {
     this.setState({ canvasName: event.target.value });
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    // console.log("submit");
-    let { dialog, dialogActions, canvasActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { dialog, dialogActions, canvasActions, settingsService } = this.props,
+        isDialogOpened = !dialog.isDialogOpened,
+        dialogType = dialog.dialogType;
 
-
-
-    //ToDo: uncomment these
     CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
-    this.props.settingsService.disableConnectionMode();
-    this.props.settingsService.enableMigrationMode();
-    // this.setState({ dialogOpened: false });
-    dialogActions.toggleDialog({ isDialogOpened: false });
+    settingsService.disableConnectionMode();
+    settingsService.enableMigrationMode();
+    dialogActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleRemoveCollectionDialogSubmit = () => {
-    let { dialog, dialogActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { dialog, dialogActions, settingsService } = this.props,
+        isDialogOpened = !dialog.isDialogOpened,
+        dialogType = dialog.dialogType;
 
     CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
-    this.props.settingsService.disableConnectionMode();
-    this.props.settingsService.enableMigrationMode();
-    // this.setState({ dialogOpened: false });
-    dialogActions.toggleDialog({ isDialogOpened: false });
+    settingsService.disableConnectionMode();
+    settingsService.enableMigrationMode();
+    dialogActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleSaveCollectionDialogSubmit = () => {
     let { dialog, dialogActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+        isDialogOpened = !dialog.isDialogOpened,
+        dialogType = dialog.dialogType;
 
     if (this.state.canvasName) {
-
       CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
-      dialogActions.toggleDialog({ isDialogOpened: false });
-      // this.setState({ dialogOpened: false });
+      this.setState({ canvasName: "" });
+      dialogActions.toggleDialog({ isDialogOpened, dialogType });
     }
     else {
       this.setState({ errorMessage: "This field is required" });
-      dialogActions.toggleDialog({ isDialogOpened: true });
     }
   }
 
@@ -86,13 +95,47 @@ class CustomDialog extends React.Component {
     let { dialog, dialogActions } = this.props,
         isDialogOpened = !dialog.isDialogOpened;
 
-    // this.setState({ dialogOpened: false});
     this.setState({ errorMessage: "" });
     this.setState({ canvasName: "" });
-    dialogActions.toggleDialog({ isDialogOpened: false });
+    dialogActions.toggleDialog({ isDialogOpened });
   }
 
+  renderLoadOrRemoveDialogBody = () => {
+    let { canvas } = this.props,
+        radios;
 
+    if (canvas) {
+      radios = canvas.map((item, index) => {
+        return (
+          <RadioButton
+            className="radio-btn"
+            key={index}
+            value={item.key}
+            label={item.name}
+            onClick={this.handleCheckRadio}
+          />
+        );
+      });
+    }
+
+    return (
+      <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
+        {radios}
+      </RadioButtonGroup>
+    );
+  }
+
+  renderSaveDialogBody = (defaultValue) => {
+    return (
+      <TextField
+        hintText="Hint Text"
+        floatingLabelText="Floating Label Text"
+        defaultValue={defaultValue}
+        errorText={this.state.errorMessage}
+        onChange={this.handleInputChange}
+      />
+    );
+  }
 
   renderDialogControls = (handler, submitText) => {
     return [
@@ -110,59 +153,18 @@ class CustomDialog extends React.Component {
     ];
   }
 
-  renderLoadOrRemoveDialogBody = () => {
-    console.log("PROPS IN RENDER RADIO: ", this.props);
-    let { radiosCollection } = this.props,
-        radios;
+  render() {
+    let { dialogType } = this.props.dialog,
+        dialogBody, dialogControls;
 
-    if (radiosCollection) {
-      radios = radiosCollection.map((item, index) => {
-        return (
-          <RadioButton
-            key={index}
-            value={item.key}
-            label={item.name}
-            style={styles.radioButton}
-            onClick={this.handleCheckRadio}
-          />
-        );
-      });
-    }
-
-    return (
-      <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-        {radios}
-      </RadioButtonGroup>
-    );
-  }
-
-  renderSaveDialogBody = () => {
-    return (
-      <TextField
-        hintText="Hint Text"
-        floatingLabelText="Floating Label Text"
-        defaultValue={this.state.canvasName}
-        errorText={this.state.errorMessage}
-        onChange={this.handleCanvasNameInputChange}
-      />
-    );
-  }
-
-  renderDialogByType = () => {
-    let dialogBody, dialogControls;
-    console.log(this.props);
-
-    // this.dialogType = this.dialogType || this.props.dialog.dialogType;
-    console.log("DIALOG TYPE: --- ", this.props.dialog.dialogType);
-
-    if (this.props.dialog.dialogType) {
-      switch (this.props.dialog.dialogType) {
+    if (dialogType) {
+      switch (dialogType) {
         case "load":
           dialogBody = this.renderLoadOrRemoveDialogBody();
           dialogControls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
         break;
         case "save":
-          dialogBody = this.renderSaveDialogBody();
+          dialogBody = this.renderSaveDialogBody(this.state.canvasName);
           dialogControls = this.renderDialogControls(this.handleSaveCollectionDialogSubmit, "Save");
         break;
         case "remove":
@@ -170,13 +172,13 @@ class CustomDialog extends React.Component {
           dialogControls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");
           break;
         case "line":
-
-        break;
+          dialogBody = this.renderSaveDialogBody(this.state.lineWeight);
+          dialogControls = this.renderDialogControls(this.handleSaveWeightDialogSubmit, "Save");
+          break;
         default:
-        throw new Error("Not supported type of dialog");
-        break;
+          throw new Error("Not supported type of the dialog window");
+          break;
       }
-
     }
 
     return (
@@ -192,42 +194,4 @@ class CustomDialog extends React.Component {
       </Dialog>
     );
   }
-
-  componentWillMount() {
-    this.props.canvasActions.loadCanvasList(this.props.firebaseRef);
-    // this.setState({dialogType: this.props.dialog.dialogType});
-    // this.setState({isDialogOpened: this.props.dialog.isDialogOpened});
-  }
-
-  render() {
-    return (
-      this.renderDialogByType()
-    );
-  }
 }
-
-
-function mapStateToProps(state, ownProps) {
-  console.log("STATE: ============= ", state, ownProps);
-  return {
-    dialog: state.dialog,
-    canvas: state.canvasList
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    // createCourse: course => dispatch(CourseActions.createCourse(course))
-    dialogActions: bindActionCreators(DialogActions, dispatch),
-    canvasActions: bindActionCreators(CanvasActions, dispatch)
-  }
-}
-
-// Courses.propTypes = {
-//   //dispatch: PropTypes.func.isRequired,
-//   // createCourse: PropTypes.func.isRequired,
-//   // actions: PropTypes.object.isRequired,
-//   courses: PropTypes.array.isRequired
-// };
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomDialog);

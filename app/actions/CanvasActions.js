@@ -10,6 +10,13 @@ export function loadCanvasListSuccess(canvasList) {
   }
 }
 
+export function loadCanvas(canvas) {
+  return {
+    type: types.LOAD_CANVAS,
+    canvas
+  }
+}
+
 export function loadCanvasList(firebaseRef) {
   return dispatch => {
     return CanvasService.loadCanvasList(firebaseRef)

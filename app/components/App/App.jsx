@@ -1,30 +1,22 @@
 import React from 'react';
-
 import ReactFire from "reactfire";
-
 import ReactMixin from "react-mixin";
 
-
-// import FlatButton from 'material-ui/FlatButton';
-// import Dialog from 'material-ui/Dialog';
-// import TextField from 'material-ui/TextField';
-// import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-// import NavigationClose from 'material-ui/svg-icons/navigation/close';
-
+// Components
 import Canvas from "../Canvas/Canvas.jsx";
 import CustomDialog from "../CustomDialog/CustomDialog.jsx";
 import LeftDrawer from "../LeftDrawer/LeftDrawer.jsx";
 import Header from "../Header/Header.jsx";
 
+// Services
 import FirebaseService from "../../services/FirebaseService";
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
+// Styles
 import "./assets/_styles.scss";
 import "../Shared/assets/_reset-default.scss";
 
-let styles = {};
-const ROOT_URL = "https://diploma-dd819.firebaseio.com/";
 
 class App extends React.Component {
   constructor(props) {
@@ -32,16 +24,6 @@ class App extends React.Component {
     this.firebaseService = new FirebaseService();
     this.settingsService = new SettingsService();
   }
-
-  state = {
-    // open: false,
-    // dialogOpened: false,
-    // radiosCollection: []
-  }
-
-
-
-
 
   componentWillMount() {
     this.firebaseRef = this.props.firebase.database();
@@ -56,20 +38,7 @@ class App extends React.Component {
   }
 
 
-
-
-  //
-  //
-  // renderHeader = () => {
-  //
-  // }
-  //
-  // renderLeftMenu = () => {
-  //
-  // }
-
   render() {
-        // console.log(styles);
     return (
       <div>
         <Header
@@ -80,27 +49,12 @@ class App extends React.Component {
           firebaseRef={this.firebaseRef}
         />
         <Canvas />
-        <LeftDrawer
-        />
+        <LeftDrawer />
         <CustomDialog
           firebaseRef={this.firebaseRef}
           settingsService={this.settingsService}
         />
       </div>
-      // handleDialogClose={this.handleDialogClose}
-
-      // dialogType={this.dialogType}
-      // dialogOpened={this.state.dialogOpened}
-      // radiosCollection={this.state.radiosCollection}
-
-      // open={this.state.open}
-      // {this.renderHeader()}
-      // {this.renderLeftMenu()}
-      // errorMessage={this.state.errorMessage}
-      // handleLoadCollectionDialogSubmit={this.handleLoadCollectionDialogSubmit}
-      // handleRemoveCollectionDialogSubmit={this.handleRemoveCollectionDialogSubmit}
-      // handleSaveCollectionDialogSubmit={this.handleSaveCollectionDialogSubmit}
-      // {this.renderDialogByType()}
     );
   }
 }
@@ -108,5 +62,3 @@ class App extends React.Component {
 ReactMixin(App.prototype, ReactFire);
 
 export default App;
-
-// iconElementLeft={<IconButton><NavigationClose /></IconButton>}

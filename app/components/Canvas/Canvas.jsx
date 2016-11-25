@@ -1,23 +1,18 @@
 import React from "react";
+import { fabric } from "fabric";
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-import { fabric } from "fabric";
 
+// Services
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
+// Styles
 import "./assets/_styles.scss";
+import "../Shared/assets/_styles.scss";
 
-const styles = {
-  block: {
-    maxWidth: 250,
-  },
-  radioButton: {
-    marginBottom: 16,
-  },
-};
 
 export default class Canvas extends React.Component {
   constructor() {
@@ -36,7 +31,6 @@ export default class Canvas extends React.Component {
   }
 
   handleMigrationMode = () => {
-    // this.settingsService.
     console.log("handleMigrationMode");
     this.settingsService.disableConnectionMode();
     this.settingsService.enableMigrationMode();
@@ -63,15 +57,15 @@ export default class Canvas extends React.Component {
 
           <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
             <RadioButton
+              className="radio-btn"
               value="not_light"
               label="Moving mode"
-              style={styles.radioButton}
               onClick={this.handleMigrationMode}
               />
             <RadioButton
+              className="radio-btn"
               value="light"
               label="Linking mode"
-              style={styles.radioButton}
               onClick={this.handleConnectionMode}
             />
           </RadioButtonGroup>
