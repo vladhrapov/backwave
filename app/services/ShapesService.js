@@ -35,10 +35,10 @@ export default class ShapesService {
   createLabel(props) {
     let { left, top, name, weight } = props;
 
-    return new fabric.Text(name, {
+    return new fabric.Text(`${weight}`, {
       left,
       top,
-      fontSize: 25,
+      fontSize: 45,
       originX: 'center',
       originY: 'center',
       customProps: {

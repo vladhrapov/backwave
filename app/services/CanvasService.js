@@ -17,8 +17,6 @@ export default class CanvasService {
       color: "black"
     });
 
-    CanvasService.init();
-
     return this.canvas;
   }
 
@@ -44,36 +42,6 @@ export default class CanvasService {
     if (CanvasService.getCanvas()._objects && CanvasService.getCanvas()._objects.length) {
       CanvasService.getCanvas().clear();
     }
-  }
-
-
-  // static refreshCanvas() {
-  //   var objects = [];
-  //   Array.prototype.forEach.call(this.canvas._objects, (item) => {
-  //     objects.push(item);
-  //   });
-  //   this.canvas.clear();
-  //   this.canvas._objects = objects;
-  //   this.canvas.renderAll();
-  // }
-
-  handleDblClick = (event) => {
-
-  }
-
-  static init() {
-    let canvas = CanvasService.getCanvas(),
-        that = this;
-    console.log("done");
-
-    fabric.util.addListener(CanvasService.getCanvas().upperCanvasEl, 'dblclick', function (event, self) {
-
-      // that.handleDblClick(event);
-      console.log(event);
-      console.log("fdsfds");
-      console.log("DblClick Handled: ", that.canvas.getActiveObject());
-      that.canvas.getActiveObject()._objects[0].fill = "green";
-    });
   }
 
 }

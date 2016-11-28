@@ -45,11 +45,11 @@ export default class FirebaseService {
 
   getLabelPropsForSerialization(label) {
     let { top, left } = label,
-        { name, type } = label.customProps;
+        { name, type, weight } = label.customProps;
 
     return {
       customProps: {
-        name, type
+        name, type, weight
       },
       helperProps: {
         top, left
@@ -140,10 +140,10 @@ export default class FirebaseService {
 
     labels.forEach((label) => {
       let { left, top } = label.helperProps,
-          { name } = label.customProps;
+          { name, weight } = label.customProps;
 
       CanvasService.getCanvas().add(
-        this.shapesService.createLabel({ left, top, name })
+        this.shapesService.createLabel({ left, top, name, weight })
       );
     });
   }

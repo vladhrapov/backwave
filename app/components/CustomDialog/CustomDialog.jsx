@@ -50,7 +50,14 @@ export default class CustomDialog extends React.Component {
   }
 
   handleInputChange = (event) => {
-    this.setState({ canvasName: event.target.value });
+    let { dialogType } = this.props.dialog;
+
+    if (dialogType == "label") {
+      this.setState({ lineWeight: event.target.value });
+    }
+    else if (dialogType == "save") {
+      this.setState({ canvasName: event.target.value });
+    }
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
@@ -89,6 +96,29 @@ export default class CustomDialog extends React.Component {
     else {
       this.setState({ errorMessage: "This field is required" });
     }
+  }
+
+  handleSaveWeightDialogSubmit = (event) => {
+    let { lineWeight } = this.state,
+        { dialog, dialogActions } = this.props,
+        isDialogOpened = dialog.isDialogOpened,
+        dialogType = dialog.dialogType;
+
+    if (/^\d+$/.test(lineWeight)) {
+      let canvas = CanvasService.getCanvas(),
+          activeLabel = canvas.getActiveObject();
+
+      activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
+      canvas.renderAll();
+      isDialogOpened = !dialog.isDialogOpened;
+      this.setState({ errorMessage: "" });
+      this.setState({ lineWeight: "" });
+      dialogActions.toggleDialog({ isDialogOpened, dialogType });
+      return;
+    }
+
+    this.setState({ errorMessage: "Please enter a valid number weight!" });
+    dialogActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleDialogClose = (event) => {
@@ -171,7 +201,7 @@ export default class CustomDialog extends React.Component {
           dialogBody = this.renderLoadOrRemoveDialogBody();
           dialogControls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");
           break;
-        case "line":
+        case "label":
           dialogBody = this.renderSaveDialogBody(this.state.lineWeight);
           dialogControls = this.renderDialogControls(this.handleSaveWeightDialogSubmit, "Save");
           break;
