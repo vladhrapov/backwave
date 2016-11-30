@@ -6,6 +6,7 @@ import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 // Actions
 import * as DialogActions from "../../actions/DialogActions";
@@ -13,6 +14,7 @@ import * as DialogActions from "../../actions/DialogActions";
 // Services
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
+import TransformationService from "../../services/TransformationService";
 
 // Styles
 import "./assets/_styles.scss";
@@ -76,6 +78,11 @@ export default class Canvas extends React.Component {
     }
   }
 
+  handleGetTransformedMatrix = () => {
+    console.log("getTransformedMatrixFromCanvas");
+    new TransformationService().getTransformedMatrixFromCanvas();
+  }
+
   render() {
     return (
       <div>
@@ -103,6 +110,11 @@ export default class Canvas extends React.Component {
               onClick={this.handleConnectionMode}
             />
           </RadioButtonGroup>
+          <RaisedButton
+            label="Get transformed Matrix"
+            style={{margin: 12}}
+            onClick={this.handleGetTransformedMatrix}
+          />
         </div>
       </div>
     );
