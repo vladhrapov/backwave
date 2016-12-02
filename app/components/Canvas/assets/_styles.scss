@@ -1,11 +1,22 @@
 canvas {
   // background: lightblue;
   width: 85%;
-  height: 88vh !important;
+  height: 86vh !important;
+  // margin-left: -370px;
   border: 2px solid black;
 }
 
-.settings {
+.tab-canvas {
+  width: 80%;
   float: right;
-  width: 15%;
+
 }
+
+.tab-settings {
+  width: 20%;
+  float: left;
+}
+// .settings {
+//   float: right;
+//   width: 15%;
+// }

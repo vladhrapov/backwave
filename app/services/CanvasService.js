@@ -11,7 +11,7 @@ export default class CanvasService {
 
     this.canvas = new fabric.Canvas('canvas', {
       width: window.screen.width - 200,
-      height: window.screen.height - 300,
+      height: window.screen.height - 200,
       selectionColor: 'rgba(100, 100, 255, 0.3)',
       backgroundColor: 'white',
       color: "black"
@@ -42,6 +42,44 @@ export default class CanvasService {
     if (CanvasService.getCanvas()._objects && CanvasService.getCanvas()._objects.length) {
       CanvasService.getCanvas().clear();
     }
+  }
+
+  static getShapeTypeGroupCount() {
+    let vertexCount = 0,
+        lineCount = 0,
+        labelCount = 0;
+
+    CanvasService.getCanvas()._objects.forEach((shape) => {
+      let { type } = shape.customProps;
+
+      if (type == "vertex") {
+        vertexCount++;
+      }
+      else if (type == "line") {
+        lineCount++;
+      }
+      else if (type == "label") {
+        labelCount++;
+      }
+    });
+
+    return { vertexCount, lineCount, labelCount };
+  }
+
+  static getVertexNames() {
+    let shapes = CanvasService.getCanvas()._objects;
+
+    if (shapes) {
+      return shapes
+      .filter((shape) => {
+        if (shape.customProps.type == "vertex") return true;
+      })
+      .map((shape) => {
+        return shape.customProps.name;
+      });
+    }
+
+    return [];
   }
 
 }

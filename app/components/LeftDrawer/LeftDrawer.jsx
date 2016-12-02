@@ -48,7 +48,7 @@ export default class LeftDrawer extends React.Component {
         open={this.props.drawer.isDrawerOpened}
         docked={false}
         onRequestChange={this.handleToggle}
-        width={350}>
+        width={370}>
         <AppBar
           title="Title"
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
