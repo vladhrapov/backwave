@@ -123,7 +123,7 @@ export default class Canvas extends React.Component {
 
     return (
       <SelectField
-        id={labelText}
+        className="select-vertex"
         floatingLabelText={labelText}
         value={labelValue}
         onClick={this.handleSelectVertexNameClick}
@@ -143,7 +143,7 @@ export default class Canvas extends React.Component {
           onChange={this.handleChange}
         >
           <Tab
-            label="Tab Canvas"
+            label="Canvas"
             value="a"
           >
             <div >
@@ -157,17 +157,19 @@ export default class Canvas extends React.Component {
           onChange={this.handleChange}
         >
           <Tab
-            label="Tab Settings"
+            label="Settings"
             value="b"
           >
             <div className="settings" >
-              <FloatingActionButton onClick={this.handleAddButton}>
-                <ContentAdd />
-              </FloatingActionButton>
+              <div className="btn-add-remove-container">
+                <FloatingActionButton onClick={this.handleAddButton}>
+                  <ContentAdd />
+                </FloatingActionButton>
 
-              <FloatingActionButton onClick={this.handleRemoveButton}>
-                <ContentRemove />
-              </FloatingActionButton>
+                <FloatingActionButton onClick={this.handleRemoveButton}>
+                  <ContentRemove />
+                </FloatingActionButton>
+              </div>
 
               <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
                 <RadioButton
@@ -183,12 +185,28 @@ export default class Canvas extends React.Component {
                   onClick={this.handleConnectionMode}
                 />
               </RadioButtonGroup>
-              <RaisedButton
-                label="Get transformed Matrix"
-                onClick={this.handleGetTransformedMatrix}
-              />
+
               {this.renderCanvasVerticeNames("From", this.state.vertexFrom, this.handleSelectVertexFromNameChange)}
               {this.renderCanvasVerticeNames("To", this.state.vertexTo, this.handleSelectVertexToNameChange)}
+
+              <RaisedButton
+                label="Get Matrix"
+                className="custom-btn-default"
+                secondary={true}
+                onClick={this.handleGetTransformedMatrix}
+              />
+
+              <RaisedButton
+                label="Wave Algorithm"
+                className="custom-btn-default"
+                secondary={true}
+              />
+
+              <RaisedButton
+                label="Back Wave Algorithm"
+                className="custom-btn-default"
+                secondary={true}
+              />
             </div>
           </Tab>
         </Tabs>

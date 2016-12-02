@@ -11,7 +11,7 @@ export default class CanvasService {
 
     this.canvas = new fabric.Canvas('canvas', {
       width: window.screen.width - 200,
-      height: window.screen.height - 200,
+      height: window.screen.height - 260,
       selectionColor: 'rgba(100, 100, 255, 0.3)',
       backgroundColor: 'white',
       color: "black"
