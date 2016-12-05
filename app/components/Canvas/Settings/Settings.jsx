@@ -52,7 +52,8 @@ export default class Settings extends React.Component {
   }
 
   handleWaveAlgorithmClick = () => {
-    let result = new WaveAlgorithmService().invoke();
+    let wa = new WaveAlgorithmService(1, 5);
+    let result = wa.invoke();
     console.log(result);
   }
 

@@ -19,7 +19,7 @@ export default class TransformationService {
       shapesCollection.forEach((shape) => {
         let { type, name, lines } = shape.customProps,
             shapesTypeGroupCount = CanvasService.getShapeTypeGroupCount(),
-            rowCollection = new Array(shapesTypeGroupCount.vertexCount + 1);
+            rowCollection = new Array(shapesTypeGroupCount.vertexCount);
 
         if (type == "vertex") {
           /*
@@ -52,7 +52,7 @@ export default class TransformationService {
 
             if (fromObj.name != name) {
               console.log("fromObj.name: ", fromObj.name);
-              rowCollection[+(fromObj.name.slice(1))] = {
+              rowCollection[+(fromObj.name.slice(1)) - 1] = {
                 weight: +weight
               };
               // Maybe we need to set -1 vertex
@@ -60,7 +60,7 @@ export default class TransformationService {
             }
             else if (toObj.name != name) {
               console.log("toObj.name: ", toObj.name);
-              rowCollection[+(toObj.name.slice(1))] = {
+              rowCollection[+(toObj.name.slice(1)) - 1] = {
                 weight: +weight
               };
               // Maybe we need to set -1 vertex
@@ -74,6 +74,7 @@ export default class TransformationService {
     }
 
     console.log(transformedMatrix);
+    return transformedMatrix;
   }
 
   getTransformedMatrixFromCanvas() {
