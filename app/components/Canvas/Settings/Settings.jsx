@@ -11,6 +11,7 @@ import MenuItem from 'material-ui/MenuItem';
 import CanvasService from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
 import TransformationService from "../../../services/TransformationService";
+import WaveAlgorithmService from "../../../services/WaveAlgorithmService"
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -45,8 +46,18 @@ export default class Settings extends React.Component {
   }
 
   handleGetTransformedMatrix = () => {
+    let { vertexFrom, vertexTo } = this.state;
     console.log("getTransformedMatrixFromCanvas");
     new TransformationService().getTransformedMatrixFromCanvas();
+  }
+
+  handleWaveAlgorithmClick = () => {
+    let result = new WaveAlgorithmService().invoke();
+    console.log(result);
+  }
+
+  handleBackWaveAlgorithmClick = () => {
+
   }
 
   handleSelectVertexNameClick = (event, key, payload) => {
@@ -132,12 +143,14 @@ export default class Settings extends React.Component {
           label="Wave Algorithm"
           className="custom-btn-default"
           secondary={true}
+          onClick={this.handleWaveAlgorithmClick}
         />
 
         <RaisedButton
           label="Back Wave Algorithm"
           className="custom-btn-default"
           secondary={true}
+          onClick={this.handleBackWaveAlgorithmClick}
         />
       </div>
     );

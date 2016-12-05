@@ -8,7 +8,7 @@ export default class TransformationService {
         canvas._objects.length;
   }
 
-  getTransformedMatrixFromCanvas() {
+  transformCanvasToMatrix() {
     let canvas = CanvasService.getCanvas(),
         shapesCollection = canvas._objects,
         transformedMatrix = [];
@@ -19,21 +19,23 @@ export default class TransformationService {
       shapesCollection.forEach((shape) => {
         let { type, name, lines } = shape.customProps,
             shapesTypeGroupCount = CanvasService.getShapeTypeGroupCount(),
-            rowCollection = new Array(shapesTypeGroupCount.vertexCount);
+            rowCollection = new Array(shapesTypeGroupCount.vertexCount + 1);
 
         if (type == "vertex") {
-          // shapesCollection.forEach((relatedShape) => {
-          //   let {
-          //     type: relatedType,
-          //     name: relatedName
-          //   } = relatedShape.customProps;
-          //
-          //   if (name != relatedName
-          //     && relatedType == "vertex"
-          //     && name) {
-          //     console.log("name: ", name, " relatedShape: ", relatedShape);
-          //   }
-          // });
+          /*
+          shapesCollection.forEach((relatedShape) => {
+            let {
+              type: relatedType,
+              name: relatedName
+            } = relatedShape.customProps;
+
+            if (name != relatedName
+              && relatedType == "vertex"
+              && name) {
+              console.log("name: ", name, " relatedShape: ", relatedShape);
+            }
+          });
+          */
           console.log("name: ", name);
 
           lines.forEach((line) => {
@@ -50,13 +52,17 @@ export default class TransformationService {
 
             if (fromObj.name != name) {
               console.log("fromObj.name: ", fromObj.name);
-              rowCollection[+(fromObj.name.slice(1))] = +weight;
+              rowCollection[+(fromObj.name.slice(1))] = {
+                weight: +weight
+              };
               // Maybe we need to set -1 vertex
               // rowCollection[+(fromObj.name.slice(1)) - 1] = +weight;
             }
             else if (toObj.name != name) {
               console.log("toObj.name: ", toObj.name);
-              rowCollection[+(toObj.name.slice(1))] = +weight;
+              rowCollection[+(toObj.name.slice(1))] = {
+                weight: +weight
+              };
               // Maybe we need to set -1 vertex
               // rowCollection[+(toObj.name.slice(1)) - 1] = +weight;
             }
@@ -68,6 +74,10 @@ export default class TransformationService {
     }
 
     console.log(transformedMatrix);
+  }
+
+  getTransformedMatrixFromCanvas() {
+    return this.transformCanvasToMatrix();
   }
 
 
