@@ -52,9 +52,12 @@ export default class Settings extends React.Component {
   }
 
   handleWaveAlgorithmClick = () => {
-    let wa = new WaveAlgorithmService(1, 5);
+    // let wa = new WaveAlgorithmService(1, 5);
+    let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
     let result = wa.invoke();
+    console.clear();
     console.log(result);
+    CanvasService.drawRoutes(result);
   }
 
   handleBackWaveAlgorithmClick = () => {

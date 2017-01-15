@@ -1,6 +1,9 @@
 import { fabric } from "fabric";
 import FirebaseService from "./FirebaseService";
 
+// Constants
+import { COLORS } from "../constants/Colors";
+
 export default class CanvasService {
   constructor() {}
 
@@ -82,4 +85,56 @@ export default class CanvasService {
     return [];
   }
 
+  static drawRoutes(routes) {
+    let shapes = CanvasService.getCanvas()._objects;
+
+    if(shapes && shapes.length && routes && routes.length) {
+      routes.forEach((route, i) => {
+        let color = COLORS[i];
+
+        route.forEach((vertex, index) => {
+          shapes.forEach((shape) => {
+            if(shape && shape.customProps) {
+              let { type, name } = shape.customProps;
+
+              if(type == "line") {
+                  let { from: vertexFrom, to: vertexTo } = shape.customProps.vertex;
+
+                  if(vertexFrom.name == vertex.name && route[index + 1] && vertexTo.name == route[index + 1].name) {
+                    shape.fill = color;
+                    shape.stroke = color;
+                    shape.strokeWidth = 5;
+                  }
+                  else if(vertexTo.name == vertex.name && route[index + 1] && vertexFrom.name == route[index + 1].name) {
+                    shape.fill = color;
+                    shape.stroke = color;
+                    shape.strokeWidth = 5;
+                  }
+              }
+            }
+          }); 
+        });
+      });
+    } 
+
+    CanvasService.getCanvas().renderAll();
+  }
+
 }
+
+
+  // customProps: {
+  //         type: "line",
+  //         name: name,
+  //         vertex: {
+  //           from: {
+  //             name: vertexFromName,
+  //             link: vertexFromLink
+  //           },
+  //           to: {
+  //             name: vertexToName,
+  //             link: vertexToLink
+  //           }
+  //         },
+  //         label
+  //       }

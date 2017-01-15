@@ -38,7 +38,7 @@ export default class ShapesService {
     return new fabric.Text(`${weight}`, {
       left,
       top,
-      fontSize: 45,
+      fontSize: 30,
       originX: 'center',
       originY: 'center',
       customProps: {
@@ -56,9 +56,9 @@ export default class ShapesService {
       let { points } = props;
 
       return new fabric.Line(points, {
-        strokeWidth: 5,
-        fill: "red",
-        stroke: "red",
+        strokeWidth: 2,
+        fill: "#666",
+        stroke: "#666",
         originX: "center",
         originY: "center"
       });
@@ -75,9 +75,9 @@ export default class ShapesService {
       } = props;
 
       return new fabric.Line(points, {
-        strokeWidth: 5,
-        fill: "red",
-        stroke: "red",
+        strokeWidth: 2,
+        fill: "#666",
+        stroke: "#666",
         originX: "center",
         originY: "center",
         customProps: {

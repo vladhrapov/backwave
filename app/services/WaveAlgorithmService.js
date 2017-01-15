@@ -1,196 +1,266 @@
 import TransformationService from "./TransformationService";
+import _ from 'lodash';
 
 export default class WaveAlgorithmService {
   constructor(startVertex, finishVertex) {
     this.transformationService = new TransformationService();
     this.startVertex = startVertex;
     this.finishVertex = finishVertex;
+    this.path = [];
   }
 
-  /* getRoutes(matrix) {
-    let path = "";
-    let a, nextVertex,
-        currentVertex = this.startVertex,
-        currentVertexWeight = Number.POSITIVE_INFINITY;
-
-    while (true) {
-
-      if (!Number.isFinite(nextVertex)) {
-        matrix[this.startVertex].forEach((item, index) => {
-
-          if (item && item.weight) {
-            if (item.weight < currentVertexWeight) {
-              currentVertexWeight = item.weight;
-              currentVertex = index;
-              nextVertex = index;
-            }
-          }
-        });
-
-        matrix[this.startVertex][currentVertex] = null;
-        matrix[currentVertex][this.startVertex] = null;
-        path += `A${currentVertex + 1} - `;
-      }
-      else {
-        currentVertexWeight = Number.POSITIVE_INFINITY;
-
-        matrix[nextVertex].forEach((item, index) => {
-          if (item && item.weight) {
-            if (item.weight < currentVertexWeight) {
-              currentVertexWeight = item.weight;
-              currentVertex = index;
-              nextVertex = index;
-            }
-          }
-        });
-
-        matrix[nextVertex][currentVertex] = null;
-        matrix[currentVertex][nextVertex] = null;
-        path += `A${currentVertex + 1} - `;
-      }
-
-      if (nextVertex == this.finishVertex) {
-        break;
-      }
-      if (a) {
-        break;
-      }
-    }
-
-    console.log("PATH: ", path);
-  }
-  */
-
-  getRoutes(matrix) {
-    let startingRoutes = [],
-      completeRoutes = []; //найденные полные пути
-    matrix.forEach((item, index) => {
+  resetStartVertexColumn() {
+    this.matrix.forEach((item, index) => {
       item[this.startVertex] = null;
     });
-    let i = 0; //чтобы пути записывать в массив по порядку
-    if (matrix.length == 0) {
-      alert('ГДЕ ГРАФ ТО?!');
-      return;
-    }
-    matrix[this.startVertex].forEach((item, index) => {
-      let currVertex = index;
-      if (item && item.weight) {
-        item.name = `A${index + 1}`
-        item.index = index;
-        item.pow = 0;
-        item.pathIndex = i; //запоминаем номер пути в массиве путей
-        startingRoutes[i] = {
-          "path": [],
-          "routeWeight": 0,
-          "routeIndex": i
-        }; //при удаление из этого массива смещается индекс, поэтому запоминаем (понадобится)
-        startingRoutes[i].path.push({
-          "name": `A${this.startVertex + 1}`,
-          "routeWeight": 0,
-          "index": this.startVertex,
-          "pow": 0,
-          "pathIndex": i
-        }, item);
-        startingRoutes[i].routeWeight = item.weight;
-        i++;
-        matrix.forEach((item1) => {
-          if (item1[currVertex]) item1[currVertex] = null;
-        })
+  }
+
+  resetFinishVertexRow() {
+    this.matrix[this.finishVertex].forEach((item, index) => {
+      this.matrix[this.finishVertex][index] = null;
+    });
+  }
+
+  resetVertexColumn(index) {
+    this.matrix.forEach((item, i) => {
+      item[index] = null;
+    });
+  }
+
+  resetVertexRow(index) {
+    this.matrix[index].forEach((item, columnIndex) => {
+      this.matrix[index][columnIndex] = null;
+    });
+  }
+
+  resetStartingRoutesColumns() {
+    this.matrix[this.startVertex].forEach((item, index) => {
+      if(item) {
+        this.resetVertexColumn(index);
       }
     });
+  }
 
+  setStartingRoutes() {
+    this.matrix[this.startVertex].forEach((item, index) => {
+      if(item) {
+        let { weight } = item;
 
-    while (startingRoutes.length > 0) {
-      let currentVertices = []; //последние вершины конкретных путей в массиве путей, для которых будем считать степень и от них дальше искать пути
+        this.path.push([{
+          name: `A${this.startVertex + 1}`,
+          weight: 0,
+          index: this.startVertex
+        }, {
+          name: "A" + (index + 1),// `A${index + 1}`,
+          weight,
+          index
+        }]);
+      }
+    });
+  }
 
+  getLinksCountForVertex(index) {
+    return this.matrix[index].filter((rowItem) => !!rowItem).length;
+  }
 
-      startingRoutes.forEach((item, index) => {
-        let currVertexPow = 0; //степень рассматриваемой вершины
-        matrix[item.path[item.path.length - 1].index].forEach((item1, index1) => {
-          if (item1 && item1.weight) {
-            currVertexPow++;
-          }
-        })
-        startingRoutes[index].path[item.path.length - 1].pow = currVertexPow;
-        currentVertices.push(item.path[item.path.length - 1]);
+  getNextVertexPathFromPathes(tempPathCollection) {
+    let vertexCollection;
+
+    vertexCollection = tempPathCollection
+      .sort((prevPath, nextPath) => {
+        let { linksCount: prevPathLinksCount } = prevPath[prevPath.length - 1],         
+            { linksCount: nextPathLinksCount } = nextPath[nextPath.length - 1];
+
+        return prevPathLinksCount - nextPathLinksCount;
+      })
+      .filter((currentPath, index) => {
+        if(!index) var { linksCount: firstPathLinksCount } = currentPath[currentPath.length - 1];           
+
+        let { linksCount: currentPathLinksCount } = currentPath[currentPath.length - 1];
+
+        return firstPathLinksCount == currentPathLinksCount ? true : false;
       });
 
-      while (currentVertices.length > 0) //пока не рассмотрены все смежные вершины
-      {
-        let leastPowVertex = {
-          "pow": Number.POSITIVE_INFINITY
-        }; //Вершина с найменьшей степенью, которую будем рассматривать
-        for (var j = currentVertices.length - 1; j >= 0; j--) { //ищем с найменьшей степенью, начинаем с конца т.к. если одинаковые степени, то выберится с меньшим порядковым номером
-          if (leastPowVertex.pow >= currentVertices[j].pow) leastPowVertex = currentVertices[j];
-        }
+    if(vertexCollection.length == 1) return vertexCollection[0];
+      
+    vertexCollection = vertexCollection
+      .sort((prevPath, nextPath) => {
+        let { weight: prevPathWeight } = prevPath[prevPath.length - 1],         
+            { weight: nextPathWeight } = nextPath[nextPath.length - 1];
 
-        currentVertices.forEach((item, index) => {
-          if (item.index == leastPowVertex.index) currentVertices.splice(index, 1); //вершину рассматриваем, в будущем уже не рассматриваем, поэтому удаляем
-        });
+        return prevPathWeight - nextPathWeight;
+      })
+      .filter((currentPath, index) => {
+        if(!index) var { weight: firstPathWeight } = currentPath[currentPath.length - 1];           
 
-        let leastWeightLink = {
-          "weight": Number.POSITIVE_INFINITY
-        }; //смежная вершина с найменьшей стоимостью
-        for (var k = matrix[leastPowVertex.index].length - 1; k >= 0; k--) { //ищем связь с найменьшей стоимостью
-          if (matrix[leastPowVertex.index][k] && k == this.finishVertex) //если смежная конечная, то берём её полюбе
-          {
-            leastWeightLink.index = k;
-            leastWeightLink.name = `A${k + 1}`;
-            leastWeightLink.pathIndex = leastPowVertex.pathIndex;
-            leastWeightLink.pow = 0;
-            leastWeightLink.weight = matrix[leastPowVertex.index][k].weight;
-            break;
-          } else if (matrix[leastPowVertex.index][k] && leastWeightLink.weight >= matrix[leastPowVertex.index][k].weight) { //иначе ищем подходящую
-            leastWeightLink.index = k;
-            leastWeightLink.name = `A${k + 1}`;
-            leastWeightLink.pathIndex = leastPowVertex.pathIndex;
-            leastWeightLink.pow = 0;
-            leastWeightLink.weight = matrix[leastPowVertex.index][k].weight;
-          }
-        }
+        let { weight: currentPathWeight } = currentPath[currentPath.length - 1];
+
+        return firstPathWeight == currentPathWeight ? true : false;
+      });
+
+    if(vertexCollection.length == 1) return vertexCollection[0];
+
+    return vertexCollection
+      .sort((prevPath, nextPath) => {
+        let { index: prevPathIndex } = prevPath[prevPath.length - 1],         
+            { index: nextPathIndex } = nextPath[nextPath.length - 1];
+
+        return prevPathIndex - nextPathIndex;
+      })[0];
+  }
+
+  getLinksCount(tempPath) {
+    return tempPath.map((currentPath, i) => {
+      let lastIndex = currentPath.length - 1,
+          { index } = currentPath[lastIndex];
+
+      // tempPath[i][currentPath.length - 1].linksCount 
+      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length; 
+
+      return currentPath;
+    });
+  }
+
+  getRoutes() {
+
+    this.resetStartVertexColumn();
+    this.resetFinishVertexRow();
+    this.setStartingRoutes();
+    this.resetStartingRoutesColumns();
+
+    this.showMatrix();
 
 
-        startingRoutes.forEach((item, index) => {
-          if (item.routeIndex == leastWeightLink.pathIndex) {
-            startingRoutes[index].path.push(leastWeightLink); //добавляем подходящую вершину в путь
-            startingRoutes[index].routeWeight = startingRoutes[index].routeWeight + leastWeightLink.weight;
-            return;
-          }
-        });
-        if (leastWeightLink.index == this.finishVertex) //если путь дошёл до конца, то вырезаем и вставляем в массив полных путей
-        {
-          let indexToDelete = 0;
-          startingRoutes.forEach((item, index) => {
-            if (item.routeIndex == leastWeightLink.pathIndex) {
-              indexToDelete = index;
-              return;
+    let currentRowIndex = this.startVertex;
+    let currentRowCount = this.getLinksCountForVertex(currentRowIndex);
+    let isAlgorithmNotFinished = true;
+
+    while(!!isAlgorithmNotFinished) {
+      let tempPath = _.cloneDeep(this.path.filter((currentPath, index) => {
+        return currentPath && !currentPath.hasOwnProperty("isFinished");
+      }));
+
+
+      while(tempPath && tempPath.length) {
+        tempPath = this.getLinksCount(tempPath);
+        let nextVertex,
+            nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
+
+        this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
+          .forEach((rowItem, index) => {
+            if(rowItem && this.finishVertex == index) {
+              let { weight } = rowItem;
+
+              nextVertex = {
+                weight,
+                index,
+                name: "A" + (index + 1)
+              }
             }
           });
-          completeRoutes.push(startingRoutes.splice(indexToDelete, 1)); //т.к. путь сформирован - заносим его в "полные пути"
-        } else { //если не конечная то удаляем столбик
-          matrix.forEach((item) => {
-            if (item[leastWeightLink.index]) item[leastWeightLink.index] = null;
-          })
+
+        
+        if(!nextVertex) {
+          nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
+            .map((rowItem, index) => {
+              if(rowItem) {
+                let { weight } = rowItem;
+
+                return {
+                  weight,
+                  index,
+                  name: "A" + (index + 1)
+                };
+              }
+            })
+            .sort((prev, next) => {
+              return prev.weight - next.weight;
+            })[0];
         }
+
+
+        tempPath = tempPath.filter((currentPath, index) => {
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+        });
+
+
+        if(nextVertex && nextVertex.index != this.finishVertex) {
+
+          this.path.forEach((currentPath, index) => {
+            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+              this.path[index].push({
+                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
+                weight: nextVertex.weight,
+                index: nextVertex.index
+              });
+              // this.path[index].isComplete = true;
+            }
+          });
+
+          this.resetVertexColumn(nextVertex.index);
+        }
+        else if(nextVertex && nextVertex.index) {
+
+          this.path.forEach((currentPath, index) => {
+            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+              this.path[index].push({
+                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
+                weight: nextVertex.weight,
+                index: nextVertex.index
+              });
+
+              this.path[index].isFinished = true;
+            }
+          });
+        }
+        else {
+          this.path.forEach((currentPath, index) => {
+            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+              this.path[index].isFinished = false;
+            }
+          });
+        }
+
+        // break;
       }
 
+
+
+      // currentRowIndex = 0;// should be next vertex index
+      // currentRowCount = this.getLinksCountForVertex(currentRowIndex);// should be next vertex links count
+
+
+      isAlgorithmNotFinished = this.path
+        .filter((path, index) => {
+          return path && !path.hasOwnProperty("isFinished");
+        })
+        .length;
+      
+      console.log(this.path);
+      console.log(this.matrix);
     }
 
-    completeRoutes.forEach((item, index) => {
-      let path = "";
-      item[0].path.forEach((item1, index1) => {
-        path += item1.name + '-';
-      })
-      item.completePath = path;
-    });
-    console.log("PATH: ", completeRoutes);
+    console.log("==========ALGORITHM FINISHED=======")
+    console.log(this.path);
+    console.log(this.matrix);
+    
+    return this.path;
+  }
+
+  showMatrix() {
+    console.log(this.matrix);
   }
 
   invoke() {
-    let matrix = this.transformationService.getTransformedMatrixFromCanvas();
+    this.matrix = this.transformationService.getTransformedMatrixFromCanvas();
 
-    if (!matrix || !matrix.length) return;
+    if (!this.matrix || !this.matrix.length) return;
+    console.clear();
 
-    return this.getRoutes(matrix);
+
+    return this.getRoutes()
+      .filter((route, index) => {
+        return route.isFinished;
+      });
   }
 }
