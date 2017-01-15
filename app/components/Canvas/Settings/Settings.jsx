@@ -5,7 +5,8 @@ import ContentRemove from 'material-ui/svg-icons/content/remove';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import Popover from 'material-ui/Popover/Popover';
+import { Menu, MenuItem } from 'material-ui/Menu';
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -22,7 +23,16 @@ export default class Settings extends React.Component {
   state = {
     vertexFrom: null,
     vertexTo: null,
-    vertexNamesCollection: []
+    vertexNamesCollection: [],
+    popoverOpened: false,
+    isAlgorithmsButtonDisabled: true,
+    isRoutesButtonDisabled: true
+  }
+
+  toggleAlgorithmsButtons(vertexFrom, vertexTo) {
+    if(vertexFrom && vertexTo) {
+      this.setState({ isAlgorithmsButtonDisabled: false });
+    }
   }
 
   handleAddButton = () => {
@@ -45,23 +55,26 @@ export default class Settings extends React.Component {
     this.settingsService.enableConnectionMode();
   }
 
-  handleGetTransformedMatrix = () => {
-    let { vertexFrom, vertexTo } = this.state;
-    console.log("getTransformedMatrixFromCanvas");
-    new TransformationService().getTransformedMatrixFromCanvas();
-  }
+  // handleGetTransformedMatrix = () => {
+  //   let { vertexFrom, vertexTo } = this.state;
+  //   console.log("getTransformedMatrixFromCanvas");
+  //   new TransformationService().getTransformedMatrixFromCanvas();
+  // }
 
   handleWaveAlgorithmClick = () => {
     // let wa = new WaveAlgorithmService(1, 5);
     let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
-    let result = wa.invoke();
+    this.result = wa.invoke();
     console.clear();
-    console.log(result);
-    CanvasService.drawRoutes(result);
+    console.log(this.result);
+    CanvasService.drawRoutes(this.result);
+    this.routesInfo = this.settingsService.showRoutesInfo(this.result);
+    this.setState({isRoutesButtonDisabled: false});
   }
 
   handleBackWaveAlgorithmClick = () => {
 
+    this.setState({isRoutesButtonDisabled: false});
   }
 
   handleSelectVertexNameClick = (event, key, payload) => {
@@ -71,13 +84,30 @@ export default class Settings extends React.Component {
   }
 
   handleSelectVertexFromNameChange = (event, key, payload) => {
-    console.log("changed: ", payload);
+    let { vertexFrom, vertexTo } = this.state;
+
     this.setState({ vertexFrom: payload });
+    this.toggleAlgorithmsButtons(vertexFrom || payload, vertexTo);
   }
 
   handleSelectVertexToNameChange = (event, key, payload) => {
-    console.log("changed: ", payload);
+    let { vertexFrom, vertexTo } = this.state;
+
     this.setState({ vertexTo: payload });
+    this.toggleAlgorithmsButtons(vertexFrom, vertexTo || payload);
+  }
+
+  handlePopoverClick = (event, key) => {
+    let { popoverOpened } = this.state;
+
+    if(popoverOpened) {
+      this.setState({popoverOpened: false, anchorEl: event.currentTarget});
+    }
+    else {
+      this.setState({popoverOpened: true, anchorEl: event.currentTarget});
+    }
+
+    return this.state.popoverOpened;  
   }
 
   renderCanvasVerticeNames = (labelText, labelValue, selectChangeHandler) => {
@@ -104,6 +134,16 @@ export default class Settings extends React.Component {
         {menuCollection}
       </SelectField>
     );
+  }
+
+  renderPaths = () => {
+    if(this.routesInfo) {
+      return this.routesInfo.map((route, index) => {
+        let { vertices, weight } = route;
+
+        return <MenuItem key={index} primaryText={`${vertices} (${weight})`} />
+      });
+    }
   }
 
   render() {
@@ -136,16 +176,19 @@ export default class Settings extends React.Component {
         {this.renderCanvasVerticeNames("From", this.state.vertexFrom, this.handleSelectVertexFromNameChange)}
         {this.renderCanvasVerticeNames("To", this.state.vertexTo, this.handleSelectVertexToNameChange)}
 
-        <RaisedButton
-          label="Get Matrix"
-          className="custom-btn-default"
-          secondary={true}
-          onClick={this.handleGetTransformedMatrix}
-        />
+        {
+        //   <RaisedButton
+        //   label="Get Matrix"
+        //   className="custom-btn-default"
+        //   secondary={true}
+        //   onClick={this.handleGetTransformedMatrix}
+        // />
+      }
 
         <RaisedButton
           label="Wave Algorithm"
           className="custom-btn-default"
+          disabled={this.state.isAlgorithmsButtonDisabled}
           secondary={true}
           onClick={this.handleWaveAlgorithmClick}
         />
@@ -153,10 +196,36 @@ export default class Settings extends React.Component {
         <RaisedButton
           label="Back Wave Algorithm"
           className="custom-btn-default"
+          disabled={this.state.isAlgorithmsButtonDisabled}
           secondary={true}
           onClick={this.handleBackWaveAlgorithmClick}
         />
+
+        <RaisedButton
+          onTouchTap={this.handlePopoverClick}
+          className="custom-btn-default"
+          disabled={this.state.isRoutesButtonDisabled}
+          primary={true}
+          label="Routes List"
+        />
+        <Popover
+          open={this.state.popoverOpened}
+          anchorEl={this.state.anchorEl}
+          anchorOrigin={{"horizontal":"middle","vertical":"top"}}
+          targetOrigin={{"horizontal":"middle","vertical":"bottom"}}
+          onRequestClose={this.handlePopoverClick}
+        >
+          <Menu>
+            {this.renderPaths()}
+          </Menu>
+        </Popover>
+
       </div>
     );
   }
 }
+
+        // <div>
+
+        // </div>
+            // anchorEl={this.state.anchorEl}

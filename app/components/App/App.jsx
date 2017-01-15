@@ -48,8 +48,8 @@ class App extends React.Component {
           handleRemoveClick={this.handleRemoveClick}
           firebaseRef={this.firebaseRef}
         />
-        <Canvas />
         <LeftDrawer />
+        <Canvas />
         <CustomDialog
           firebaseRef={this.firebaseRef}
           settingsService={this.settingsService}

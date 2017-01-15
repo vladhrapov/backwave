@@ -20,8 +20,8 @@ export default class SettingsService {
     SettingsService.shapesCounter++;
 
     let vertex = this.shapesService.createVertex({
-      left: this.getRandomInt(20, 900),
-      top: this.getRandomInt(20, 600),
+      left: this.getRandomInt(20, 700),
+      top: this.getRandomInt(20, 500),
       name: `A${SettingsService.shapesCounter}`
     });
 
@@ -116,7 +116,7 @@ export default class SettingsService {
           left: ((x1 + x2) / 2),
           top: ((y1 + y2) / 2),
           name: `Line${SettingsService.lineCounter}`,
-          weight: 0
+          weight: 1
         });
 
         line = this.shapesService.createLine({
@@ -204,6 +204,32 @@ export default class SettingsService {
   setObjectMigration(obj, isEnabled) {
     obj.lockScalingX = obj.lockScalingY = obj.lockRotation = obj.lockMovementX = obj.lockMovementY = isEnabled;
     obj.selectable = !isEnabled;
+  }
+
+  showRoutesInfo(routes) {
+    return routes.map((path, i) => {
+      let pathInfo = {
+        vertices: "",
+        weight: 0
+      };
+
+      path.map((vertex, index) => {
+        let { weight, name } = vertex;  
+
+        pathInfo.weight += weight;
+
+        if(index == path.length - 1) {
+          pathInfo.vertices += `${name}`;
+          return pathInfo;
+        }
+        else {
+          pathInfo.vertices += `${name} - `;
+        }
+        
+      });
+
+      return pathInfo;
+    });
   }
 
 }
