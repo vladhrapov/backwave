@@ -134,7 +134,7 @@ export default class CustomDialog extends React.Component {
     let { canvas } = this.props,
         radios;
 
-    if (canvas) {
+    if (canvas && canvas.length) {
       radios = canvas.map((item, index) => {
         return (
           <RadioButton

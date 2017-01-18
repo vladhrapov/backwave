@@ -220,6 +220,7 @@ export default class SettingsService {
 
         if(index == path.length - 1) {
           pathInfo.vertices += `${name}`;
+          pathInfo.reliability = "0." + (this.getRandomInt(10, 30));
           return pathInfo;
         }
         else {

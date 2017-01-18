@@ -3,7 +3,13 @@ canvas {
   width: 85%;
   height: 86vh !important;
   // margin-left: -370px;
-  border: 2px solid black;
+  border-left: 2px solid black;
+}
+
+#chart {
+  width: 85%;
+  height: 200px !important;
+  border: none;
 }
 
 .tab-canvas {

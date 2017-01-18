@@ -10,10 +10,10 @@ export function loadCanvasListSuccess(canvasList) {
   }
 }
 
-export function loadCanvas(canvas) {
+export function saveCanvasReportInfo(canvasInfo) {
   return {
-    type: types.LOAD_CANVAS,
-    canvas
+    type: types.SAVE_CANVAS_INFO,
+    canvasInfo
   }
 }
 

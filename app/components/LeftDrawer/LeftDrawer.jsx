@@ -1,4 +1,5 @@
 import React from "react";
+import { browserHistory } from "react-router";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import AppBar from 'material-ui/AppBar';
@@ -15,17 +16,23 @@ import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 // Actions
 import * as DrawerActions from "../../actions/DrawerActions";
+import * as CanvasActions from "../../actions/CanvasActions";
+
+// Services
+import CanvasService from "../../services/CanvasService";
 
 
 function mapStateToProps(state, ownProps) {
   return {
-    drawer: state.drawer
+    drawer: state.drawer,
+    canvas: state.canvas
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(DrawerActions, dispatch)
+    drawerActions: bindActionCreators(DrawerActions, dispatch),
+    canvasActions: bindActionCreators(CanvasActions, dispatch)
   }
 }
 
@@ -36,10 +43,29 @@ export default class LeftDrawer extends React.Component {
   }
 
   handleToggle = () => {
-    let { drawer, actions } = this.props,
+    let { drawer, drawerActions } = this.props,
         isDrawerOpened = !drawer.isDrawerOpened;
 
-    actions.toggleDrawer({ isDrawerOpened });
+    drawerActions.toggleDrawer({ isDrawerOpened });
+  }
+
+  navigateTo = (location) => {
+    let { drawer, drawerActions, canvasInfo, canvasActions } = this.props;
+
+    drawerActions.toggleDrawer({ isDrawerOpened: false });
+    if(location == "/charts/") {
+      canvasActions.saveCanvasReportInfo({
+        routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+        image: CanvasService.getCanvas().toDataURL("image/png")
+      });
+    }
+    else if (location == "/reports/") {
+      canvasActions.saveCanvasReportInfo({
+        routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+        image: CanvasService.getCanvas().toDataURL("image/png")
+      });
+    }
+    browserHistory.push(location);
   }
 
   render() {
@@ -53,8 +79,21 @@ export default class LeftDrawer extends React.Component {
           title="Title"
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
           onLeftIconButtonTouchTap={this.handleToggle}/>
-        <MenuItem>Menu Item</MenuItem>
-        <MenuItem>Menu Item 2</MenuItem>
+        <MenuItem
+          onClick={() => this.navigateTo("/")}
+        >
+          Home
+        </MenuItem>
+        <MenuItem
+          onClick={() => this.navigateTo("/charts/")}
+        >
+          Charts
+        </MenuItem>
+        <MenuItem
+          onClick={() => this.navigateTo("/reports/")}
+        >
+          Reports
+        </MenuItem>
         <MenuItem
           primaryText="Case Tools"
           rightIcon={<ArrowDropRight />}

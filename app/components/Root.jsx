@@ -1,28 +1,39 @@
 import React from "react";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Provider} from "react-redux";
+import {Router, Route, IndexRoute, hashHistory, browserHistory} from 'react-router';
 
 import App from "./App/App.jsx";
+import Home from "./Home/Home.jsx";
+import Charts from "./Charts/Charts.jsx";
+import Reports from "./Reports/Reports.jsx";
 import Store from "../store/Store";
 
-import * as firebase from "firebase";
-
-let config = {
-  apiKey: "AIzaSyCzqQq-uOcmHCzbhhr4FtWmMNLl2SA7-jQ",
-  databaseURL: "https://diploma-dd819.firebaseio.com/"
-}
-
-firebase.initializeApp(config);
 
 const store = new Store();
+
+// const AppWrapper = () => { 
+//   return (
+//     <div>
+//       <Home firebase={firebase}/>
+//     </div>
+//   );
+// }
 
 const Root = () => (
   <Provider store={store}>
     <MuiThemeProvider>
-      <App firebase={firebase}/>
+      <Router history={browserHistory}>
+        <Route path="/" component={App}>
+          <IndexRoute component={Home}/>
+          <Route path="charts/" component={Charts}/>
+          <Route path="reports/" component={Reports}/>
+        </Route>
+      </Router>
     </MuiThemeProvider>
   </Provider>
 );
+      // <App firebase={firebase}/>
 // {Routes}
 
 export default Root;

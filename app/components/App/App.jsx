@@ -3,7 +3,6 @@ import ReactFire from "reactfire";
 import ReactMixin from "react-mixin";
 
 // Components
-import Canvas from "../Canvas/Canvas.jsx";
 import CustomDialog from "../CustomDialog/CustomDialog.jsx";
 import LeftDrawer from "../LeftDrawer/LeftDrawer.jsx";
 import Header from "../Header/Header.jsx";
@@ -13,9 +12,15 @@ import FirebaseService from "../../services/FirebaseService";
 import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
-// Styles
-import "./assets/_styles.scss";
-import "../Shared/assets/_reset-default.scss";
+
+import * as firebase from "firebase";
+
+let config = {
+  apiKey: "AIzaSyCzqQq-uOcmHCzbhhr4FtWmMNLl2SA7-jQ",
+  databaseURL: "https://diploma-dd819.firebaseio.com/"
+}
+
+firebase.initializeApp(config);
 
 
 class App extends React.Component {
@@ -26,7 +31,8 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.firebaseRef = this.props.firebase.database();
+    this.firebaseRef = //this.props.
+    firebase.database();
     this.bindAsArray(this.firebaseRef.ref("canvasCollection"), "canvasCollection");
 
     // console.log(this.firebaseRef.val());
@@ -47,9 +53,9 @@ class App extends React.Component {
           handleSaveClick={this.handleSaveClick}
           handleRemoveClick={this.handleRemoveClick}
           firebaseRef={this.firebaseRef}
-        />
+        />       
         <LeftDrawer />
-        <Canvas />
+        {this.props.children}
         <CustomDialog
           firebaseRef={this.firebaseRef}
           settingsService={this.settingsService}
