@@ -95,10 +95,14 @@ export default class CanvasService {
         shape.stroke = "#666";
         shape.strokeWidth = 2;
       }
+      else if(shape && shape.customProps.type == "vertex") {
+        shape.fill = '#fff';
+      }
     });
 
     CanvasService.getCanvas().renderAll();
   }
+  
 
   static drawRoutes(routes) {
     let shapes = CanvasService.getCanvas()._objects;
@@ -133,6 +137,24 @@ export default class CanvasService {
         });
       });
     } 
+
+    CanvasService.getCanvas().renderAll();
+  }
+
+  static drawRouteEndpoints(startVertex, finishVertex) {
+
+    CanvasService.getCanvas()._objects.forEach((shape) => {
+      if(shape && shape.customProps) {
+        let { type, name } = shape.customProps;
+
+        if(type == "vertex" && (name == `A${startVertex}` || name == `A${finishVertex}`)) {
+          shape._objects[0].fill = "#372";
+          shape._objects[1].fill = "#372";
+          shape.fill = "#372";
+          CanvasService.getCanvas().bringToFront(shape);
+        }
+      }
+    });
 
     CanvasService.getCanvas().renderAll();
   }

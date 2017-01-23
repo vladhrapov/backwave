@@ -13,7 +13,8 @@ import Chart from 'chart.js'
 import CanvasService from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
 import TransformationService from "../../../services/TransformationService";
-import WaveAlgorithmService from "../../../services/WaveAlgorithmService"
+import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
+import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -69,11 +70,17 @@ export default class Settings extends React.Component {
     console.clear();
     console.log(this.result);
     CanvasService.drawRoutes(this.result);
+    // CanvasService.drawRouteEndpoints(this.state.vertexFrom, this.state.vertexTo);
+
     this.routesInfo = this.settingsService.showRoutesInfo(this.result);
     this.setState({isRoutesButtonDisabled: false});
   }
 
   handleBackWaveAlgorithmClick = () => {
+    let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
+    this.result = bwa.invoke();
+    // console.clear();
+    console.log(this.result);
 
     this.setState({isRoutesButtonDisabled: false});
   }
@@ -116,7 +123,7 @@ export default class Settings extends React.Component {
     win.document.body.innerHTML = "<h1 align='center'>Звіт</h1>";
     win.document.body.innerHTML += "<h2 align='center'>Знайдені маршрути</h2>";
     this.routesInfo.forEach((route, index) => {
-      win.document.body.innerHTML += `<br /> ${index})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
+      win.document.body.innerHTML += `<br /> ${index + 1})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
     });
 
     win.document.body.innerHTML += `<div><img src="${CanvasService.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;

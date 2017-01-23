@@ -64,7 +64,7 @@ export default class WaveAlgorithmService {
   }
 
   getNextVertexPathFromPathes(tempPathCollection) {
-    let vertexCollection;
+    let vertexCollection, firstPathLinksCount, firstPathWeight;
 
     vertexCollection = tempPathCollection
       .sort((prevPath, nextPath) => {
@@ -74,7 +74,7 @@ export default class WaveAlgorithmService {
         return prevPathLinksCount - nextPathLinksCount;
       })
       .filter((currentPath, index) => {
-        if(!index) var { linksCount: firstPathLinksCount } = currentPath[currentPath.length - 1];           
+        if(!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;           
 
         let { linksCount: currentPathLinksCount } = currentPath[currentPath.length - 1];
 
@@ -91,7 +91,7 @@ export default class WaveAlgorithmService {
         return prevPathWeight - nextPathWeight;
       })
       .filter((currentPath, index) => {
-        if(!index) var { weight: firstPathWeight } = currentPath[currentPath.length - 1];           
+        if(!index) firstPathWeight = currentPath[currentPath.length - 1].weight;           
 
         let { weight: currentPathWeight } = currentPath[currentPath.length - 1];
 
@@ -131,8 +131,6 @@ export default class WaveAlgorithmService {
     this.showMatrix();
 
 
-    let currentRowIndex = this.startVertex;
-    let currentRowCount = this.getLinksCountForVertex(currentRowIndex);
     let isAlgorithmNotFinished = true;
 
     while(!!isAlgorithmNotFinished) {
@@ -146,6 +144,7 @@ export default class WaveAlgorithmService {
         let nextVertex,
             nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
 
+        // if the next vertex could be linked with finish vertex
         this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
             if(rowItem && this.finishVertex == index) {
@@ -159,7 +158,7 @@ export default class WaveAlgorithmService {
             }
           });
 
-        
+        // if not finish vertex get next vertex by weight
         if(!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
@@ -175,17 +174,32 @@ export default class WaveAlgorithmService {
             })
             .sort((prev, next) => {
               return prev.weight - next.weight;
-            })[0];
+            });
+            
+  
+            nextVertex = nextVertex.filter((rowItem, index) => {
+              if(rowItem) return rowItem.weight == nextVertex[0].weight;
+            });
+
+            if(nextVertex.length == 1) {
+              nextVertex = nextVertex[0];
+            }
+            else {
+              nextVertex = nextVertex
+                .sort((prev, next) => {
+                  return prev.index - next.index;
+                })[0];
+            }
         }
 
 
+        // remove path that we went 
         tempPath = tempPath.filter((currentPath, index) => {
           return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
         });
 
 
-        if(nextVertex && nextVertex.index != this.finishVertex) {
-
+        if(nextVertex && nextVertex.index) {
           this.path.forEach((currentPath, index) => {
             if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               this.path[index].push({
@@ -193,25 +207,13 @@ export default class WaveAlgorithmService {
                 weight: nextVertex.weight,
                 index: nextVertex.index
               });
+
               // this.path[index].isComplete = true;
+              if(nextVertex.index == this.finishVertex) this.path[index].isFinished = true;
             }
           });
 
-          this.resetVertexColumn(nextVertex.index);
-        }
-        else if(nextVertex && nextVertex.index) {
-
-          this.path.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
-              this.path[index].push({
-                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
-                weight: nextVertex.weight,
-                index: nextVertex.index
-              });
-
-              this.path[index].isFinished = true;
-            }
-          });
+          if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
         }
         else {
           this.path.forEach((currentPath, index) => {
