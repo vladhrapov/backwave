@@ -213,7 +213,7 @@ export default class CustomDialog extends React.Component {
 
     return (
       <Dialog
-        title="Scrollable Dialog"
+        title="Please fill the form"
         actions={dialogControls || null}
         modal={false}
         open={this.props.dialog.isDialogOpened || false}

@@ -161,7 +161,7 @@ export default class BackwaveAlgorithmService {
         //       }
         //     }
         //   });
-        this.matrixCopy[nextVertexPath[nextVertexPath.length - 1].index]
+        this.matrixCopy1[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
             if(rowItem) {
               this.path2.forEach((path, i) => {
@@ -242,9 +242,9 @@ export default class BackwaveAlgorithmService {
               });
 
               this.resetVertexColumn(nextVertex.index); 
-              // this.matrixCopy.forEach((item) => {
-              //   item[nextVertex.index] = null;
-              // });
+              this.matrixCopy1.forEach((item) => {
+                item[nextVertex.index] = null;
+              });
             }
           });
 
@@ -489,6 +489,7 @@ export default class BackwaveAlgorithmService {
 
   invoke() {
     this.matrix = this.transformationService.getTransformedMatrixFromCanvas();
+    this.matrixCopy1 = _.cloneDeep(this.matrix);
     this.matrixCopy = _.cloneDeep(this.matrix);
 
     if (!this.matrix || !this.matrix.length) return;

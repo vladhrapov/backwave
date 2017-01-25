@@ -64,26 +64,28 @@ export default class Settings extends React.Component {
   // }
 
   handleWaveAlgorithmClick = () => {
+    let { vertexFrom, vertexTo } = this.state;
     // let wa = new WaveAlgorithmService(1, 5);
     let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
-    this.result = wa.invoke();
+    this.waResult = wa.invoke();
     console.clear();
-    console.log(this.result);
-    CanvasService.drawRoutes(this.result);
+    console.log(this.waResult);
+    CanvasService.drawRoutes(this.waResult, vertexFrom, vertexTo);
     // CanvasService.drawRouteEndpoints(this.state.vertexFrom, this.state.vertexTo);
 
-    this.routesInfo = this.settingsService.showRoutesInfo(this.result);
+    this.routesInfo = this.settingsService.showRoutesInfo(this.waResult);
     this.setState({isRoutesButtonDisabled: false});
   }
 
   handleBackWaveAlgorithmClick = () => {
+    let { vertexFrom, vertexTo } = this.state;
     let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
-    this.result = bwa.invoke();
+    this.bwaResult = bwa.invoke();
     // console.clear();
-    console.log(this.result);
-    CanvasService.drawRoutes(this.result);
+    console.log(this.bwaResult);
+    CanvasService.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
-    this.routesInfo = this.settingsService.showRoutesInfo(this.result);
+    this.routesInfo = this.settingsService.showRoutesInfo(this.bwaResult);
     this.setState({isRoutesButtonDisabled: false});
   }
 
@@ -97,6 +99,7 @@ export default class Settings extends React.Component {
     let { vertexFrom, vertexTo } = this.state;
 
     this.setState({ vertexFrom: payload });
+    // CanvasService.drawRouteEndpoints(vertexFrom, vertexTo);
     this.toggleAlgorithmsButtons(vertexFrom || payload, vertexTo);
   }
 
@@ -104,6 +107,7 @@ export default class Settings extends React.Component {
     let { vertexFrom, vertexTo } = this.state;
 
     this.setState({ vertexTo: payload });
+    // CanvasService.drawRouteEndpoints(vertexFrom, vertexTo);
     this.toggleAlgorithmsButtons(vertexFrom, vertexTo || payload);
   }
 
@@ -134,15 +138,56 @@ export default class Settings extends React.Component {
     // win.window.close();    
   }
 
+  getIterations() {
+    let waIterations = [],
+        bwaIterations = [];
+    
+    waIterations.push(
+      this.waResult
+        .map(route => route.length - 1)
+        .reduce((sum, current) => {
+          waIterations.push(sum);
+          return sum + current;
+        }, 0)
+    );
+    
+    bwaIterations.push(
+      Math.ceil(this.bwaResult
+        .map(route => route.length - 1)
+        .reduce((sum, current) => {
+          bwaIterations.push(Math.ceil(sum / 2));
+          return sum + current;
+      }, 0) / 2)
+    );
+
+    return { waIterations, bwaIterations };
+    //Object.keys(routes).filter(vertex => !!+vertex);
+  }
+
+  getRoutesCount() {
+    let routesCount = this.waResult.length > this.bwaResult.length
+                      ? this.waResult
+                      : this.bwaResult;
+
+    return Object.keys(routesCount);
+  }
+
   handleChartClick = () => {
+    let routesArray = this.getRoutesCount();
+    routesArray.push(routesArray.length + "");
+
+    let iterations = this.getIterations();
+    console.log(routesArray, iterations);
+
+    console.log(routesArray);
     var lineChartData = {
-        labels: ["0", "1", "2", "3", "4"],
+        labels: routesArray,//["0", "1", "2", "3", "4"],
         datasets: [{
             label: "MWA",
             fillColor: "rgba(215, 40, 40, 0.9)",
             strokeColor: "rgba(215, 40, 40, 0.9)",
             pointColor: "rgba(220,180,0,1)",
-            data: [0, 336, 567, 753],
+            data: iterations.waIterations,//[0, 336, 567, 753],
             borderColor: "rgba(156, 22, 44, 0.9)",
             backgroundColor: "rgba(0, 0, 0, 0)"
         }, {
@@ -150,7 +195,7 @@ export default class Settings extends React.Component {
             fillColor: "rgba(151,187,205,0)",
             strokeColor: "rgba(151,187,205,1)",
             pointColor: "rgba(151,187,205,1)",
-            data: [0, 224, 352, 573],
+            data: iterations.bwaIterations,//[0, 224, 352, 573],
             borderColor: "rgba(79, 228, 233, 0.9)",
             backgroundColor: "rgba(0, 0, 0, 0)"
         }]
@@ -194,7 +239,7 @@ export default class Settings extends React.Component {
                 yAxes: [{
                   scaleLabel: {
                     display: true,
-                    labelString: 'Time'
+                    labelString: 'Iterations'
                   }
                 }],
                 xAxes: [{
@@ -290,7 +335,7 @@ export default class Settings extends React.Component {
         //   secondary={true}
         //   onClick={this.handleGetTransformedMatrix}
         // />
-      }
+        }
 
         <RaisedButton
           label="Wave Algorithm"

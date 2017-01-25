@@ -104,7 +104,7 @@ export default class CanvasService {
   }
   
 
-  static drawRoutes(routes) {
+  static drawRoutes(routes, startVertex, finishVertex) {
     let shapes = CanvasService.getCanvas()._objects;
 
     if(shapes && shapes.length && routes && routes.length) {
@@ -132,10 +132,53 @@ export default class CanvasService {
                     shape.strokeWidth = 5;
                   }
               }
+
+              if(type == "vertex") {         
+                if(name == `A${startVertex}`) {
+                  // shape._objects[0].fill = "#372";
+                  // shape._objects[1].fill = "#372";
+                  shape.set("fill", "rgb(27, 146, 42)");//.fill = "#372";
+                  shape._objects[1].fill = "#fff";
+                  // CanvasService.getCanvas().bringToFront(shape);
+                }
+                else if (name == `A${finishVertex}`) {
+                  shape.set("fill", "#234eae");//.fill = "#372";
+                  shape._objects[1].fill = "#fff";
+                }
+                else {
+                  shape.set("fill", "#fff");
+                  shape._objects[1].fill = "#000";
+                }
+
+
+              }
+              
             }
           }); 
         });
       });
+
+      let linkedPoints = routes.map((route) => {
+        return route.filter(vertex => !!vertex.isCenter)[0];
+      });
+
+      if(!!linkedPoints && linkedPoints.filter(vertex => !!vertex).length) {
+        // a81d31
+        shapes.forEach((shape) => {
+          if(shape && shape.customProps) {
+            let { type, name } = shape.customProps;
+
+            if(type == "vertex") {
+              let linkedPoint = linkedPoints.filter(vertex => vertex.name == name)[0];
+
+              if(linkedPoint && name == linkedPoint.name) {
+                shape.set("fill", "rgb(167, 10, 219)");//.fill = "#372";
+                shape._objects[1].fill = "#fff";
+              } 
+            }
+          }
+        });
+      }
     } 
 
     CanvasService.getCanvas().renderAll();
@@ -147,12 +190,24 @@ export default class CanvasService {
       if(shape && shape.customProps) {
         let { type, name } = shape.customProps;
 
-        if(type == "vertex" && (name == `A${startVertex}` || name == `A${finishVertex}`)) {
-          shape._objects[0].fill = "#372";
-          shape._objects[1].fill = "#372";
-          shape.fill = "#372";
-          CanvasService.getCanvas().bringToFront(shape);
+        if(type == "vertex") {         
+          if(name == `A${startVertex}` || name == `A${finishVertex}`) {
+            // shape._objects[0].fill = "#372";
+            // shape._objects[1].fill = "#372";
+            shape.set("fill", "#372");//.fill = "#372";
+            shape._objects[1].fill = "#fff";
+            // CanvasService.getCanvas().bringToFront(shape);
+          }
+          else {
+            shape.set("fill", "#fff");
+            shape._objects[1].fill = "#000";
+          }
         }
+
+        // if(type == "vertex" && )
+        // {
+        //   shape.set("fill", "#fff");
+        // }
       }
     });
 
