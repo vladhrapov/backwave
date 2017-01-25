@@ -161,7 +161,7 @@ export default class BackwaveAlgorithmService {
         //       }
         //     }
         //   });
-        this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
+        this.matrixCopy[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
             if(rowItem) {
               this.path2.forEach((path, i) => {
@@ -171,8 +171,10 @@ export default class BackwaveAlgorithmService {
                   nextVertex = {
                       weight,
                       index,
-                      name: "A" + (index + 1)
+                      name: "A" + (index + 1),
+                      linked: true
                   }
+
                 }
               });
             }
@@ -234,12 +236,15 @@ export default class BackwaveAlgorithmService {
 
               this.path2.forEach((currentPath, ind) => {
                 if(currentPath[currentPath.length - 1].index == tempVertexObj.index) {
-                  this.path2[ind].push(tempVertexObj);
+                  //this.path2[ind].push(tempVertexObj);
                   this.path1[index].isFinished = this.path2[ind].isFinished = true;
                 }
               });
 
               this.resetVertexColumn(nextVertex.index); 
+              // this.matrixCopy.forEach((item) => {
+              //   item[nextVertex.index] = null;
+              // });
             }
           });
 
@@ -279,7 +284,7 @@ export default class BackwaveAlgorithmService {
         //       }
         //     }
         //   });
-        this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
+        this.matrixCopy[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
             if(rowItem) {
               this.path1.forEach((path, i) => {
@@ -353,12 +358,15 @@ export default class BackwaveAlgorithmService {
 
               this.path1.forEach((currentPath, ind) => {
                 if(currentPath[currentPath.length - 1].index == tempVertexObj.index) {
-                  this.path1[ind].push(tempVertexObj);
+                  //this.path1[ind].push(tempVertexObj);
                   this.path2[index].isFinished = this.path1[ind].isFinished = true;
                 }
               });
 
-              this.resetVertexColumn(nextVertex.index); 
+              this.resetVertexColumn(nextVertex.index);
+              this.matrixCopy.forEach((item) => {
+                item[nextVertex.index] = null;
+              }); 
             }
           });
 
@@ -398,7 +406,7 @@ export default class BackwaveAlgorithmService {
     console.log(this.path1);
     console.log(this.path2);
     // console.log(this.matrix);
-    this.concatRoutes();
+    console.log(this.concatRoutes());
     
     return this.concatRoutes();
   }
@@ -408,11 +416,25 @@ export default class BackwaveAlgorithmService {
   }
 
   concatRoutes() {
-    console.log(this.matrixCopy);
-    this.cutPath1Routes();
-    this.cutPath2Routes();
-    
-    return [];
+    return this.path1.map((path1CurrentRoute, path1CurrentIndex) => {
+      let linkedRoute = this.path2
+        .filter((path2CurrentRoute, path2CurrentIndex) => {
+          return path1CurrentRoute[path1CurrentRoute.length - 1].index == path2CurrentRoute[path2CurrentRoute.length - 1].index;
+        })[0];
+
+      if(linkedRoute) {
+        let fullRoute = _.cloneDeep(path1CurrentRoute);
+        
+        fullRoute[fullRoute.length - 1].isCenter = true;
+        
+        for(let i = linkedRoute.length - 2; i >= 0; i--) {
+          fullRoute.push(linkedRoute[i]);
+        }
+
+        return fullRoute;
+      }
+
+    });
   }
 
   cutPath1Routes() {
@@ -473,9 +495,6 @@ export default class BackwaveAlgorithmService {
     console.clear();
 
 
-    return this.getRoutes()
-      .filter((route, index) => {
-        return route.isFinished;
-      });
+    return this.getRoutes().filter(route => !!route);
   }
 }

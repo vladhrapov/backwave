@@ -81,7 +81,9 @@ export default class Settings extends React.Component {
     this.result = bwa.invoke();
     // console.clear();
     console.log(this.result);
+    CanvasService.drawRoutes(this.result);
 
+    this.routesInfo = this.settingsService.showRoutesInfo(this.result);
     this.setState({isRoutesButtonDisabled: false});
   }
 
