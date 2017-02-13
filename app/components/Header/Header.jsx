@@ -84,8 +84,8 @@ export default class Header extends React.Component {
   render() {
     return (
       <AppBar
-        showMenuIconButton={false}
-        title=""
+        showMenuIconButton={true}
+        title="Title"
         iconElementRight={
           <IconMenu
 
