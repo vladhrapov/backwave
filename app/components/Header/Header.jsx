@@ -24,6 +24,8 @@ import * as CanvasActions from "../../actions/CanvasActions";
 // Services
 import CanvasService from "../../services/CanvasService";
 
+import { store } from "../../store/Store";
+
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -55,7 +57,10 @@ export default class Header extends React.Component {
   }
 
   handleRefreshClick = (event) => {
-    CanvasService.refreshCanvas();
+    let { dialog, dialogActions, canvasActions, firebaseRef } = this.props;
+    // CanvasService.refreshCanvas();
+    canvasActions.loadCanvasList();
+    console.log("Props in refresh: ", this.props);
   }
 
   handleLoadClick = (event) => {

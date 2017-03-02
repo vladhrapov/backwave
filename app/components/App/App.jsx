@@ -22,6 +22,8 @@ let config = {
 
 firebase.initializeApp(config);
 
+export const firebaseRef =  firebase.database();
+
 
 class App extends React.Component {
   constructor(props) {

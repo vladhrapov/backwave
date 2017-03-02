@@ -10,7 +10,8 @@ import Reports from "./Reports/Reports.jsx";
 import Store from "../store/Store";
 
 
-const store = new Store();
+export const store = new Store();
+
 
 // const AppWrapper = () => { 
 //   return (

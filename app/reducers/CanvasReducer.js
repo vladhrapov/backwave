@@ -1,17 +1,33 @@
-import { types } from "../constants/ActionTypes";
 import InitialState from "./InitialState";
 
-export default function canvasReducer(state = [], action) {
+export default function canvasReducer(state = InitialState.canvas, action) {
   switch (action.type) {
-    case types.LOAD_CANVAS_LIST:
-      return [
-        ...action.canvasList
-      ];
-    case types.SAVE_CANVAS_INFO:
+    case "LOAD_CANVAS_LIST_SUCCEEDED":
+      console.log("Canvas REDUCER: ", action);
+      return {
+        ...action.payload
+        // ...state,
+        // canvasShapesList: [
+        //   ...action.payload
+        // ]
+      };
+    case "LOAD_CANVAS_NAMES_SUCCEEDED":
+      console.log("Canvas REDUCER: ", action);
       return {
         ...state,
-        ...action.canvasInfo
+        canvasNames: [
+          ...action.payload
+        ]
       };
+
+      // [
+      //   ...action.canvasShapesList
+      // ];
+    // case types.SAVE_CANVAS_INFO:
+    //   return {
+    //     ...state,
+    //     ...action.canvasInfo
+    //   };
     default:
       return state;
   }
