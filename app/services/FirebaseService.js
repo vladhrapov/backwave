@@ -89,7 +89,7 @@ export default class FirebaseService {
 
   saveCanvasToFirebase(name, database) {
     console.log(database);
-    database.ref("canvasCollection").child(name).set({
+    return database.ref("canvasCollection").child(name).set({
       name: name,
       canvasObjects: this.getCanvasObjectsCollection()
     });

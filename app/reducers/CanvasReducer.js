@@ -4,21 +4,22 @@ export default function canvasReducer(state = InitialState.canvas, action) {
   switch (action.type) {
     case "LOAD_CANVAS_LIST_SUCCEEDED":
       console.log("Canvas REDUCER: ", action);
-      return {
+      return [
         ...action.payload
         // ...state,
         // canvasShapesList: [
         //   ...action.payload
         // ]
-      };
-    case "LOAD_CANVAS_NAMES_SUCCEEDED":
-      console.log("Canvas REDUCER: ", action);
-      return {
+      ];
+    case "SAVE_CANVAS_TO_LIST_SUCCEEDED":
+      console.log("Canvas REDUCER: ", action, state);
+      return [
         ...state,
-        canvasNames: [
-          ...action.payload
-        ]
-      };
+        ...action.payload//.filter(canvasName)
+        // ...state,
+        // canvasNames: [
+        // ]
+      ];
 
       // [
       //   ...action.canvasShapesList

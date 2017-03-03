@@ -83,12 +83,13 @@ export default class CustomDialog extends React.Component {
   }
 
   handleSaveCollectionDialogSubmit = () => {
-    let { dialog, dialogActions } = this.props,
+    let { dialog, dialogActions, canvas, canvasActions } = this.props,
         isDialogOpened = !dialog.isDialogOpened,
         dialogType = dialog.dialogType;
 
     if (this.state.canvasName) {
-      CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
+      canvasActions.saveCanvasToList({ canvasName: this.state.canvasName });
+      // CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
       this.setState({ canvasName: "" });
       dialogActions.toggleDialog({ isDialogOpened, dialogType });

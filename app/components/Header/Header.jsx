@@ -58,16 +58,15 @@ export default class Header extends React.Component {
 
   handleRefreshClick = (event) => {
     let { dialog, dialogActions, canvasActions, firebaseRef } = this.props;
-    // CanvasService.refreshCanvas();
-    canvasActions.loadCanvasList();
-    console.log("Props in refresh: ", this.props);
+    CanvasService.refreshCanvas();
   }
 
   handleLoadClick = (event) => {
     let { dialog, dialogActions, canvasActions, firebaseRef } = this.props,
         isDialogOpened = !dialog.isDialogOpened;
 
-    canvasActions.loadCanvasList(firebaseRef);
+    canvasActions.loadCanvasList();
+    // canvasActions.loadCanvasList(firebaseRef);
     dialogActions.toggleDialog({ isDialogOpened, dialogType: "load" });
   }
 
