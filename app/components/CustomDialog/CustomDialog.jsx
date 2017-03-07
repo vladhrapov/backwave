@@ -72,11 +72,12 @@ export default class CustomDialog extends React.Component {
   }
 
   handleRemoveCollectionDialogSubmit = () => {
-    let { dialog, dialogActions, settingsService } = this.props,
+    let { dialog, dialogActions, canvas, canvasActions, settingsService } = this.props,
         isDialogOpened = !dialog.isDialogOpened,
         dialogType = dialog.dialogType;
 
-    CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
+    // CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
+    canvasActions.removeCanvasFromList({ canvasName: this.state.selectedRadio });
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
     dialogActions.toggleDialog({ isDialogOpened, dialogType });

@@ -1,6 +1,6 @@
 import { delay } from 'redux-saga';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { loadCanvasListRequestApi, saveCanvasToListApi } from "./api/Canvas";
+import { loadCanvasListRequestApi, saveCanvasToListApi, removeCanvasFromListApi } from "../api/CanvasApi";
 
 
 
@@ -20,7 +20,6 @@ export function* loadCanvasListRequest() {
 
 function* saveCanvasToListAsync(action) {
   try {
-    console.log("saveCanvasToListAsync: action ", action);
     let { payload } = action;
     yield call(saveCanvasToListApi, payload.canvasName);
     yield put({type: "SAVE_CANVAS_TO_LIST_SUCCEEDED", payload});
@@ -34,11 +33,14 @@ export function* saveCanvasToListRequest() {
   yield takeLatest("SAVE_CANVAS_TO_LIST", saveCanvasToListAsync);
 }
 
-function* removeCanvasFromListAsync() {
+function* removeCanvasFromListAsync(action) {
   try {
-    const data = 8;
+    let { payload } = action;
+    yield call(removeCanvasFromListApi, payload.canvasName);
+    yield put({type: "REMOVE_CANVAS_FROM_LIST_SUCCEEDED", payload});
   } catch(error) {
-
+    console.log(error);
+    yield put({type: "REMOVE_CANVAS_FROM_LIST_FAILED", payload});
   }
 }
 

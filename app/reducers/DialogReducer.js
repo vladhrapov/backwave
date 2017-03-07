@@ -1,7 +1,7 @@
 import { types } from "../constants/ActionTypes";
-import InitialState from "./InitialState";
+import { initialState } from "./";
 
-export default function dialogReducer(state = InitialState.dialog, action) {
+export default function dialogReducer(state = initialState.dialog, action) {
   switch (action.type) {
     case types.TOGGLE_DIALOG:
       console.log("TOGGLE_DIALOG: ", action);

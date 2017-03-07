@@ -1,7 +1,7 @@
 import { types } from "../constants/ActionTypes";
-import InitialState from "./InitialState";
+import { initialState } from "./";
 
-export default function drawerReducer(state = InitialState.drawer, action) {
+export default function drawerReducer(state = initialState.drawer, action) {
   switch (action.type) {
     case types.TOGGLE_DRAWER:
       console.log("action.drawer: ", action.drawer);

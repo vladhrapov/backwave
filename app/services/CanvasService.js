@@ -24,9 +24,9 @@ export default class CanvasService {
     return this.canvas;
   }
 
-  static loadCanvasList(database) {
-    return new FirebaseService().loadCanvasListFromFirebase(database);
-  }
+  // static loadCanvasList(database) {
+  //   return new FirebaseService().loadCanvasListFromFirebase(database);
+  // }
 
   static loadCanvas(name, database) {
     CanvasService.refreshCanvas();
@@ -34,13 +34,13 @@ export default class CanvasService {
     CanvasService.getCanvas().renderAll();
   }
 
-  static saveCanvas(name, database) {
-    new FirebaseService().saveCanvasToFirebase(name, database);
-  }
+  // static saveCanvas(name, database) {
+  //   new FirebaseService().saveCanvasToFirebase(name, database);
+  // }
 
-  static removeCanvas(name, database) {
-    new FirebaseService().removeCanvasFromFirebase(name, database);
-  }
+  // static removeCanvas(name, database) {
+  //   new FirebaseService().removeCanvasFromFirebase(name, database);
+  // }
 
   static refreshCanvas() {
     if (CanvasService.getCanvas()._objects && CanvasService.getCanvas()._objects.length) {

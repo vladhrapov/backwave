@@ -1,8 +1,9 @@
-import { loadCanvasListRequest, saveCanvasToListRequest } from "./CanvasSaga";
+import { loadCanvasListRequest, saveCanvasToListRequest, removeCanvasFromListRequest } from "./CanvasSaga";
 
 export function* rootSaga() {
   yield [
     loadCanvasListRequest(),
-    saveCanvasToListRequest()
+    saveCanvasToListRequest(),
+    removeCanvasFromListRequest()
   ]
 }

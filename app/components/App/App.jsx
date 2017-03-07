@@ -13,16 +13,7 @@ import CanvasService from "../../services/CanvasService";
 import SettingsService from "../../services/SettingsService";
 
 
-import * as firebase from "firebase";
-
-let config = {
-  apiKey: "AIzaSyCzqQq-uOcmHCzbhhr4FtWmMNLl2SA7-jQ",
-  databaseURL: "https://diploma-dd819.firebaseio.com/"
-}
-
-firebase.initializeApp(config);
-
-export const firebaseRef =  firebase.database();
+import { firebaseRef } from "../../constants/FirebaseConfig";
 
 
 class App extends React.Component {
@@ -33,9 +24,9 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.firebaseRef = //this.props.
-    firebase.database();
-    this.bindAsArray(this.firebaseRef.ref("canvasCollection"), "canvasCollection");
+    // this.firebaseRef = //this.props.
+    // firebase.database();
+    // this.bindAsArray(firebaseRef.ref("canvasCollection"), "canvasCollection");
 
     // console.log(this.firebaseRef.val());
     //this.firebaseRef.on('value', this.handleDataLoaded.bind(this));
@@ -54,12 +45,12 @@ class App extends React.Component {
           handleLoadClick={this.handleLoadClick}
           handleSaveClick={this.handleSaveClick}
           handleRemoveClick={this.handleRemoveClick}
-          firebaseRef={this.firebaseRef}
+          firebaseRef={firebaseRef}
         />       
         <LeftDrawer />
         {this.props.children}
         <CustomDialog
-          firebaseRef={this.firebaseRef}
+          firebaseRef={firebaseRef}
           settingsService={this.settingsService}
         />
       </div>

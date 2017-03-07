@@ -87,13 +87,13 @@ export default class FirebaseService {
     return canvasObjectsCollection;
   }
 
-  saveCanvasToFirebase(name, database) {
-    console.log(database);
-    return database.ref("canvasCollection").child(name).set({
-      name: name,
-      canvasObjects: this.getCanvasObjectsCollection()
-    });
-  }
+  // saveCanvasToFirebase(name, database) {
+  //   console.log(database);
+  //   return database.ref("canvasCollection").child(name).set({
+  //     name: name,
+  //     canvasObjects: this.getCanvasObjectsCollection()
+  //   });
+  // }
 
   restoreVertices(vertices) {
     console.log(vertices);
@@ -204,28 +204,28 @@ export default class FirebaseService {
     });
   }
 
-  loadCanvasListFromFirebase(database) {
-    return database.ref("canvasCollection").once("value").then((data) => {
-      let firebaseCanvasList = data.val();
-      let canvasList = [];
+  // loadCanvasListFromFirebase(database) {
+  //   return database.ref("canvasCollection").once("value").then((data) => {
+  //     let firebaseCanvasList = data.val();
+  //     let canvasList = [];
 
-      for (let key in firebaseCanvasList) {
-        if (firebaseCanvasList.hasOwnProperty(key)) {
-          console.log("key: ", key);
-          console.log(data.child(`/${key}/name`).val());
-          canvasList.push({
-            key,
-            name: data.child(`/${key}/name`).val()
-          });
-        }
-      }
+  //     for (let key in firebaseCanvasList) {
+  //       if (firebaseCanvasList.hasOwnProperty(key)) {
+  //         console.log("key: ", key);
+  //         console.log(data.child(`/${key}/name`).val());
+  //         canvasList.push({
+  //           key,
+  //           name: data.child(`/${key}/name`).val()
+  //         });
+  //       }
+  //     }
 
-      return canvasList;
-    });
-  }
+  //     return canvasList;
+  //   });
+  // }
 
-  removeCanvasFromFirebase(name, database) {
-    database.ref(`canvasCollection/${name}`).remove();
-  }
+  // removeCanvasFromFirebase(name, database) {
+  //   return database.ref(`canvasCollection/${name}`).remove();
+  // }
 
 }
