@@ -7,8 +7,8 @@ import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 // Actions
-import * as DialogActions from "../../../actions/DialogActions";
 import * as CanvasActions from "../../../actions/CanvasActions";
+import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -21,15 +21,15 @@ import "../../Shared/assets/_styles.scss";
 function mapStateToProps(state, ownProps) {
   console.log("STATE: ============= ", state, ownProps);
   return {
-    dialog: state.dialog,
-    canvas: state.canvas
+    canvas: state.canvas,
+    settings: state.settings
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    dialogActions: bindActionCreators(DialogActions, dispatch),
-    canvasActions: bindActionCreators(CanvasActions, dispatch)
+    canvasActions: bindActionCreators(CanvasActions, dispatch),
+    settingsActions: bindActionCreators(SettingsActions, dispatch)
   }
 }
 
@@ -61,39 +61,41 @@ export default class CustomDialog extends React.Component {
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    let { dialog, dialogActions, canvasActions, settingsService } = this.props,
-        isDialogOpened = !dialog.isDialogOpened,
-        dialogType = dialog.dialogType;
+    let { canvasActions, settingsActions, settings, settingsService } = this.props,
+        isDialogOpened = !settings.isDialogOpened,
+        dialogType = settings.dialogType;
 
     CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
-    dialogActions.toggleDialog({ isDialogOpened, dialogType });
+
+    settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleRemoveCollectionDialogSubmit = () => {
-    let { dialog, dialogActions, canvas, canvasActions, settingsService } = this.props,
-        isDialogOpened = !dialog.isDialogOpened,
-        dialogType = dialog.dialogType;
+    let { canvas, canvasActions, settings, settingsActions, settingsService } = this.props,
+        isDialogOpened = !settings.isDialogOpened,
+        dialogType = settings.dialogType;
 
     // CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
     canvasActions.removeCanvasFromList({ canvasName: this.state.selectedRadio });
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
-    dialogActions.toggleDialog({ isDialogOpened, dialogType });
+
+    settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleSaveCollectionDialogSubmit = () => {
-    let { dialog, dialogActions, canvas, canvasActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened,
-        dialogType = dialog.dialogType;
+    let { canvas, canvasActions, settings, settingsActions } = this.props,
+        isDialogOpened = !settings.isDialogOpened,
+        dialogType = settings.dialogType;
 
     if (this.state.canvasName) {
       canvasActions.saveCanvasToList({ canvasName: this.state.canvasName });
       // CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
       this.setState({ canvasName: "" });
-      dialogActions.toggleDialog({ isDialogOpened, dialogType });
+      settingsActions.toggleDialog({ isDialogOpened, dialogType });
     }
     else {
       this.setState({ errorMessage: "This field is required" });
@@ -102,9 +104,9 @@ export default class CustomDialog extends React.Component {
 
   handleSaveWeightDialogSubmit = (event) => {
     let { lineWeight } = this.state,
-        { dialog, dialogActions } = this.props,
-        isDialogOpened = dialog.isDialogOpened,
-        dialogType = dialog.dialogType;
+        { settings, settingsActions } = this.props,
+        isDialogOpened = settings.isDialogOpened,
+        dialogType = settings.dialogType;
 
     if (/^\d+$/.test(lineWeight)) {
       let canvas = CanvasService.getCanvas(),
@@ -112,24 +114,27 @@ export default class CustomDialog extends React.Component {
 
       activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
       canvas.renderAll();
-      isDialogOpened = !dialog.isDialogOpened;
+      isDialogOpened = !settings.isDialogOpened;
       this.setState({ errorMessage: "" });
       this.setState({ lineWeight: "" });
-      dialogActions.toggleDialog({ isDialogOpened, dialogType });
+
+      settingsActions.toggleDialog({ isDialogOpened, dialogType });
       return;
     }
 
     this.setState({ errorMessage: "Please enter a valid number weight!" });
-    dialogActions.toggleDialog({ isDialogOpened, dialogType });
+
+    settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleDialogClose = (event) => {
-    let { dialog, dialogActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { settings, settingsActions } = this.props,
+        isDialogOpened = !settings.isDialogOpened;
 
     this.setState({ errorMessage: "" });
     this.setState({ canvasName: "" });
-    dialogActions.toggleDialog({ isDialogOpened });
+
+    settingsActions.toggleDialog({ isDialogOpened });
   }
 
   renderLoadOrRemoveDialogBody = () => {
@@ -186,7 +191,7 @@ export default class CustomDialog extends React.Component {
   }
 
   render() {
-    let { dialogType } = this.props.dialog,
+    let { dialogType } = this.props.settings,
         dialogBody, dialogControls;
 
     if (dialogType) {
@@ -218,7 +223,7 @@ export default class CustomDialog extends React.Component {
         title="Please fill the form"
         actions={dialogControls || null}
         modal={false}
-        open={this.props.dialog.isDialogOpened || false}
+        open={this.props.settings.isDialogOpened || false}
         onRequestClose={this.handleDialogClose}
         autoScrollBodyContent={true}
       >

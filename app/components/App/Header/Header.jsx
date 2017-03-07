@@ -17,9 +17,8 @@ import IconMenu from 'material-ui/IconMenu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 // Actions
-import * as DrawerActions from "../../../actions/DrawerActions";
-import * as DialogActions from "../../../actions/DialogActions";
 import * as CanvasActions from "../../../actions/CanvasActions";
+import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -29,17 +28,15 @@ import { store } from "../../../store/Store";
 
 function mapStateToProps(state, ownProps) {
   return {
-    drawer: state.drawer,
-    dialog: state.dialog,
-    canvas: state.canvas
+    canvas: state.canvas,
+    settings: state.settings
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    drawerActions: bindActionCreators(DrawerActions, dispatch),
-    dialogActions: bindActionCreators(DialogActions, dispatch),
-    canvasActions: bindActionCreators(CanvasActions, dispatch)
+    canvasActions: bindActionCreators(CanvasActions, dispatch),
+    settingsActions: bindActionCreators(SettingsActions, dispatch)
   }
 }
 
@@ -50,10 +47,10 @@ export default class Header extends React.Component {
   }
 
   handleToggle = () => {
-    let { drawer, drawerActions } = this.props,
-        isDrawerOpened = !drawer.isDrawerOpened;
+    let { settings, settingsActions } = this.props,
+        isDrawerOpened = !settings.isDrawerOpened;
 
-    drawerActions.toggleDrawer({ isDrawerOpened });
+    settingsActions.toggleDrawer({ isDrawerOpened });
   }
 
   handleRefreshClick = (event) => {
@@ -62,27 +59,27 @@ export default class Header extends React.Component {
   }
 
   handleLoadClick = (event) => {
-    let { dialog, dialogActions, canvasActions, firebaseRef } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
+        isDialogOpened = !settings.isDialogOpened;
 
     canvasActions.loadCanvasList();
     // canvasActions.loadCanvasList(firebaseRef);
-    dialogActions.toggleDialog({ isDialogOpened, dialogType: "load" });
+    settingsActions.toggleDialog({ isDialogOpened, dialogType: "load" });
   }
 
   handleSaveClick = (event) => {
-    let { dialog, dialogActions, canvasActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { settings, settingsActions, canvasActions } = this.props,
+        isDialogOpened = !state.isDialogOpened;
 
-    dialogActions.toggleDialog({ isDialogOpened, dialogType: "save" });
+    settingsActions.toggleDialog({ isDialogOpened, dialogType: "save" });
   }
 
   handleRemoveClick = (event) => {
-    let { dialog, dialogActions, canvasActions, firebaseRef } = this.props,
-        isDialogOpened = !dialog.isDialogOpened;
+    let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
+        isDialogOpened = !settings.isDialogOpened;
 
     canvasActions.loadCanvasList(firebaseRef);
-    dialogActions.toggleDialog({ isDialogOpened, dialogType: "remove" });
+    settingsActions.toggleDialog({ isDialogOpened, dialogType: "remove" });
   }
 
   render() {

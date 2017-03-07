@@ -15,8 +15,9 @@ import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 // Actions
-import * as DrawerActions from "../../../actions/DrawerActions";
+// import * as DrawerActions from "../../../actions/DrawerActions";
 import * as CanvasActions from "../../../actions/CanvasActions";
+import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -24,15 +25,15 @@ import CanvasService from "../../../services/CanvasService";
 
 function mapStateToProps(state, ownProps) {
   return {
-    drawer: state.drawer,
-    canvas: state.canvas
+    canvas: state.canvas,
+    settings: state.settings
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    drawerActions: bindActionCreators(DrawerActions, dispatch),
-    canvasActions: bindActionCreators(CanvasActions, dispatch)
+    canvasActions: bindActionCreators(CanvasActions, dispatch),
+    settingsActions: bindActionCreators(SettingsActions, dispatch)
   }
 }
 
@@ -43,16 +44,16 @@ export default class LeftDrawer extends React.Component {
   }
 
   handleToggle = () => {
-    let { drawer, drawerActions } = this.props,
-        isDrawerOpened = !drawer.isDrawerOpened;
+    let { settings, settingsActions } = this.props,
+        isDrawerOpened = !settings.isDrawerOpened;
 
-    drawerActions.toggleDrawer({ isDrawerOpened });
+    settingsActions.toggleDrawer({ isDrawerOpened });
   }
 
   navigateTo = (location) => {
-    let { drawer, drawerActions, canvasInfo, canvasActions } = this.props;
+    let { settings, settingsActions, canvasInfo, canvasActions } = this.props;
 
-    drawerActions.toggleDrawer({ isDrawerOpened: false });
+    settingsActions.toggleDrawer({ isDrawerOpened: false });
     // if(location == "/charts/") {
     //   canvasActions.saveCanvasReportInfo({
     //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
@@ -71,7 +72,7 @@ export default class LeftDrawer extends React.Component {
   render() {
     return (
       <Drawer
-        open={this.props.drawer.isDrawerOpened}
+        open={this.props.settings.isDrawerOpened}
         docked={false}
         onRequestChange={this.handleToggle}
         width={370}>

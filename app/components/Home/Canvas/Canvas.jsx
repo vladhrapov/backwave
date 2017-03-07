@@ -5,7 +5,8 @@ import { fabric } from "fabric";
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 // Actions
-import * as DialogActions from "../../../actions/DialogActions";
+// import * as DialogActions from "../../../actions/DialogActions";
+import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Components
 import Settings from "../Settings/Settings.jsx";
@@ -21,13 +22,13 @@ import "../../Shared/assets/_styles.scss";
 function mapStateToProps(state, ownProps) {
   console.log("STATE: ============= ", state, ownProps);
   return {
-    dialog: state.dialog
+    settings: state.settings
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    dialogActions: bindActionCreators(DialogActions, dispatch)
+    settingsActions: bindActionCreators(SettingsActions, dispatch)
   }
 }
 
@@ -45,12 +46,12 @@ export default class Canvas extends React.Component {
   }
 
   handleDblClick = (event) => {
-    let { dialog, dialogActions } = this.props,
-        isDialogOpened = !dialog.isDialogOpened,
+    let { settings, settingsActions } = this.props,
+        isDialogOpened = !settings.isDialogOpened,
         activeObject = CanvasService.getCanvas().getActiveObject();
 
     if (this.isActiveObjectHasCustomProps(activeObject) && activeObject.customProps.type == "label") {
-      dialogActions.toggleDialog({ isDialogOpened, dialogType: "label" });
+      settingsActions.toggleDialog({ isDialogOpened, dialogType: "label" });
     }
   }
 

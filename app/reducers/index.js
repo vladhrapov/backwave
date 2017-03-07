@@ -1,16 +1,17 @@
 import { combineReducers } from "redux";
-import drawer from "./DrawerReducer";
-import dialog from "./DialogReducer";
 import canvas from "./CanvasReducer";
+import settings from "./SettingsReducer";
 
 export const initialState = {
   canvas: [],
-  dialog: {},
-  drawer: {}
+  settings: {
+    isDrawerOpened: false,
+    isDialogOpened: false,
+    dialogType: ""
+  }
 }
 
 export const rootReducer = combineReducers({
-  drawer,
-  dialog,
-  canvas
+  canvas,
+  settings
 });
