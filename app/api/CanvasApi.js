@@ -28,5 +28,5 @@ export const saveCanvasToListApi = name => {
 
 export const removeCanvasFromListApi = name => {
   console.log(`canvasCollection/${name}`);
-  //return firebaseRef.ref(`canvasCollection/${name}`).remove().then(data => console.log(`canvasCollection/${name} + DATA + `, data));
+  return firebaseRef.ref(`canvasCollection/${name}`).remove();
 }

@@ -7,15 +7,15 @@ import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 // Actions
-import * as DialogActions from "../../actions/DialogActions";
-import * as CanvasActions from "../../actions/CanvasActions";
+import * as DialogActions from "../../../actions/DialogActions";
+import * as CanvasActions from "../../../actions/CanvasActions";
 
 // Services
-import CanvasService from "../../services/CanvasService";
-import SettingsService from "../../services/SettingsService";
+import CanvasService from "../../../services/CanvasService";
+import SettingsService from "../../../services/SettingsService";
 
 // Styles
-import "../Shared/assets/_styles.scss";
+import "../../Shared/assets/_styles.scss";
 
 
 function mapStateToProps(state, ownProps) {

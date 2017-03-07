@@ -17,14 +17,14 @@ import IconMenu from 'material-ui/IconMenu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 // Actions
-import * as DrawerActions from "../../actions/DrawerActions";
-import * as DialogActions from "../../actions/DialogActions";
-import * as CanvasActions from "../../actions/CanvasActions";
+import * as DrawerActions from "../../../actions/DrawerActions";
+import * as DialogActions from "../../../actions/DialogActions";
+import * as CanvasActions from "../../../actions/CanvasActions";
 
 // Services
-import CanvasService from "../../services/CanvasService";
+import CanvasService from "../../../services/CanvasService";
 
-import { store } from "../../store/Store";
+import { store } from "../../../store/Store";
 
 
 function mapStateToProps(state, ownProps) {

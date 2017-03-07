@@ -5,17 +5,17 @@ import { fabric } from "fabric";
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 // Actions
-import * as DialogActions from "../../actions/DialogActions";
+import * as DialogActions from "../../../actions/DialogActions";
 
 // Components
-import Settings from "./Settings/Settings.jsx";
+import Settings from "../Settings/Settings.jsx";
 
 // Services
-import CanvasService from "../../services/CanvasService";
+import CanvasService from "../../../services/CanvasService";
 
 // Styles
 import "./assets/_styles.scss";
-import "../Shared/assets/_styles.scss";
+import "../../Shared/assets/_styles.scss";
 
 
 function mapStateToProps(state, ownProps) {

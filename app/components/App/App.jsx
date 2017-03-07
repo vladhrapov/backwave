@@ -3,9 +3,9 @@ import ReactFire from "reactfire";
 import ReactMixin from "react-mixin";
 
 // Components
-import CustomDialog from "../CustomDialog/CustomDialog.jsx";
-import LeftDrawer from "../LeftDrawer/LeftDrawer.jsx";
-import Header from "../Header/Header.jsx";
+import CustomDialog from "./CustomDialog/CustomDialog.jsx";
+import LeftDrawer from "./LeftDrawer/LeftDrawer.jsx";
+import Header from "./Header/Header.jsx";
 
 // Services
 import FirebaseService from "../../services/FirebaseService";
@@ -46,7 +46,7 @@ class App extends React.Component {
           handleSaveClick={this.handleSaveClick}
           handleRemoveClick={this.handleRemoveClick}
           firebaseRef={firebaseRef}
-        />       
+        />
         <LeftDrawer />
         {this.props.children}
         <CustomDialog

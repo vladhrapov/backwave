@@ -15,11 +15,11 @@ import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 // Actions
-import * as DrawerActions from "../../actions/DrawerActions";
-import * as CanvasActions from "../../actions/CanvasActions";
+import * as DrawerActions from "../../../actions/DrawerActions";
+import * as CanvasActions from "../../../actions/CanvasActions";
 
 // Services
-import CanvasService from "../../services/CanvasService";
+import CanvasService from "../../../services/CanvasService";
 
 
 function mapStateToProps(state, ownProps) {
@@ -53,18 +53,18 @@ export default class LeftDrawer extends React.Component {
     let { drawer, drawerActions, canvasInfo, canvasActions } = this.props;
 
     drawerActions.toggleDrawer({ isDrawerOpened: false });
-    if(location == "/charts/") {
-      canvasActions.saveCanvasReportInfo({
-        routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-        image: CanvasService.getCanvas().toDataURL("image/png")
-      });
-    }
-    else if (location == "/reports/") {
-      canvasActions.saveCanvasReportInfo({
-        routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-        image: CanvasService.getCanvas().toDataURL("image/png")
-      });
-    }
+    // if(location == "/charts/") {
+    //   canvasActions.saveCanvasReportInfo({
+    //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+    //     image: CanvasService.getCanvas().toDataURL("image/png")
+    //   });
+    // }
+    // else if (location == "/reports/") {
+    //   canvasActions.saveCanvasReportInfo({
+    //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+    //     image: CanvasService.getCanvas().toDataURL("image/png")
+    //   });
+    // }
     browserHistory.push(location);
   }
 
