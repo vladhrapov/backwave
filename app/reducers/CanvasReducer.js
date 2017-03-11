@@ -1,9 +1,9 @@
 import { initialState } from "./";
 
 export default function canvasReducer(state = initialState.canvas, action) {
+  console.log("Canvas REDUCER: ", action, state);
   switch (action.type) {
     case "LOAD_CANVAS_LIST_SUCCEEDED":
-      console.log("Canvas REDUCER: ", action);
       return [
         ...action.payload
         // ...state,
@@ -12,13 +12,13 @@ export default function canvasReducer(state = initialState.canvas, action) {
         // ]
       ];
     case "SAVE_CANVAS_TO_LIST_SUCCEEDED":
-      console.log("Canvas REDUCER: ", action, state);
       return [
-        ...state
+        ...state,
+        { ...action.payload }
       ];
     case "REMOVE_CANVAS_FROM_LIST_SUCCEEDED":
       return [
-        ...state.filter(canvas => canvas.key != action.payload.canvasName)
+        ...state.filter(canvas => canvas.key != action.payload.name)
       ];
     // case types.SAVE_CANVAS_INFO:
     //   return {

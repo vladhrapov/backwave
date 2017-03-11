@@ -4,9 +4,10 @@ import SettingsService from "./SettingsService";
 
 // Constants
 import { COLORS } from "../constants/Colors";
+import { firebaseRef } from "../constants/FirebaseConfig";
 
 export default class CanvasService {
-  constructor() {}
+  constructor() { }
 
   static getCanvas() {
     if (this.canvas) {
@@ -28,9 +29,9 @@ export default class CanvasService {
   //   return new FirebaseService().loadCanvasListFromFirebase(database);
   // }
 
-  static loadCanvas(name, database) {
+  static loadCanvas(collection) {
     CanvasService.refreshCanvas();
-    new FirebaseService().loadCanvasFromFirebase(name, database);
+    new FirebaseService().deserializeCanvasObjectsCollection(collection);
     CanvasService.getCanvas().renderAll();
   }
 
@@ -52,8 +53,8 @@ export default class CanvasService {
 
   static getShapeTypeGroupCount() {
     let vertexCount = 0,
-        lineCount = 0,
-        labelCount = 0;
+      lineCount = 0,
+      labelCount = 0;
 
     CanvasService.getCanvas()._objects.forEach((shape) => {
       let { type } = shape.customProps;
@@ -77,12 +78,12 @@ export default class CanvasService {
 
     if (shapes) {
       return shapes
-      .filter((shape) => {
-        if (shape.customProps.type == "vertex") return true;
-      })
-      .map((shape) => {
-        return shape.customProps.name;
-      });
+        .filter((shape) => {
+          if (shape.customProps.type == "vertex") return true;
+        })
+        .map((shape) => {
+          return shape.customProps.name;
+        });
     }
 
     return [];
@@ -90,24 +91,24 @@ export default class CanvasService {
 
   static refreshRoutes() {
     CanvasService.getCanvas()._objects.forEach((shape) => {
-      if(shape && shape.customProps.type == "line") {
+      if (shape && shape.customProps.type == "line") {
         shape.fill = "#666";
         shape.stroke = "#666";
         shape.strokeWidth = 2;
       }
-      else if(shape && shape.customProps.type == "vertex") {
+      else if (shape && shape.customProps.type == "vertex") {
         shape.fill = '#fff';
       }
     });
 
     CanvasService.getCanvas().renderAll();
   }
-  
+
 
   static drawRoutes(routes, startVertex, finishVertex) {
     let shapes = CanvasService.getCanvas()._objects;
 
-    if(shapes && shapes.length && routes && routes.length) {
+    if (shapes && shapes.length && routes && routes.length) {
       CanvasService.refreshRoutes();
 
       routes.forEach((route, i) => {
@@ -115,26 +116,26 @@ export default class CanvasService {
 
         route.forEach((vertex, index) => {
           shapes.forEach((shape) => {
-            if(shape && shape.customProps) {
+            if (shape && shape.customProps) {
               let { type, name } = shape.customProps;
 
-              if(type == "line") {
-                  let { from: vertexFrom, to: vertexTo } = shape.customProps.vertex;
+              if (type == "line") {
+                let { from: vertexFrom, to: vertexTo } = shape.customProps.vertex;
 
-                  if(vertexFrom.name == vertex.name && route[index + 1] && vertexTo.name == route[index + 1].name) {
-                    shape.fill = color;
-                    shape.stroke = color;
-                    shape.strokeWidth = 5;
-                  }
-                  else if(vertexTo.name == vertex.name && route[index + 1] && vertexFrom.name == route[index + 1].name) {
-                    shape.fill = color;
-                    shape.stroke = color;
-                    shape.strokeWidth = 5;
-                  }
+                if (vertexFrom.name == vertex.name && route[index + 1] && vertexTo.name == route[index + 1].name) {
+                  shape.fill = color;
+                  shape.stroke = color;
+                  shape.strokeWidth = 5;
+                }
+                else if (vertexTo.name == vertex.name && route[index + 1] && vertexFrom.name == route[index + 1].name) {
+                  shape.fill = color;
+                  shape.stroke = color;
+                  shape.strokeWidth = 5;
+                }
               }
 
-              if(type == "vertex") {         
-                if(name == `A${startVertex}`) {
+              if (type == "vertex") {
+                if (name == `A${startVertex}`) {
                   // shape._objects[0].fill = "#372";
                   // shape._objects[1].fill = "#372";
                   shape.set("fill", "rgb(27, 146, 42)");//.fill = "#372";
@@ -152,9 +153,9 @@ export default class CanvasService {
 
 
               }
-              
+
             }
-          }); 
+          });
         });
       });
 
@@ -162,24 +163,24 @@ export default class CanvasService {
         return route.filter(vertex => !!vertex.isCenter)[0];
       });
 
-      if(!!linkedPoints && linkedPoints.filter(vertex => !!vertex).length) {
+      if (!!linkedPoints && linkedPoints.filter(vertex => !!vertex).length) {
         // a81d31
         shapes.forEach((shape) => {
-          if(shape && shape.customProps) {
+          if (shape && shape.customProps) {
             let { type, name } = shape.customProps;
 
-            if(type == "vertex") {
+            if (type == "vertex") {
               let linkedPoint = linkedPoints.filter(vertex => vertex.name == name)[0];
 
-              if(linkedPoint && name == linkedPoint.name) {
+              if (linkedPoint && name == linkedPoint.name) {
                 shape.set("fill", "rgb(167, 10, 219)");//.fill = "#372";
                 shape._objects[1].fill = "#fff";
-              } 
+              }
             }
           }
         });
       }
-    } 
+    }
 
     CanvasService.getCanvas().renderAll();
   }
@@ -187,11 +188,11 @@ export default class CanvasService {
   static drawRouteEndpoints(startVertex, finishVertex) {
 
     CanvasService.getCanvas()._objects.forEach((shape) => {
-      if(shape && shape.customProps) {
+      if (shape && shape.customProps) {
         let { type, name } = shape.customProps;
 
-        if(type == "vertex") {         
-          if(name == `A${startVertex}` || name == `A${finishVertex}`) {
+        if (type == "vertex") {
+          if (name == `A${startVertex}` || name == `A${finishVertex}`) {
             // shape._objects[0].fill = "#372";
             // shape._objects[1].fill = "#372";
             shape.set("fill", "#372");//.fill = "#372";

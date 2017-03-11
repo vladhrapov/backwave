@@ -1,8 +1,6 @@
-import FirebaseService from "../services/FirebaseService";
-
 import { firebaseRef } from "../constants/FirebaseConfig";
 
-export const loadCanvasListRequestApi = () =>  {
+export const loadCanvasListRequestApi = () => {
   return firebaseRef.ref("canvasCollection")
     .once("value")
     .then(data => {
@@ -18,15 +16,19 @@ export const loadCanvasListRequestApi = () =>  {
 }
 
 
-export const saveCanvasToListApi = name => {
-  // return new FirebaseService().saveCanvasToFirebase(name, firebaseRef);
-  return firebaseRef.ref("canvasCollection").child(name).set({
-      name: name,
-      canvasObjects: new FirebaseService().getCanvasObjectsCollection()
-    });
+export const saveCanvasToListApi = payload => {
+  let { name, canvasObjects } = payload;
+
+  return firebaseRef
+    .ref("canvasCollection")
+    .child(name)
+    .set({ name, canvasObjects });
 }
 
-export const removeCanvasFromListApi = name => {
-  console.log(`canvasCollection/${name}`);
-  return firebaseRef.ref(`canvasCollection/${name}`).remove();
+export const removeCanvasFromListApi = payload => {
+  let { name } = payload;
+
+  return firebaseRef
+    .ref(`canvasCollection/${name}`)
+    .remove();
 }

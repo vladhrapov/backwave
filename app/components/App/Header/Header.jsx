@@ -48,7 +48,7 @@ export default class Header extends React.Component {
 
   handleToggle = () => {
     let { settings, settingsActions } = this.props,
-        isDrawerOpened = !settings.isDrawerOpened;
+      isDrawerOpened = !settings.isDrawerOpened;
 
     settingsActions.toggleDrawer({ isDrawerOpened });
   }
@@ -60,7 +60,7 @@ export default class Header extends React.Component {
 
   handleLoadClick = (event) => {
     let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
-        isDialogOpened = !settings.isDialogOpened;
+      isDialogOpened = !settings.isDialogOpened;
 
     canvasActions.loadCanvasList();
     // canvasActions.loadCanvasList(firebaseRef);
@@ -69,14 +69,14 @@ export default class Header extends React.Component {
 
   handleSaveClick = (event) => {
     let { settings, settingsActions, canvasActions } = this.props,
-        isDialogOpened = !state.isDialogOpened;
+      isDialogOpened = !settings.isDialogOpened;
 
     settingsActions.toggleDialog({ isDialogOpened, dialogType: "save" });
   }
 
   handleRemoveClick = (event) => {
     let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
-        isDialogOpened = !settings.isDialogOpened;
+      isDialogOpened = !settings.isDialogOpened;
 
     canvasActions.loadCanvasList(firebaseRef);
     settingsActions.toggleDialog({ isDialogOpened, dialogType: "remove" });
@@ -93,16 +93,16 @@ export default class Header extends React.Component {
             iconButtonElement={
               <IconButton><MoreVertIcon /></IconButton>
             }
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
-          <MenuItem primaryText="Refresh" onClick={this.handleRefreshClick} />
-          <MenuItem primaryText="Load" onClick={this.handleLoadClick} />
-          <MenuItem primaryText="Save" onClick={this.handleSaveClick} />
-          <MenuItem primaryText="Remove" onClick={this.handleRemoveClick}/>
-        </IconMenu>
+            <MenuItem primaryText="Refresh" onClick={this.handleRefreshClick} />
+            <MenuItem primaryText="Load" onClick={this.handleLoadClick} />
+            <MenuItem primaryText="Save" onClick={this.handleSaveClick} />
+            <MenuItem primaryText="Remove" onClick={this.handleRemoveClick} />
+          </IconMenu>
         }
-        onLeftIconButtonTouchTap={this.handleToggle}/>
+        onLeftIconButtonTouchTap={this.handleToggle} />
     );
   }
 }

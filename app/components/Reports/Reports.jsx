@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 // Actions
-import * as DrawerActions from "../../actions/DrawerActions";
 import * as CanvasActions from "../../actions/CanvasActions";
 
 // // Components
@@ -21,14 +20,12 @@ import * as CanvasActions from "../../actions/CanvasActions";
 
 function mapStateToProps(state, ownProps) {
   return {
-    drawer: state.drawer,
     canvas: state.canvas
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    drawerActions: bindActionCreators(DrawerActions, dispatch),
     canvasActions: bindActionCreators(CanvasActions, dispatch)
   }
 }

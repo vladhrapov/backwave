@@ -5,12 +5,28 @@ import SettingsService from "./SettingsService";
 
 export default class FirebaseService {
   constructor() {
-    this.shapesService = new ShapesService();
+    this.firebaseSerializer = new FirebaseSerializer();
+    this.firebaseDeserializer = new FirebaseDeserializer();
   }
+
+  get serializedCanvasObjectsCollection() {
+    return this.firebaseSerializer.getCanvasObjectsCollection();
+  }
+
+  deserializeCanvasObjectsCollection(collection) {
+    this.firebaseDeserializer.restoreCanvas(collection);
+  }
+}
+
+
+
+
+class FirebaseSerializer {
+  constructor() { }
 
   getVertexPropsForSerialization(vertex) {
     let { top, left } = vertex,
-        { name, type, lines } = vertex.customProps;
+      { name, type, lines } = vertex.customProps;
 
     lines.forEach((line, index) => {
       lines[index] = line.customProps.name
@@ -28,7 +44,7 @@ export default class FirebaseService {
 
   getLinePropsForSerialization(line) {
     let { x1, x2, y1, y2 } = line,
-        { label, name, type, vertex } = line.customProps;
+      { label, name, type, vertex } = line.customProps;
 
     label = label.customProps.name;
     vertex.from.link = vertex.to.link = null;
@@ -45,7 +61,7 @@ export default class FirebaseService {
 
   getLabelPropsForSerialization(label) {
     let { top, left } = label,
-        { name, type, weight } = label.customProps;
+      { name, type, weight } = label.customProps;
 
     return {
       customProps: {
@@ -76,7 +92,7 @@ export default class FirebaseService {
 
   getCanvasObjectsCollection() {
     let canvas = CanvasService.getCanvas(),
-        canvasObjectsCollection = [];
+      canvasObjectsCollection = [];
 
     canvas._objects.forEach((serializedObject) => {
       let { type } = serializedObject.customProps;
@@ -86,21 +102,20 @@ export default class FirebaseService {
 
     return canvasObjectsCollection;
   }
+}
 
-  // saveCanvasToFirebase(name, database) {
-  //   console.log(database);
-  //   return database.ref("canvasCollection").child(name).set({
-  //     name: name,
-  //     canvasObjects: this.getCanvasObjectsCollection()
-  //   });
-  // }
+
+class FirebaseDeserializer {
+  constructor() {
+    this.shapesService = new ShapesService();
+  }
 
   restoreVertices(vertices) {
     console.log(vertices);
 
     vertices.forEach((vertex) => {
       let { left, top } = vertex.helperProps,
-          { name } = vertex.customProps;
+        { name } = vertex.customProps;
 
       CanvasService.getCanvas().add(
         this.shapesService.createVertex({ left, top, name, lines: [] })
@@ -114,18 +129,18 @@ export default class FirebaseService {
     console.log(lines);
     lines.forEach((line) => {
       let { x1, x2, y1, y2 } = line.helperProps,
-          { name, label, vertex } = line.customProps;
+        { name, label, vertex } = line.customProps;
 
       let restoredLine = this.shapesService.createLine({
-          isCustom: true,
-          points: [x1, y1, x2, y2],
-          name,
-          vertexFromName: vertex.from.name,
-          vertexFromLink: null,
-          vertexToName: vertex.to.name,
-          vertexToLink: null,
-          label: null
-        });
+        isCustom: true,
+        points: [x1, y1, x2, y2],
+        name,
+        vertexFromName: vertex.from.name,
+        vertexFromLink: null,
+        vertexToName: vertex.to.name,
+        vertexToLink: null,
+        label: null
+      });
 
       CanvasService.getCanvas().add(restoredLine);
 
@@ -140,7 +155,7 @@ export default class FirebaseService {
 
     labels.forEach((label) => {
       let { left, top } = label.helperProps,
-          { name, weight } = label.customProps;
+        { name, weight } = label.customProps;
 
       CanvasService.getCanvas().add(
         this.shapesService.createLabel({ left, top, name, weight })
@@ -155,8 +170,8 @@ export default class FirebaseService {
       if (item && item.customProps && item.customProps.type == "vertex") {
         canvasObjects.forEach((linkItem) => {
           if (linkItem && linkItem.customProps && linkItem.customProps.type == "line"
-          && (linkItem.customProps.vertex.from.name == item.customProps.name
-            || linkItem.customProps.vertex.to.name == item.customProps.name)) {
+            && (linkItem.customProps.vertex.from.name == item.customProps.name
+              || linkItem.customProps.vertex.to.name == item.customProps.name)) {
             item.customProps.lines.push(linkItem);
           }
         });
@@ -164,15 +179,15 @@ export default class FirebaseService {
       else if (item && item.customProps && item.customProps.type == "line") {
         canvasObjects.forEach((linkItem) => {
           if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex"
-          && (item.customProps.vertex.from.name == linkItem.customProps.name)) {
+            && (item.customProps.vertex.from.name == linkItem.customProps.name)) {
             item.customProps.vertex.from.link = linkItem;
           }
           else if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex"
-          && (item.customProps.vertex.to.name == linkItem.customProps.name)) {
+            && (item.customProps.vertex.to.name == linkItem.customProps.name)) {
             item.customProps.vertex.to.link = linkItem;
           }
           else if (linkItem && linkItem.customProps && linkItem.customProps.type == "label"
-          && (item.customProps.name == linkItem.customProps.name)) {
+            && (item.customProps.name == linkItem.customProps.name)) {
             item.customProps.label = linkItem;
           }
 
@@ -190,42 +205,26 @@ export default class FirebaseService {
     });
   }
 
-  loadCanvasFromFirebase(name, database) {
-    database.ref("canvasCollection").once("value").then((data) => {
-      let canvasObjects = data.child(name + "/canvasObjects").val();
-      let canvasName = data.child(name + "/name").val();
-
-      if (canvasObjects) {
-        this.restoreVertices(this.filterCollectionByType("vertex", canvasObjects));
-        this.restoreLines(this.filterCollectionByType("line", canvasObjects));
-        this.restoreLabels(this.filterCollectionByType("label", canvasObjects));
-        this.restoreLinks();
-      }
-    });
+  restoreCanvas(collection) {
+    if (collection && collection.length) {
+      this.restoreVertices(this.filterCollectionByType("vertex", collection));
+      this.restoreLines(this.filterCollectionByType("line", collection));
+      this.restoreLabels(this.filterCollectionByType("label", collection));
+      this.restoreLinks();
+    }
   }
 
-  // loadCanvasListFromFirebase(database) {
-  //   return database.ref("canvasCollection").once("value").then((data) => {
-  //     let firebaseCanvasList = data.val();
-  //     let canvasList = [];
+  // loadCanvasFromFirebase(name, database) {
+  //   database.ref("canvasCollection").once("value").then((data) => {
+  //     let canvasObjects = data.child(name + "/canvasObjects").val();
+  //     let canvasName = data.child(name + "/name").val();
 
-  //     for (let key in firebaseCanvasList) {
-  //       if (firebaseCanvasList.hasOwnProperty(key)) {
-  //         console.log("key: ", key);
-  //         console.log(data.child(`/${key}/name`).val());
-  //         canvasList.push({
-  //           key,
-  //           name: data.child(`/${key}/name`).val()
-  //         });
-  //       }
+  //     if (canvasObjects) {
+  //       this.restoreVertices(this.filterCollectionByType("vertex", canvasObjects));
+  //       this.restoreLines(this.filterCollectionByType("line", canvasObjects));
+  //       this.restoreLabels(this.filterCollectionByType("label", canvasObjects));
+  //       this.restoreLinks();
   //     }
-
-  //     return canvasList;
   //   });
   // }
-
-  // removeCanvasFromFirebase(name, database) {
-  //   return database.ref(`canvasCollection/${name}`).remove();
-  // }
-
 }

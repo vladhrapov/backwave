@@ -13,6 +13,7 @@ import * as SettingsActions from "../../../actions/SettingsActions";
 // Services
 import CanvasService from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
+import FirebaseService from "../../../services/FirebaseService";
 
 // Styles
 import "../../Shared/assets/_styles.scss";
@@ -37,6 +38,7 @@ function mapDispatchToProps(dispatch) {
 export default class CustomDialog extends React.Component {
   constructor(props) {
     super(props);
+    this.firebaseService = new FirebaseService();
   }
 
   state = {
@@ -46,11 +48,11 @@ export default class CustomDialog extends React.Component {
   }
 
   handleCheckRadio = (event) => {
-    this.setState({selectedRadio: event.target.value});
+    this.setState({ selectedRadio: event.target.value });
   }
 
   handleInputChange = (event) => {
-    let { dialogType } = this.props.dialog;
+    let { dialogType } = this.props.settings;
 
     if (dialogType == "label") {
       this.setState({ lineWeight: event.target.value });
@@ -61,11 +63,13 @@ export default class CustomDialog extends React.Component {
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    let { canvasActions, settingsActions, settings, settingsService } = this.props,
-        isDialogOpened = !settings.isDialogOpened,
-        dialogType = settings.dialogType;
+    let { canvas, canvasActions, settingsActions, settings, settingsService } = this.props,
+      isDialogOpened = !settings.isDialogOpened,
+      dialogType = settings.dialogType;
 
-    CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
+    //CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
+    CanvasService.loadCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
+
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
 
@@ -74,11 +78,11 @@ export default class CustomDialog extends React.Component {
 
   handleRemoveCollectionDialogSubmit = () => {
     let { canvas, canvasActions, settings, settingsActions, settingsService } = this.props,
-        isDialogOpened = !settings.isDialogOpened,
-        dialogType = settings.dialogType;
+      isDialogOpened = !settings.isDialogOpened,
+      dialogType = settings.dialogType;
 
     // CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
-    canvasActions.removeCanvasFromList({ canvasName: this.state.selectedRadio });
+    canvasActions.removeCanvasFromList({ name: this.state.selectedRadio });
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
 
@@ -87,11 +91,12 @@ export default class CustomDialog extends React.Component {
 
   handleSaveCollectionDialogSubmit = () => {
     let { canvas, canvasActions, settings, settingsActions } = this.props,
-        isDialogOpened = !settings.isDialogOpened,
-        dialogType = settings.dialogType;
+      isDialogOpened = !settings.isDialogOpened,
+      dialogType = settings.dialogType;
 
     if (this.state.canvasName) {
-      canvasActions.saveCanvasToList({ canvasName: this.state.canvasName });
+      let canvasObjects = this.firebaseService.serializedCanvasObjectsCollection;
+      canvasActions.saveCanvasToList({ name: this.state.canvasName, canvasObjects: canvasObjects });
       // CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
       this.setState({ canvasName: "" });
@@ -104,13 +109,13 @@ export default class CustomDialog extends React.Component {
 
   handleSaveWeightDialogSubmit = (event) => {
     let { lineWeight } = this.state,
-        { settings, settingsActions } = this.props,
-        isDialogOpened = settings.isDialogOpened,
-        dialogType = settings.dialogType;
+      { settings, settingsActions } = this.props,
+      isDialogOpened = settings.isDialogOpened,
+      dialogType = settings.dialogType;
 
     if (/^\d+$/.test(lineWeight)) {
       let canvas = CanvasService.getCanvas(),
-          activeLabel = canvas.getActiveObject();
+        activeLabel = canvas.getActiveObject();
 
       activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
       canvas.renderAll();
@@ -129,7 +134,7 @@ export default class CustomDialog extends React.Component {
 
   handleDialogClose = (event) => {
     let { settings, settingsActions } = this.props,
-        isDialogOpened = !settings.isDialogOpened;
+      isDialogOpened = !settings.isDialogOpened;
 
     this.setState({ errorMessage: "" });
     this.setState({ canvasName: "" });
@@ -139,7 +144,7 @@ export default class CustomDialog extends React.Component {
 
   renderLoadOrRemoveDialogBody = () => {
     let { canvas } = this.props,
-        radios;
+      radios;
 
     if (canvas && canvas.length) {
       radios = canvas.map((item, index) => {
@@ -192,18 +197,18 @@ export default class CustomDialog extends React.Component {
 
   render() {
     let { dialogType } = this.props.settings,
-        dialogBody, dialogControls;
+      dialogBody, dialogControls;
 
     if (dialogType) {
       switch (dialogType) {
         case "load":
           dialogBody = this.renderLoadOrRemoveDialogBody();
           dialogControls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
-        break;
+          break;
         case "save":
           dialogBody = this.renderSaveDialogBody(this.state.canvasName);
           dialogControls = this.renderDialogControls(this.handleSaveCollectionDialogSubmit, "Save");
-        break;
+          break;
         case "remove":
           dialogBody = this.renderLoadOrRemoveDialogBody();
           dialogControls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");

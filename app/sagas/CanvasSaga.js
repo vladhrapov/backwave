@@ -5,13 +5,13 @@ import { loadCanvasListRequestApi, saveCanvasToListApi, removeCanvasFromListApi 
 
 
 function* loadCanvasListAsync() {
-   try {
-      const data = yield call(loadCanvasListRequestApi);
-      yield put({type: "LOAD_CANVAS_LIST_SUCCEEDED", payload: data});
-   } catch (error) {
-     console.log(error);
-     yield put({type: "LOAD_CANVAS_LIST_FAILED", error});
-   }
+  try {
+    const data = yield call(loadCanvasListRequestApi);
+    yield put({ type: "LOAD_CANVAS_LIST_SUCCEEDED", payload: data });
+  } catch (error) {
+    console.log(error);
+    yield put({ type: "LOAD_CANVAS_LIST_FAILED", error });
+  }
 }
 
 export function* loadCanvasListRequest() {
@@ -21,11 +21,11 @@ export function* loadCanvasListRequest() {
 function* saveCanvasToListAsync(action) {
   try {
     let { payload } = action;
-    yield call(saveCanvasToListApi, payload.canvasName);
-    yield put({type: "SAVE_CANVAS_TO_LIST_SUCCEEDED", payload});
-  } catch(error) {
-     console.log(error);
-     yield put({type: "SAVE_CANVAS_TO_LIST_FAILED", error});
+    yield call(saveCanvasToListApi, payload);
+    yield put({ type: "SAVE_CANVAS_TO_LIST_SUCCEEDED", payload });
+  } catch (error) {
+    console.log(error);
+    yield put({ type: "SAVE_CANVAS_TO_LIST_FAILED", error });
   }
 }
 
@@ -36,11 +36,11 @@ export function* saveCanvasToListRequest() {
 function* removeCanvasFromListAsync(action) {
   try {
     let { payload } = action;
-    yield call(removeCanvasFromListApi, payload.canvasName);
-    yield put({type: "REMOVE_CANVAS_FROM_LIST_SUCCEEDED", payload});
-  } catch(error) {
+    yield call(removeCanvasFromListApi, payload);
+    yield put({ type: "REMOVE_CANVAS_FROM_LIST_SUCCEEDED", payload });
+  } catch (error) {
     console.log(error);
-    yield put({type: "REMOVE_CANVAS_FROM_LIST_FAILED", payload});
+    yield put({ type: "REMOVE_CANVAS_FROM_LIST_FAILED", payload });
   }
 }
 
