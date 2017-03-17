@@ -11,7 +11,7 @@ import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
-import CanvasService from "../../../services/CanvasService";
+import CanvasService, { restoreCanvas, renderAll } from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
 import FirebaseService from "../../../services/FirebaseService";
 
@@ -67,9 +67,7 @@ export default class CustomDialog extends React.Component {
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
-    //CanvasService.loadCanvas(this.state.selectedRadio, this.props.firebaseRef);
-    CanvasService.loadCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
-
+    restoreCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
 
@@ -81,7 +79,6 @@ export default class CustomDialog extends React.Component {
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
-    // CanvasService.removeCanvas(this.state.selectedRadio, this.props.firebaseRef);
     canvasActions.removeCanvasFromList({ name: this.state.selectedRadio });
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
@@ -96,8 +93,8 @@ export default class CustomDialog extends React.Component {
 
     if (this.state.canvasName) {
       let canvasObjects = this.firebaseService.serializedCanvasObjectsCollection;
+
       canvasActions.saveCanvasToList({ name: this.state.canvasName, canvasObjects: canvasObjects });
-      // CanvasService.saveCanvas(this.state.canvasName, this.props.firebaseRef);
       this.setState({ errorMessage: "" });
       this.setState({ canvasName: "" });
       settingsActions.toggleDialog({ isDialogOpened, dialogType });
@@ -118,7 +115,7 @@ export default class CustomDialog extends React.Component {
         activeLabel = canvas.getActiveObject();
 
       activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
-      canvas.renderAll();
+      renderAll();
       isDialogOpened = !settings.isDialogOpened;
       this.setState({ errorMessage: "" });
       this.setState({ lineWeight: "" });

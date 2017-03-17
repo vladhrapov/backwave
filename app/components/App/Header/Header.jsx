@@ -21,7 +21,7 @@ import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
-import CanvasService from "../../../services/CanvasService";
+import CanvasService, { refreshCanvas } from "../../../services/CanvasService";
 
 import { store } from "../../../store/Store";
 
@@ -55,7 +55,7 @@ export default class Header extends React.Component {
 
   handleRefreshClick = (event) => {
     let { dialog, dialogActions, canvasActions, firebaseRef } = this.props;
-    CanvasService.refreshCanvas();
+    refreshCanvas();
   }
 
   handleLoadClick = (event) => {

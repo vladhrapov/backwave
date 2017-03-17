@@ -32,7 +32,7 @@ export default class Settings extends React.Component {
   }
 
   toggleAlgorithmsButtons(vertexFrom, vertexTo) {
-    if(vertexFrom && vertexTo) {
+    if (vertexFrom && vertexTo) {
       this.setState({ isAlgorithmsButtonDisabled: false });
     }
   }
@@ -71,10 +71,9 @@ export default class Settings extends React.Component {
     console.clear();
     console.log(this.waResult);
     CanvasService.drawRoutes(this.waResult, vertexFrom, vertexTo);
-    // CanvasService.drawRouteEndpoints(this.state.vertexFrom, this.state.vertexTo);
 
     this.routesInfo = this.settingsService.showRoutesInfo(this.waResult);
-    this.setState({isRoutesButtonDisabled: false});
+    this.setState({ isRoutesButtonDisabled: false });
   }
 
   handleBackWaveAlgorithmClick = () => {
@@ -86,7 +85,7 @@ export default class Settings extends React.Component {
     CanvasService.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
     this.routesInfo = this.settingsService.showRoutesInfo(this.bwaResult);
-    this.setState({isRoutesButtonDisabled: false});
+    this.setState({ isRoutesButtonDisabled: false });
   }
 
   handleSelectVertexNameClick = (event, key, payload) => {
@@ -99,7 +98,6 @@ export default class Settings extends React.Component {
     let { vertexFrom, vertexTo } = this.state;
 
     this.setState({ vertexFrom: payload });
-    // CanvasService.drawRouteEndpoints(vertexFrom, vertexTo);
     this.toggleAlgorithmsButtons(vertexFrom || payload, vertexTo);
   }
 
@@ -107,21 +105,20 @@ export default class Settings extends React.Component {
     let { vertexFrom, vertexTo } = this.state;
 
     this.setState({ vertexTo: payload });
-    // CanvasService.drawRouteEndpoints(vertexFrom, vertexTo);
     this.toggleAlgorithmsButtons(vertexFrom, vertexTo || payload);
   }
 
   handlePopoverClick = (event, key) => {
     let { popoverOpened } = this.state;
 
-    if(popoverOpened) {
-      this.setState({popoverOpened: false, anchorEl: event.currentTarget});
+    if (popoverOpened) {
+      this.setState({ popoverOpened: false, anchorEl: event.currentTarget });
     }
     else {
-      this.setState({popoverOpened: true, anchorEl: event.currentTarget});
+      this.setState({ popoverOpened: true, anchorEl: event.currentTarget });
     }
 
-    return this.state.popoverOpened;  
+    return this.state.popoverOpened;
   }
 
   handleReportsClick = () => {
@@ -140,8 +137,8 @@ export default class Settings extends React.Component {
 
   getIterations() {
     let waIterations = [],
-        bwaIterations = [];
-    
+      bwaIterations = [];
+
     waIterations.push(
       this.waResult
         .map(route => route.length - 1)
@@ -150,14 +147,14 @@ export default class Settings extends React.Component {
           return sum + current;
         }, 0)
     );
-    
+
     bwaIterations.push(
       Math.ceil(this.bwaResult
         .map(route => route.length - 1)
         .reduce((sum, current) => {
           bwaIterations.push(Math.ceil(sum / 2));
           return sum + current;
-      }, 0) / 2)
+        }, 0) / 2)
     );
 
     return { waIterations, bwaIterations };
@@ -166,8 +163,8 @@ export default class Settings extends React.Component {
 
   getRoutesCount() {
     let routesCount = this.waResult.length > this.bwaResult.length
-                      ? this.waResult
-                      : this.bwaResult;
+      ? this.waResult
+      : this.bwaResult;
 
     return Object.keys(routesCount);
   }
@@ -181,24 +178,24 @@ export default class Settings extends React.Component {
 
     console.log(routesArray);
     var lineChartData = {
-        labels: routesArray,//["0", "1", "2", "3", "4"],
-        datasets: [{
-            label: "MWA",
-            fillColor: "rgba(215, 40, 40, 0.9)",
-            strokeColor: "rgba(215, 40, 40, 0.9)",
-            pointColor: "rgba(220,180,0,1)",
-            data: iterations.waIterations,//[0, 336, 567, 753],
-            borderColor: "rgba(156, 22, 44, 0.9)",
-            backgroundColor: "rgba(0, 0, 0, 0)"
-        }, {
-            label: "BWA",
-            fillColor: "rgba(151,187,205,0)",
-            strokeColor: "rgba(151,187,205,1)",
-            pointColor: "rgba(151,187,205,1)",
-            data: iterations.bwaIterations,//[0, 224, 352, 573],
-            borderColor: "rgba(79, 228, 233, 0.9)",
-            backgroundColor: "rgba(0, 0, 0, 0)"
-        }]
+      labels: routesArray,//["0", "1", "2", "3", "4"],
+      datasets: [{
+        label: "MWA",
+        fillColor: "rgba(215, 40, 40, 0.9)",
+        strokeColor: "rgba(215, 40, 40, 0.9)",
+        pointColor: "rgba(220,180,0,1)",
+        data: iterations.waIterations,//[0, 336, 567, 753],
+        borderColor: "rgba(156, 22, 44, 0.9)",
+        backgroundColor: "rgba(0, 0, 0, 0)"
+      }, {
+        label: "BWA",
+        fillColor: "rgba(151,187,205,0)",
+        strokeColor: "rgba(151,187,205,1)",
+        pointColor: "rgba(151,187,205,1)",
+        data: iterations.bwaIterations,//[0, 224, 352, 573],
+        borderColor: "rgba(79, 228, 233, 0.9)",
+        backgroundColor: "rgba(0, 0, 0, 0)"
+      }]
 
     }
 
@@ -223,33 +220,33 @@ export default class Settings extends React.Component {
 
     let ctx = document.getElementById("chart");
 
-    if(ctx) {
+    if (ctx) {
       ctx = ctx.getContext("2d");
       this.myLineChart = new Chart(ctx, {
-          type: 'line',
-          data: lineChartData,
-          options: {
-            legend: {
-              display: true,
-              labels: {
-                // fontColor: 'rgb(255, 99, 132)'
+        type: 'line',
+        data: lineChartData,
+        options: {
+          legend: {
+            display: true,
+            labels: {
+              // fontColor: 'rgb(255, 99, 132)'
+            }
+          },
+          scales: {
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Iterations'
               }
-            },
-              scales: {
-                yAxes: [{
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Iterations'
-                  }
-                }],
-                xAxes: [{
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Routes'
-                  }
-                }]
+            }],
+            xAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Routes'
               }
+            }]
           }
+        }
       });
 
     }
@@ -260,7 +257,7 @@ export default class Settings extends React.Component {
 
   renderCanvasVerticeNames = (labelText, labelValue, selectChangeHandler) => {
     let { vertexNamesCollection } = this.state,
-        menuCollection;
+      menuCollection;
 
     if (vertexNamesCollection && vertexNamesCollection.length) {
       menuCollection = vertexNamesCollection.map((name, index) => {
@@ -285,7 +282,7 @@ export default class Settings extends React.Component {
   }
 
   renderPaths = () => {
-    if(this.routesInfo) {
+    if (this.routesInfo) {
       return this.routesInfo.map((route, index) => {
         let { vertices, weight } = route;
 
@@ -316,7 +313,7 @@ export default class Settings extends React.Component {
             value="not_light"
             label="Moving mode"
             onClick={this.handleMigrationMode}
-            />
+          />
           <RadioButton
             className="radio-btn"
             value="light"
@@ -329,12 +326,12 @@ export default class Settings extends React.Component {
         {this.renderCanvasVerticeNames("To", this.state.vertexTo, this.handleSelectVertexToNameChange)}
 
         {
-        //   <RaisedButton
-        //   label="Get Matrix"
-        //   className="custom-btn-default"
-        //   secondary={true}
-        //   onClick={this.handleGetTransformedMatrix}
-        // />
+          //   <RaisedButton
+          //   label="Get Matrix"
+          //   className="custom-btn-default"
+          //   secondary={true}
+          //   onClick={this.handleGetTransformedMatrix}
+          // />
         }
 
         <RaisedButton
@@ -363,8 +360,8 @@ export default class Settings extends React.Component {
         <Popover
           open={this.state.popoverOpened}
           anchorEl={this.state.anchorEl}
-          anchorOrigin={{"horizontal":"middle","vertical":"top"}}
-          targetOrigin={{"horizontal":"middle","vertical":"bottom"}}
+          anchorOrigin={{ "horizontal": "middle", "vertical": "top" }}
+          targetOrigin={{ "horizontal": "middle", "vertical": "bottom" }}
           onRequestClose={this.handlePopoverClick}
         >
           <Menu>

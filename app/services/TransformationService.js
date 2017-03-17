@@ -5,21 +5,25 @@ export default class TransformationService {
 
   isCanvasHasShapes(canvas) {
     return canvas._objects &&
-        canvas._objects.length;
+      canvas._objects.length;
   }
 
   transformCanvasToMatrix() {
     let canvas = CanvasService.getCanvas(),
-        shapesCollection = canvas._objects,
-        transformedMatrix = [];
+      shapesCollection = canvas._objects,
+      transformedMatrix = [];
 
     console.log("vertex names: ", CanvasService.getVertexNames());
 
     if (this.isCanvasHasShapes(canvas)) {
       shapesCollection.forEach((shape) => {
-        let { type, name, lines } = shape.customProps,
-            shapesTypeGroupCount = CanvasService.getShapeTypeGroupCount(),
-            rowCollection = new Array(shapesTypeGroupCount.vertexCount);
+        let {
+          type,
+          name,
+          lines
+        } = shape.customProps,
+          shapesTypeGroupCount = CanvasService.getShapeTypeGroupCount(),
+          rowCollection = new Array(shapesTypeGroupCount.vertexCount);
 
         if (type == "vertex") {
           /*
@@ -43,12 +47,12 @@ export default class TransformationService {
               type: lineType,
               name: relatedName,
               label
-            } = line.customProps,
-            {
+            } = line.customProps, {
               from: fromObj,
               to: toObj
-            } = line.customProps.vertex,
-            { weight } = label.customProps;
+            } = line.customProps.vertex, {
+              weight
+            } = label.customProps;
 
             if (fromObj.name != name) {
               console.log("fromObj.name: ", fromObj.name);
@@ -57,8 +61,7 @@ export default class TransformationService {
               };
               // Maybe we need to set -1 vertex
               // rowCollection[+(fromObj.name.slice(1)) - 1] = +weight;
-            }
-            else if (toObj.name != name) {
+            } else if (toObj.name != name) {
               console.log("toObj.name: ", toObj.name);
               rowCollection[+(toObj.name.slice(1)) - 1] = {
                 weight: +weight
