@@ -16,7 +16,7 @@ import TransformationService from "../../../services/TransformationService";
 import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
 import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService";
 
-export default class Settings extends React.Component {
+export default class Tools extends React.Component {
   constructor(props) {
     super(props);
     this.settingsService = new SettingsService();

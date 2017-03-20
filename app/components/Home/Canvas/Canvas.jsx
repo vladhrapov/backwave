@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fabric } from "fabric";
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 // Actions
@@ -9,7 +8,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Components
-import Settings from "../Settings/Settings.jsx";
+import Tools from "../Tools/Tools.jsx";
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -36,7 +35,6 @@ function mapDispatchToProps(dispatch) {
 export default class Canvas extends React.Component {
   constructor() {
     super();
-    console.log("Fabric: ", fabric);
     window.ondblclick = this.handleDblClick;
   }
 
@@ -61,13 +59,13 @@ export default class Canvas extends React.Component {
         <Tabs className="tab-canvas" value={"canvas"}>
           <Tab label="Canvas" value="canvas">
             <div>
-              <canvas id="canvasId" onDoubleClick={this.handleDblClick}></canvas>
+              <canvas id="canvas" onDoubleClick={this.handleDblClick}></canvas>
             </div>
           </Tab>
         </Tabs>
         <Tabs className="tab-settings" value={"settings"}>
           <Tab label="Settings" value="settings">
-            <Settings />
+            <Tools />
           </Tab>
         </Tabs>
       </div>
