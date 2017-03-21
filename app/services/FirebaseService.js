@@ -1,4 +1,4 @@
-import CanvasService from "./CanvasService";
+// import CanvasService from "./CanvasService";
 import ShapesService from "./ShapesService";
 import SettingsService from "./SettingsService";
 
@@ -9,12 +9,12 @@ export default class FirebaseService {
     this.firebaseDeserializer = new FirebaseDeserializer();
   }
 
-  get serializedCanvasObjectsCollection() {
-    return this.firebaseSerializer.getCanvasObjectsCollection();
+  getSerializedCanvasObjectsCollection(canvas) {
+    return this.firebaseSerializer.getCanvasObjectsCollection(canvas);
   }
 
-  deserializeCanvasObjectsCollection(collection) {
-    this.firebaseDeserializer.restoreCanvas(collection);
+  deserializeCanvasObjectsCollection(collection, canvas) {
+    this.firebaseDeserializer.restoreCanvas(collection, canvas);
   }
 }
 
@@ -22,11 +22,17 @@ export default class FirebaseService {
 
 
 class FirebaseSerializer {
-  constructor() { }
+  constructor() {}
 
   getVertexPropsForSerialization(vertex) {
-    let { top, left } = vertex,
-      { name, type, lines } = vertex.customProps;
+    let {
+      top,
+      left
+    } = vertex, {
+      name,
+      type,
+      lines
+    } = vertex.customProps;
 
     lines.forEach((line, index) => {
       lines[index] = line.customProps.name
@@ -34,41 +40,68 @@ class FirebaseSerializer {
 
     return {
       customProps: {
-        name, type, lines
+        name,
+        type,
+        lines
       },
       helperProps: {
-        top, left
+        top,
+        left
       }
     };
   }
 
   getLinePropsForSerialization(line) {
-    let { x1, x2, y1, y2 } = line,
-      { label, name, type, vertex } = line.customProps;
+    let {
+      x1,
+      x2,
+      y1,
+      y2
+    } = line, {
+      label,
+      name,
+      type,
+      vertex
+    } = line.customProps;
 
     label = label.customProps.name;
     vertex.from.link = vertex.to.link = null;
 
     return {
       customProps: {
-        label, name, type, vertex
+        label,
+        name,
+        type,
+        vertex
       },
       helperProps: {
-        x1, x2, y1, y2
+        x1,
+        x2,
+        y1,
+        y2
       }
     };
   }
 
   getLabelPropsForSerialization(label) {
-    let { top, left } = label,
-      { name, type, weight } = label.customProps;
+    let {
+      top,
+      left
+    } = label, {
+      name,
+      type,
+      weight
+    } = label.customProps;
 
     return {
       customProps: {
-        name, type, weight
+        name,
+        type,
+        weight
       },
       helperProps: {
-        top, left
+        top,
+        left
       }
     };
   }
@@ -90,12 +123,13 @@ class FirebaseSerializer {
     }
   }
 
-  getCanvasObjectsCollection() {
-    let canvas = CanvasService.getCanvas(),
-      canvasObjectsCollection = [];
+  getCanvasObjectsCollection(canvas) {
+    let canvasObjectsCollection = [];
 
     canvas._objects.forEach((serializedObject) => {
-      let { type } = serializedObject.customProps;
+      let {
+        type
+      } = serializedObject.customProps;
 
       canvasObjectsCollection.push(this.getSerializedObjectByType(type, serializedObject));
     });
@@ -110,26 +144,43 @@ class FirebaseDeserializer {
     this.shapesService = new ShapesService();
   }
 
-  restoreVertices(vertices) {
+  restoreVertices(vertices, canvas) {
     console.log(vertices);
 
     vertices.forEach((vertex) => {
-      let { left, top } = vertex.helperProps,
-        { name } = vertex.customProps;
+      let {
+        left,
+        top
+      } = vertex.helperProps, {
+        name
+      } = vertex.customProps;
 
-      CanvasService.getCanvas().add(
-        this.shapesService.createVertex({ left, top, name, lines: [] })
+      canvas.add(
+        this.shapesService.createVertex({
+          left,
+          top,
+          name,
+          lines: []
+        })
       );
     });
 
     SettingsService.shapesCounter = vertices.length;
   }
 
-  restoreLines(lines) {
+  restoreLines(lines, canvas) {
     console.log(lines);
     lines.forEach((line) => {
-      let { x1, x2, y1, y2 } = line.helperProps,
-        { name, label, vertex } = line.customProps;
+      let {
+        x1,
+        x2,
+        y1,
+        y2
+      } = line.helperProps, {
+        name,
+        label,
+        vertex
+      } = line.customProps;
 
       let restoredLine = this.shapesService.createLine({
         isCustom: true,
@@ -142,52 +193,59 @@ class FirebaseDeserializer {
         label: null
       });
 
-      CanvasService.getCanvas().add(restoredLine);
+      canvas.add(restoredLine);
 
-      CanvasService.getCanvas().sendToBack(restoredLine);
+      canvas.sendToBack(restoredLine);
     });
 
     SettingsService.lineCounter = lines.length;
   }
 
-  restoreLabels(labels) {
+  restoreLabels(labels, canvas) {
     console.log(labels);
 
     labels.forEach((label) => {
-      let { left, top } = label.helperProps,
-        { name, weight } = label.customProps;
+      let {
+        left,
+        top
+      } = label.helperProps, {
+        name,
+        weight
+      } = label.customProps;
 
-      CanvasService.getCanvas().add(
-        this.shapesService.createLabel({ left, top, name, weight })
+      canvas.add(
+        this.shapesService.createLabel({
+          left,
+          top,
+          name,
+          weight
+        })
       );
     });
   }
 
-  restoreLinks() {
-    let canvasObjects = CanvasService.getCanvas()._objects;
+  restoreLinks(canvas) {
+    let canvasObjects = canvas._objects;
 
     canvasObjects.forEach((item) => {
       if (item && item.customProps && item.customProps.type == "vertex") {
         canvasObjects.forEach((linkItem) => {
-          if (linkItem && linkItem.customProps && linkItem.customProps.type == "line"
-            && (linkItem.customProps.vertex.from.name == item.customProps.name
-              || linkItem.customProps.vertex.to.name == item.customProps.name)) {
+          if (linkItem && linkItem.customProps && linkItem.customProps.type == "line" &&
+            (linkItem.customProps.vertex.from.name == item.customProps.name ||
+              linkItem.customProps.vertex.to.name == item.customProps.name)) {
             item.customProps.lines.push(linkItem);
           }
         });
-      }
-      else if (item && item.customProps && item.customProps.type == "line") {
+      } else if (item && item.customProps && item.customProps.type == "line") {
         canvasObjects.forEach((linkItem) => {
-          if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex"
-            && (item.customProps.vertex.from.name == linkItem.customProps.name)) {
+          if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex" &&
+            (item.customProps.vertex.from.name == linkItem.customProps.name)) {
             item.customProps.vertex.from.link = linkItem;
-          }
-          else if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex"
-            && (item.customProps.vertex.to.name == linkItem.customProps.name)) {
+          } else if (linkItem && linkItem.customProps && linkItem.customProps.type == "vertex" &&
+            (item.customProps.vertex.to.name == linkItem.customProps.name)) {
             item.customProps.vertex.to.link = linkItem;
-          }
-          else if (linkItem && linkItem.customProps && linkItem.customProps.type == "label"
-            && (item.customProps.name == linkItem.customProps.name)) {
+          } else if (linkItem && linkItem.customProps && linkItem.customProps.type == "label" &&
+            (item.customProps.name == linkItem.customProps.name)) {
             item.customProps.label = linkItem;
           }
 
@@ -198,19 +256,19 @@ class FirebaseDeserializer {
 
   filterCollectionByType(type, collection) {
     return collection.filter((item) => {
-      return item
-        && item.customProps
-        && item.customProps.type
-        && item.customProps.type == type;
+      return item &&
+        item.customProps &&
+        item.customProps.type &&
+        item.customProps.type == type;
     });
   }
 
-  restoreCanvas(collection) {
+  restoreCanvas(collection, canvas) {
     if (collection && collection.length) {
-      this.restoreVertices(this.filterCollectionByType("vertex", collection));
-      this.restoreLines(this.filterCollectionByType("line", collection));
-      this.restoreLabels(this.filterCollectionByType("label", collection));
-      this.restoreLinks();
+      this.restoreVertices(this.filterCollectionByType("vertex", collection), canvas);
+      this.restoreLines(this.filterCollectionByType("line", collection), canvas);
+      this.restoreLabels(this.filterCollectionByType("label", collection), canvas);
+      this.restoreLinks(canvas);
     }
   }
 

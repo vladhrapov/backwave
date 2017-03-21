@@ -11,7 +11,7 @@ import * as SettingsActions from "../../../actions/SettingsActions";
 import Tools from "../Tools/Tools.jsx";
 
 // Services
-import CanvasService from "../../../services/CanvasService";
+// import CanvasService from "../../../services/CanvasService";
 
 // Styles
 import "./assets/_styles.scss";
@@ -44,9 +44,9 @@ export default class Canvas extends React.Component {
   }
 
   handleDblClick = (event) => {
-    let { settings, settingsActions } = this.props,
+    let { settings, settingsActions, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
-      activeObject = CanvasService.getCanvas().getActiveObject();
+      activeObject = canvasSrv.getCanvas().getActiveObject();
 
     if (this.isActiveObjectHasCustomProps(activeObject) && activeObject.customProps.type == "label") {
       settingsActions.toggleDialog({ isDialogOpened, dialogType: "label" });
@@ -65,7 +65,7 @@ export default class Canvas extends React.Component {
         </Tabs>
         <Tabs className="tab-settings" value={"settings"}>
           <Tab label="Settings" value="settings">
-            <Tools />
+            <Tools canvasSrv={this.props.canvasSrv} />
           </Tab>
         </Tabs>
       </div>

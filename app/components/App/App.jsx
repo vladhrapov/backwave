@@ -21,6 +21,7 @@ class App extends React.Component {
     super(props);
     this.firebaseService = new FirebaseService();
     this.settingsService = new SettingsService();
+    this.canvasSrv = new CanvasService();
   }
 
   componentWillMount() {
@@ -38,6 +39,10 @@ class App extends React.Component {
 
 
   render() {
+    let children = React.Children.map(this.props.children, child => {
+      return React.cloneElement(child, { canvasSrv: this.canvasSrv });
+    });
+
     return (
       <div>
         <Header
@@ -46,12 +51,14 @@ class App extends React.Component {
           handleSaveClick={this.handleSaveClick}
           handleRemoveClick={this.handleRemoveClick}
           firebaseRef={firebaseRef}
+          canvasSrv={this.canvasSrv}
         />
         <LeftDrawer />
-        {this.props.children}
+        {children}
         <CustomDialog
           firebaseRef={firebaseRef}
           settingsService={this.settingsService}
+          canvasSrv={this.canvasSrv}
         />
       </div>
     );

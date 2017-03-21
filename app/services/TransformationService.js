@@ -1,5 +1,3 @@
-import CanvasService from "./CanvasService";
-
 export default class TransformationService {
   constructor() {}
 
@@ -8,12 +6,12 @@ export default class TransformationService {
       canvas._objects.length;
   }
 
-  transformCanvasToMatrix() {
-    let canvas = CanvasService.getCanvas(),
+  transformCanvasToMatrix(canvasSrv) {
+    let canvas = canvasSrv.getCanvas(),
       shapesCollection = canvas._objects,
       transformedMatrix = [];
 
-    console.log("vertex names: ", CanvasService.getVertexNames());
+    console.log("vertex names: ", canvasSrv.getVertexNames());
 
     if (this.isCanvasHasShapes(canvas)) {
       shapesCollection.forEach((shape) => {
@@ -22,7 +20,7 @@ export default class TransformationService {
           name,
           lines
         } = shape.customProps,
-          shapesTypeGroupCount = CanvasService.getShapeTypeGroupCount(),
+          shapesTypeGroupCount = canvasSrv.getShapeTypeGroupCount(),
           rowCollection = new Array(shapesTypeGroupCount.vertexCount);
 
         if (type == "vertex") {
@@ -80,8 +78,8 @@ export default class TransformationService {
     return transformedMatrix;
   }
 
-  getTransformedMatrixFromCanvas() {
-    return this.transformCanvasToMatrix();
+  getTransformedMatrixFromCanvas(canvasSrv) {
+    return this.transformCanvasToMatrix(canvasSrv);
   }
 
 

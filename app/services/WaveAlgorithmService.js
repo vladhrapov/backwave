@@ -35,7 +35,7 @@ export default class WaveAlgorithmService {
 
   resetStartingRoutesColumns() {
     this.matrix[this.startVertex].forEach((item, index) => {
-      if(item) {
+      if (item) {
         this.resetVertexColumn(index);
       }
     });
@@ -43,15 +43,17 @@ export default class WaveAlgorithmService {
 
   setStartingRoutes() {
     this.matrix[this.startVertex].forEach((item, index) => {
-      if(item) {
-        let { weight } = item;
+      if (item) {
+        let {
+          weight
+        } = item;
 
         this.path.push([{
           name: `A${this.startVertex + 1}`,
           weight: 0,
           index: this.startVertex
         }, {
-          name: "A" + (index + 1),// `A${index + 1}`,
+          name: "A" + (index + 1), // `A${index + 1}`,
           weight,
           index
         }]);
@@ -68,42 +70,55 @@ export default class WaveAlgorithmService {
 
     vertexCollection = tempPathCollection
       .sort((prevPath, nextPath) => {
-        let { linksCount: prevPathLinksCount } = prevPath[prevPath.length - 1],         
-            { linksCount: nextPathLinksCount } = nextPath[nextPath.length - 1];
+        let {
+          linksCount: prevPathLinksCount
+        } = prevPath[prevPath.length - 1], {
+          linksCount: nextPathLinksCount
+        } = nextPath[nextPath.length - 1];
 
         return prevPathLinksCount - nextPathLinksCount;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;           
+        if (!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;
 
-        let { linksCount: currentPathLinksCount } = currentPath[currentPath.length - 1];
+        let {
+          linksCount: currentPathLinksCount
+        } = currentPath[currentPath.length - 1];
 
         return firstPathLinksCount == currentPathLinksCount ? true : false;
       });
 
-    if(vertexCollection.length == 1) return vertexCollection[0];
-      
+    if (vertexCollection.length == 1) return vertexCollection[0];
+
     vertexCollection = vertexCollection
       .sort((prevPath, nextPath) => {
-        let { weight: prevPathWeight } = prevPath[prevPath.length - 1],         
-            { weight: nextPathWeight } = nextPath[nextPath.length - 1];
+        let {
+          weight: prevPathWeight
+        } = prevPath[prevPath.length - 1], {
+          weight: nextPathWeight
+        } = nextPath[nextPath.length - 1];
 
         return prevPathWeight - nextPathWeight;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathWeight = currentPath[currentPath.length - 1].weight;           
+        if (!index) firstPathWeight = currentPath[currentPath.length - 1].weight;
 
-        let { weight: currentPathWeight } = currentPath[currentPath.length - 1];
+        let {
+          weight: currentPathWeight
+        } = currentPath[currentPath.length - 1];
 
         return firstPathWeight == currentPathWeight ? true : false;
       });
 
-    if(vertexCollection.length == 1) return vertexCollection[0];
+    if (vertexCollection.length == 1) return vertexCollection[0];
 
     return vertexCollection
       .sort((prevPath, nextPath) => {
-        let { index: prevPathIndex } = prevPath[prevPath.length - 1],         
-            { index: nextPathIndex } = nextPath[nextPath.length - 1];
+        let {
+          index: prevPathIndex
+        } = prevPath[prevPath.length - 1], {
+          index: nextPathIndex
+        } = nextPath[nextPath.length - 1];
 
         return prevPathIndex - nextPathIndex;
       })[0];
@@ -112,10 +127,12 @@ export default class WaveAlgorithmService {
   getLinksCount(tempPath) {
     return tempPath.map((currentPath, i) => {
       let lastIndex = currentPath.length - 1,
-          { index } = currentPath[lastIndex];
+        {
+          index
+        } = currentPath[lastIndex];
 
       // tempPath[i][currentPath.length - 1].linksCount 
-      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length; 
+      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length;
 
       return currentPath;
     });
@@ -133,22 +150,24 @@ export default class WaveAlgorithmService {
 
     let isAlgorithmNotFinished = true;
 
-    while(!!isAlgorithmNotFinished) {
+    while (!!isAlgorithmNotFinished) {
       let tempPath = _.cloneDeep(this.path.filter((currentPath, index) => {
         return currentPath && !currentPath.hasOwnProperty("isFinished");
       }));
 
 
-      while(tempPath && tempPath.length) {
+      while (tempPath && tempPath.length) {
         tempPath = this.getLinksCount(tempPath);
         let nextVertex,
-            nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
+          nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
 
         // if the next vertex could be linked with finish vertex
         this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
-            if(rowItem && this.finishVertex == index) {
-              let { weight } = rowItem;
+            if (rowItem && this.finishVertex == index) {
+              let {
+                weight
+              } = rowItem;
 
               nextVertex = {
                 weight,
@@ -159,11 +178,13 @@ export default class WaveAlgorithmService {
           });
 
         // if not finish vertex get next vertex by weight
-        if(!nextVertex) {
+        if (!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
-              if(rowItem) {
-                let { weight } = rowItem;
+              if (rowItem) {
+                let {
+                  weight
+                } = rowItem;
 
                 return {
                   weight,
@@ -175,49 +196,47 @@ export default class WaveAlgorithmService {
             .sort((prev, next) => {
               return prev.weight - next.weight;
             });
-            
-  
-            nextVertex = nextVertex.filter((rowItem, index) => {
-              if(rowItem) return rowItem.weight == nextVertex[0].weight;
-            });
 
-            if(nextVertex.length == 1) {
-              nextVertex = nextVertex[0];
-            }
-            else {
-              nextVertex = nextVertex
-                .sort((prev, next) => {
-                  return prev.index - next.index;
-                })[0];
-            }
+
+          nextVertex = nextVertex.filter((rowItem, index) => {
+            if (rowItem) return rowItem.weight == nextVertex[0].weight;
+          });
+
+          if (nextVertex.length == 1) {
+            nextVertex = nextVertex[0];
+          } else {
+            nextVertex = nextVertex
+              .sort((prev, next) => {
+                return prev.index - next.index;
+              })[0];
+          }
         }
 
 
         // remove path that we went 
         tempPath = tempPath.filter((currentPath, index) => {
-          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;
         });
 
 
-        if(nextVertex && nextVertex.index) {
+        if (nextVertex && nextVertex.index) {
           this.path.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               this.path[index].push({
-                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
+                name: "A" + (nextVertex.index + 1), // `A${index + 1}`,
                 weight: nextVertex.weight,
                 index: nextVertex.index
               });
 
               // this.path[index].isComplete = true;
-              if(nextVertex.index == this.finishVertex) this.path[index].isFinished = true;
+              if (nextVertex.index == this.finishVertex) this.path[index].isFinished = true;
             }
           });
 
-          if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
-        }
-        else {
+          if (nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index);
+        } else {
           this.path.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               this.path[index].isFinished = false;
             }
           });
@@ -237,7 +256,7 @@ export default class WaveAlgorithmService {
           return path && !path.hasOwnProperty("isFinished");
         })
         .length;
-      
+
       console.log(this.path);
       console.log(this.matrix);
     }
@@ -245,7 +264,7 @@ export default class WaveAlgorithmService {
     console.log("==========ALGORITHM FINISHED=======")
     console.log(this.path);
     console.log(this.matrix);
-    
+
     return this.path;
   }
 
@@ -253,8 +272,8 @@ export default class WaveAlgorithmService {
     console.log(this.matrix);
   }
 
-  invoke() {
-    this.matrix = this.transformationService.getTransformedMatrixFromCanvas();
+  invoke(canvasSrv) {
+    this.matrix = this.transformationService.getTransformedMatrixFromCanvas(canvasSrv);
 
     if (!this.matrix || !this.matrix.length) return;
     console.clear();

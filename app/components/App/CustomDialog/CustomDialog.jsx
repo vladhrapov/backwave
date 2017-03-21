@@ -11,7 +11,6 @@ import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
-import CanvasService, { restoreCanvas, renderAll } from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
 import FirebaseService from "../../../services/FirebaseService";
 
@@ -63,11 +62,11 @@ export default class CustomDialog extends React.Component {
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    let { canvas, canvasActions, settingsActions, settings, settingsService } = this.props,
+    let { canvas, canvasActions, settingsActions, settings, settingsService, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
-    restoreCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
+    canvasSrv.restoreCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
     settingsService.disableConnectionMode();
     settingsService.enableMigrationMode();
 
@@ -87,12 +86,12 @@ export default class CustomDialog extends React.Component {
   }
 
   handleSaveCollectionDialogSubmit = () => {
-    let { canvas, canvasActions, settings, settingsActions } = this.props,
+    let { canvas, canvasActions, settings, settingsActions, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
     if (this.state.canvasName) {
-      let canvasObjects = this.firebaseService.serializedCanvasObjectsCollection;
+      let canvasObjects = this.firebaseService.getSerializedCanvasObjectsCollection(canvasSrv.getCanvas());
 
       canvasActions.saveCanvasToList({ name: this.state.canvasName, canvasObjects: canvasObjects });
       this.setState({ errorMessage: "" });
@@ -106,16 +105,16 @@ export default class CustomDialog extends React.Component {
 
   handleSaveWeightDialogSubmit = (event) => {
     let { lineWeight } = this.state,
-      { settings, settingsActions } = this.props,
+      { settings, settingsActions, canvasSrv } = this.props,
       isDialogOpened = settings.isDialogOpened,
       dialogType = settings.dialogType;
 
     if (/^\d+$/.test(lineWeight)) {
-      let canvas = CanvasService.getCanvas(),
+      let canvas = canvasSrv.getCanvas(),
         activeLabel = canvas.getActiveObject();
 
       activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
-      renderAll();
+      canvasSrv.renderAll();
       isDialogOpened = !settings.isDialogOpened;
       this.setState({ errorMessage: "" });
       this.setState({ lineWeight: "" });

@@ -12,23 +12,6 @@ import {
   firebaseRef
 } from "../constants/FirebaseConfig";
 
-export const refreshCanvas = () => {
-  if (CanvasService.getCanvas()._objects && CanvasService.getCanvas()._objects.length) {
-    CanvasService.getCanvas().clear();
-    SettingsService.shapesCounter = 0;
-    SettingsService.lineCounter = 0;
-  }
-}
-
-export const renderAll = () => {
-  CanvasService.getCanvas().renderAll();
-}
-
-export const restoreCanvas = (collection) => {
-  refreshCanvas();
-  new FirebaseService().deserializeCanvasObjectsCollection(collection);
-  renderAll();
-}
 
 export default class CanvasService {
   constructor() {}
@@ -49,12 +32,34 @@ export default class CanvasService {
     return this.canvas;
   }
 
-  static getShapeTypeGroupCount() {
+  getCanvas() {
+    return CanvasService.getCanvas();
+  }
+
+  renderAll() {
+    this.getCanvas().renderAll();
+  }
+
+  refreshCanvas() {
+    if (this.getCanvas()._objects && this.getCanvas()._objects.length) {
+      this.getCanvas().clear();
+      SettingsService.shapesCounter = 0;
+      SettingsService.lineCounter = 0;
+    }
+  }
+
+  restoreCanvas(collection) {
+    this.refreshCanvas();
+    new FirebaseService().deserializeCanvasObjectsCollection(collection, this.getCanvas());
+    this.renderAll();
+  }
+
+  getShapeTypeGroupCount() {
     let vertexCount = 0,
       lineCount = 0,
       labelCount = 0;
 
-    CanvasService.getCanvas()._objects.forEach((shape) => {
+    this.getCanvas()._objects.forEach((shape) => {
       let {
         type
       } = shape.customProps;
@@ -75,8 +80,8 @@ export default class CanvasService {
     };
   }
 
-  static getVertexNames() {
-    let shapes = CanvasService.getCanvas()._objects;
+  getVertexNames() {
+    let shapes = this.getCanvas()._objects;
 
     if (shapes) {
       return shapes
@@ -91,8 +96,10 @@ export default class CanvasService {
     return [];
   }
 
+
+
   refreshRoutes() {
-    CanvasService.getCanvas()._objects.forEach((shape) => {
+    this.getCanvas()._objects.forEach((shape) => {
       if (shape && shape.customProps.type == "line") {
         shape.fill = "#666";
         shape.stroke = "#666";
@@ -102,12 +109,12 @@ export default class CanvasService {
       }
     });
 
-    renderAll();
+    this.renderAll();
   }
 
 
-  static drawRoutes(routes, startVertex, finishVertex) {
-    let shapes = CanvasService.getCanvas()._objects;
+  drawRoutes(routes, startVertex, finishVertex) {
+    let shapes = this.getCanvas()._objects;
 
     if (shapes && shapes.length && routes && routes.length) {
       this.refreshRoutes();
@@ -146,7 +153,7 @@ export default class CanvasService {
                   // shape._objects[1].fill = "#372";
                   shape.set("fill", "rgb(27, 146, 42)"); //.fill = "#372";
                   shape._objects[1].fill = "#fff";
-                  // CanvasService.getCanvas().bringToFront(shape);
+                  // this.getCanvas().bringToFront(shape);
                 } else if (name == `A${finishVertex}`) {
                   shape.set("fill", "#234eae"); //.fill = "#372";
                   shape._objects[1].fill = "#fff";
@@ -189,7 +196,7 @@ export default class CanvasService {
       }
     }
 
-    renderAll();
+    this.renderAll();
   }
 
 }

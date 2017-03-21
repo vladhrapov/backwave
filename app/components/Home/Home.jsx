@@ -30,7 +30,7 @@ export default class Home extends React.Component {
   render() {
     return (
       <div>
-        <Canvas />
+        <Canvas canvasSrv={this.props.canvasSrv} />
       </div>
     );
   }

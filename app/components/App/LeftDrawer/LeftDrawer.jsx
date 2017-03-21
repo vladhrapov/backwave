@@ -45,7 +45,7 @@ export default class LeftDrawer extends React.Component {
 
   handleToggle = () => {
     let { settings, settingsActions } = this.props,
-        isDrawerOpened = !settings.isDrawerOpened;
+      isDrawerOpened = !settings.isDrawerOpened;
 
     settingsActions.toggleDrawer({ isDrawerOpened });
   }
@@ -79,7 +79,7 @@ export default class LeftDrawer extends React.Component {
         <AppBar
           title="Title"
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-          onLeftIconButtonTouchTap={this.handleToggle}/>
+          onLeftIconButtonTouchTap={this.handleToggle} />
         <MenuItem
           onClick={() => this.navigateTo("/")}
         >
@@ -103,23 +103,23 @@ export default class LeftDrawer extends React.Component {
             <MenuItem primaryText="lowercase" />,
             <MenuItem primaryText="CamelCase" />,
             <MenuItem primaryText="Propercase" />,
-          ]}/>
+          ]} />
         <Divider />
         <Checkbox
           label="Simple"
           className="checkbox"
-          />
+        />
         <Checkbox
           checkedIcon={<Visibility />}
           uncheckedIcon={<VisibilityOff />}
           label="Custom icon of different shapes"
           className="checkbox"
-          />
+        />
         <Checkbox
           label="Label on the left"
           labelPosition="left"
           className="checkbox"
-          />
+        />
         <Divider />
         <p>Some text</p>
         <p>Some text</p>

@@ -36,7 +36,7 @@ export default class BackwaveAlgorithmService {
 
   resetStartingRoutesColumns(startingRouteIndex) {
     this.matrix[startingRouteIndex].forEach((item, index) => {
-      if(item) {
+      if (item) {
         this.resetVertexColumn(index);
       }
     });
@@ -44,15 +44,17 @@ export default class BackwaveAlgorithmService {
 
   setStartingRoutes(startingRouteIndex, path) {
     this.matrix[startingRouteIndex].forEach((item, index) => {
-      if(item) {
-        let { weight } = item;
+      if (item) {
+        let {
+          weight
+        } = item;
 
         path.push([{
           name: `A${startingRouteIndex + 1}`,
           weight: 0,
           index: startingRouteIndex
         }, {
-          name: "A" + (index + 1),// `A${index + 1}`,
+          name: "A" + (index + 1), // `A${index + 1}`,
           weight,
           index
         }]);
@@ -69,42 +71,55 @@ export default class BackwaveAlgorithmService {
 
     vertexCollection = tempPathCollection
       .sort((prevPath, nextPath) => {
-        let { linksCount: prevPathLinksCount } = prevPath[prevPath.length - 1],         
-            { linksCount: nextPathLinksCount } = nextPath[nextPath.length - 1];
+        let {
+          linksCount: prevPathLinksCount
+        } = prevPath[prevPath.length - 1], {
+          linksCount: nextPathLinksCount
+        } = nextPath[nextPath.length - 1];
 
         return prevPathLinksCount - nextPathLinksCount;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;           
+        if (!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;
 
-        let { linksCount: currentPathLinksCount } = currentPath[currentPath.length - 1];
+        let {
+          linksCount: currentPathLinksCount
+        } = currentPath[currentPath.length - 1];
 
         return firstPathLinksCount == currentPathLinksCount ? true : false;
       });
 
-    if(vertexCollection.length == 1) return vertexCollection[0];
-      
+    if (vertexCollection.length == 1) return vertexCollection[0];
+
     vertexCollection = vertexCollection
       .sort((prevPath, nextPath) => {
-        let { weight: prevPathWeight } = prevPath[prevPath.length - 1],         
-            { weight: nextPathWeight } = nextPath[nextPath.length - 1];
+        let {
+          weight: prevPathWeight
+        } = prevPath[prevPath.length - 1], {
+          weight: nextPathWeight
+        } = nextPath[nextPath.length - 1];
 
         return prevPathWeight - nextPathWeight;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathWeight = currentPath[currentPath.length - 1].weight;           
+        if (!index) firstPathWeight = currentPath[currentPath.length - 1].weight;
 
-        let { weight: currentPathWeight } = currentPath[currentPath.length - 1];
+        let {
+          weight: currentPathWeight
+        } = currentPath[currentPath.length - 1];
 
         return firstPathWeight == currentPathWeight ? true : false;
       });
 
-    if(vertexCollection.length == 1) return vertexCollection[0];
+    if (vertexCollection.length == 1) return vertexCollection[0];
 
     return vertexCollection
       .sort((prevPath, nextPath) => {
-        let { index: prevPathIndex } = prevPath[prevPath.length - 1],         
-            { index: nextPathIndex } = nextPath[nextPath.length - 1];
+        let {
+          index: prevPathIndex
+        } = prevPath[prevPath.length - 1], {
+          index: nextPathIndex
+        } = nextPath[nextPath.length - 1];
 
         return prevPathIndex - nextPathIndex;
       })[0];
@@ -113,10 +128,12 @@ export default class BackwaveAlgorithmService {
   getLinksCount(tempPath) {
     return tempPath.map((currentPath, i) => {
       let lastIndex = currentPath.length - 1,
-          { index } = currentPath[lastIndex];
+        {
+          index
+        } = currentPath[lastIndex];
 
       // tempPath[i][currentPath.length - 1].linksCount 
-      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length; 
+      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length;
 
       return currentPath;
     });
@@ -138,16 +155,16 @@ export default class BackwaveAlgorithmService {
 
     let isAlgorithmNotFinished = true;
 
-    while(!!isAlgorithmNotFinished) {
+    while (!!isAlgorithmNotFinished) {
       let tempPath = _.cloneDeep(this.path1.filter((currentPath, index) => {
         return currentPath && !currentPath.hasOwnProperty("isFinished");
       }));
 
 
-      while(tempPath && tempPath.length) {
+      while (tempPath && tempPath.length) {
         tempPath = this.getLinksCount(tempPath);
         let nextVertex,
-            nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
+          nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
 
         // this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
         //   .forEach((rowItem, index) => {
@@ -163,16 +180,18 @@ export default class BackwaveAlgorithmService {
         //   });
         this.matrixCopy1[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
-            if(rowItem) {
+            if (rowItem) {
               this.path2.forEach((path, i) => {
-                if(index == path[path.length - 1].index) {
-                  let { weight } = rowItem;
+                if (index == path[path.length - 1].index) {
+                  let {
+                    weight
+                  } = rowItem;
 
                   nextVertex = {
-                      weight,
-                      index,
-                      name: "A" + (index + 1),
-                      linked: true
+                    weight,
+                    index,
+                    name: "A" + (index + 1),
+                    linked: true
                   }
 
                 }
@@ -180,12 +199,14 @@ export default class BackwaveAlgorithmService {
             }
           });
 
-        
-        if(!nextVertex) {
+
+        if (!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
-              if(rowItem) {
-                let { weight } = rowItem;
+              if (rowItem) {
+                let {
+                  weight
+                } = rowItem;
 
                 return {
                   weight,
@@ -198,33 +219,32 @@ export default class BackwaveAlgorithmService {
               return prev.weight - next.weight;
             });
 
-            nextVertex = nextVertex.filter((rowItem, index) => {
-              if(rowItem) return rowItem.weight == nextVertex[0].weight;
-            });
+          nextVertex = nextVertex.filter((rowItem, index) => {
+            if (rowItem) return rowItem.weight == nextVertex[0].weight;
+          });
 
-            if(nextVertex.length == 1) {
-              nextVertex = nextVertex[0];
-            }
-            else {
-              nextVertex = nextVertex
-                .sort((prev, next) => {
-                  return prev.index - next.index;
-                })[0];
-            }
+          if (nextVertex.length == 1) {
+            nextVertex = nextVertex[0];
+          } else {
+            nextVertex = nextVertex
+              .sort((prev, next) => {
+                return prev.index - next.index;
+              })[0];
+          }
         }
 
 
         tempPath = tempPath.filter((currentPath, index) => {
-          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;
         });
 
 
 
-        if(nextVertex && nextVertex.index) {
+        if (nextVertex && nextVertex.index) {
           this.path1.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               let tempVertexObj = {
-                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
+                name: "A" + (nextVertex.index + 1), // `A${index + 1}`,
                 weight: nextVertex.weight,
                 index: nextVertex.index
               };
@@ -235,13 +255,13 @@ export default class BackwaveAlgorithmService {
               // if(nextVertex.index == this.finishVertex) this.path1[index].isFinished = true;
 
               this.path2.forEach((currentPath, ind) => {
-                if(currentPath[currentPath.length - 1].index == tempVertexObj.index) {
+                if (currentPath[currentPath.length - 1].index == tempVertexObj.index) {
                   //this.path2[ind].push(tempVertexObj);
                   this.path1[index].isFinished = this.path2[ind].isFinished = true;
                 }
               });
 
-              this.resetVertexColumn(nextVertex.index); 
+              this.resetVertexColumn(nextVertex.index);
               this.matrixCopy1.forEach((item) => {
                 item[nextVertex.index] = null;
               });
@@ -250,16 +270,15 @@ export default class BackwaveAlgorithmService {
 
 
           // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
-        }
-        else {
+        } else {
           this.path1.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               this.path1[index].isFinished = false;
             }
           });
         }
 
-        
+
         // break;
       }
 
@@ -267,10 +286,10 @@ export default class BackwaveAlgorithmService {
         return currentPath && !currentPath.hasOwnProperty("isFinished");
       }));
 
-      while(tempPath && tempPath.length) {
-          tempPath = this.getLinksCount(tempPath);
+      while (tempPath && tempPath.length) {
+        tempPath = this.getLinksCount(tempPath);
         let nextVertex,
-            nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
+          nextVertexPath = this.getNextVertexPathFromPathes(tempPath);
 
         // this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
         //   .forEach((rowItem, index) => {
@@ -286,27 +305,31 @@ export default class BackwaveAlgorithmService {
         //   });
         this.matrixCopy[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
-            if(rowItem) {
+            if (rowItem) {
               this.path1.forEach((path, i) => {
-                if(index == path[path.length - 1].index) {
-                  let { weight } = rowItem;
+                if (index == path[path.length - 1].index) {
+                  let {
+                    weight
+                  } = rowItem;
 
                   nextVertex = {
-                      weight,
-                      index,
-                      name: "A" + (index + 1)
+                    weight,
+                    index,
+                    name: "A" + (index + 1)
                   }
                 }
               });
             }
           });
 
-        
-        if(!nextVertex) {
+
+        if (!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
-              if(rowItem) {
-                let { weight } = rowItem;
+              if (rowItem) {
+                let {
+                  weight
+                } = rowItem;
 
                 return {
                   weight,
@@ -319,34 +342,33 @@ export default class BackwaveAlgorithmService {
               return prev.weight - next.weight;
             });
 
-            nextVertex = nextVertex.filter((rowItem, index) => {
-              if(rowItem) return rowItem.weight == nextVertex[0].weight;
-            });
+          nextVertex = nextVertex.filter((rowItem, index) => {
+            if (rowItem) return rowItem.weight == nextVertex[0].weight;
+          });
 
-            if(nextVertex.length == 1) {
-              nextVertex = nextVertex[0];
-            }
-            else {
-              nextVertex = nextVertex
-                .sort((prev, next) => {
-                  return prev.index - next.index;
-                })[0];
-            }
+          if (nextVertex.length == 1) {
+            nextVertex = nextVertex[0];
+          } else {
+            nextVertex = nextVertex
+              .sort((prev, next) => {
+                return prev.index - next.index;
+              })[0];
+          }
         }
 
 
         tempPath = tempPath.filter((currentPath, index) => {
-          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;
         });
 
 
 
 
-        if(nextVertex && nextVertex.index) {
+        if (nextVertex && nextVertex.index) {
           this.path2.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               let tempVertexObj = {
-                name: "A" + (nextVertex.index + 1),// `A${index + 1}`,
+                name: "A" + (nextVertex.index + 1), // `A${index + 1}`,
                 weight: nextVertex.weight,
                 index: nextVertex.index
               };
@@ -357,7 +379,7 @@ export default class BackwaveAlgorithmService {
               // if(nextVertex.index == this.finishVertex) this.path2[index].isFinished = true;
 
               this.path1.forEach((currentPath, ind) => {
-                if(currentPath[currentPath.length - 1].index == tempVertexObj.index) {
+                if (currentPath[currentPath.length - 1].index == tempVertexObj.index) {
                   //this.path1[ind].push(tempVertexObj);
                   this.path2[index].isFinished = this.path1[ind].isFinished = true;
                 }
@@ -366,15 +388,14 @@ export default class BackwaveAlgorithmService {
               this.resetVertexColumn(nextVertex.index);
               this.matrixCopy.forEach((item) => {
                 item[nextVertex.index] = null;
-              }); 
+              });
             }
           });
 
           // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
-        }
-        else {
+        } else {
           this.path2.forEach((currentPath, index) => {
-            if(currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
+            if (currentPath[currentPath.length - 1].index == nextVertexPath[nextVertexPath.length - 1].index) {
               this.path2[index].isFinished = false;
             }
           });
@@ -388,14 +409,13 @@ export default class BackwaveAlgorithmService {
         .filter((path, index) => {
           return path && !path.hasOwnProperty("isFinished");
         })
-        .length
-        &&
+        .length &&
         this.path2
         .filter((path, index) => {
           return path && !path.hasOwnProperty("isFinished");
         })
         .length;
-      
+
       // isAlgorithmNotFinished = false;
       // console.log(this.path1);
       // console.log(this.path2);
@@ -407,7 +427,7 @@ export default class BackwaveAlgorithmService {
     console.log(this.path2);
     // console.log(this.matrix);
     console.log(this.concatRoutes());
-    
+
     return this.concatRoutes();
   }
 
@@ -422,12 +442,12 @@ export default class BackwaveAlgorithmService {
           return path1CurrentRoute[path1CurrentRoute.length - 1].index == path2CurrentRoute[path2CurrentRoute.length - 1].index;
         })[0];
 
-      if(linkedRoute) {
+      if (linkedRoute) {
         let fullRoute = _.cloneDeep(path1CurrentRoute);
-        
+
         fullRoute[fullRoute.length - 1].isCenter = true;
-        
-        for(let i = linkedRoute.length - 2; i >= 0; i--) {
+
+        for (let i = linkedRoute.length - 2; i >= 0; i--) {
           fullRoute.push(linkedRoute[i]);
         }
 
@@ -447,12 +467,12 @@ export default class BackwaveAlgorithmService {
           routePath2 = routePath2.reverse();
 
           for (let vrtxIndex in routePath2) {
-            console.log("FROM: ", routePath1[vertexIndex].name, " TO: ", routePath2[vrtxIndex].name); 
-            
-            if (routePath1[vertexIndex] 
-              && routePath1[vertexIndex].index 
-              && routePath2[vrtxIndex] 
-              && routePath2[vrtxIndex].index) {
+            console.log("FROM: ", routePath1[vertexIndex].name, " TO: ", routePath2[vrtxIndex].name);
+
+            if (routePath1[vertexIndex] &&
+              routePath1[vertexIndex].index &&
+              routePath2[vrtxIndex] &&
+              routePath2[vrtxIndex].index) {
               hasLink = !!this.matrixCopy[routePath1[vertexIndex].index][routePath2[vrtxIndex].index];
             }
             // .filter((mtrxRowItem, mrtxIndex) => {
@@ -461,8 +481,8 @@ export default class BackwaveAlgorithmService {
             //   }
             // }).length;
 
-            if(!!hasLink) {
-              console.log("TRUE: ",this.path1[routePath1Index], " from: ", 0," to: ", +vertexIndex + 1);
+            if (!!hasLink) {
+              console.log("TRUE: ", this.path1[routePath1Index], " from: ", 0, " to: ", +vertexIndex + 1);
               this.path1[routePath1Index] = this.path1[routePath1Index].slice(0, +vertexIndex + 1);
               break;
             }
@@ -473,7 +493,7 @@ export default class BackwaveAlgorithmService {
         });
 
         console.log("-------------PATH2 DONE----------", );
-        if(!!hasLink) break;
+        if (!!hasLink) break;
       }
 
       console.log("=========PATH1 DONE=========", );
@@ -487,8 +507,8 @@ export default class BackwaveAlgorithmService {
 
   }
 
-  invoke() {
-    this.matrix = this.transformationService.getTransformedMatrixFromCanvas();
+  invoke(canvasSrv) {
+    this.matrix = this.transformationService.getTransformedMatrixFromCanvas(canvasSrv);
     this.matrixCopy1 = _.cloneDeep(this.matrix);
     this.matrixCopy = _.cloneDeep(this.matrix);
 

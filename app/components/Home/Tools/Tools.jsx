@@ -10,7 +10,7 @@ import { Menu, MenuItem } from 'material-ui/Menu';
 import Chart from 'chart.js'
 
 // Services
-import CanvasService from "../../../services/CanvasService";
+// import CanvasService from "../../../services/CanvasService";
 import SettingsService from "../../../services/SettingsService";
 import TransformationService from "../../../services/TransformationService";
 import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
@@ -64,33 +64,37 @@ export default class Tools extends React.Component {
   // }
 
   handleWaveAlgorithmClick = () => {
-    let { vertexFrom, vertexTo } = this.state;
+    let { vertexFrom, vertexTo } = this.state,
+      { canvasSrv } = this.props;
     // let wa = new WaveAlgorithmService(1, 5);
     let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
-    this.waResult = wa.invoke();
+    this.waResult = wa.invoke(canvasSrv);
     console.clear();
     console.log(this.waResult);
-    CanvasService.drawRoutes(this.waResult, vertexFrom, vertexTo);
+    canvasSrv.drawRoutes(this.waResult, vertexFrom, vertexTo);
 
     this.routesInfo = this.settingsService.showRoutesInfo(this.waResult);
     this.setState({ isRoutesButtonDisabled: false });
   }
 
   handleBackWaveAlgorithmClick = () => {
-    let { vertexFrom, vertexTo } = this.state;
+    let { vertexFrom, vertexTo } = this.state,
+      { canvasSrv } = this.props;
     let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
-    this.bwaResult = bwa.invoke();
+    this.bwaResult = bwa.invoke(canvasSrv);
     // console.clear();
     console.log(this.bwaResult);
-    CanvasService.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
+    canvasSrv.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
     this.routesInfo = this.settingsService.showRoutesInfo(this.bwaResult);
     this.setState({ isRoutesButtonDisabled: false });
   }
 
   handleSelectVertexNameClick = (event, key, payload) => {
+    let { canvasSrv } = this.props;
+
     this.setState({
-      vertexNamesCollection: CanvasService.getVertexNames()
+      vertexNamesCollection: canvasSrv.getVertexNames()
     });
   }
 
@@ -122,17 +126,18 @@ export default class Tools extends React.Component {
   }
 
   handleReportsClick = () => {
-    let win = window.open("", "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1150, height=900, top=0, left=0");
+    let win = window.open("", "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1150, height=900, top=0, left=0"),
+      { canvasSrv } = this.props;
     win.document.body.innerHTML = "<h1 align='center'>Звіт</h1>";
     win.document.body.innerHTML += "<h2 align='center'>Знайдені маршрути</h2>";
     this.routesInfo.forEach((route, index) => {
       win.document.body.innerHTML += `<br /> ${index + 1})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
     });
 
-    win.document.body.innerHTML += `<div><img src="${CanvasService.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
+    win.document.body.innerHTML += `<div><img src="${canvasSrv.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
     win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="400" height="400" /></div>`;
     win.window.print();
-    // win.window.close();    
+    // win.window.close();
   }
 
   getIterations() {
