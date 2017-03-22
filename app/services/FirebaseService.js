@@ -1,6 +1,5 @@
 // import CanvasService from "./CanvasService";
 import ShapesService from "./ShapesService";
-import SettingsService from "./SettingsService";
 
 
 export default class FirebaseService {
@@ -165,7 +164,7 @@ class FirebaseDeserializer {
       );
     });
 
-    SettingsService.shapesCounter = vertices.length;
+    canvas.shapesCounter = vertices.length;
   }
 
   restoreLines(lines, canvas) {
@@ -198,7 +197,7 @@ class FirebaseDeserializer {
       canvas.sendToBack(restoredLine);
     });
 
-    SettingsService.lineCounter = lines.length;
+    canvas.lineCounter = lines.length;
   }
 
   restoreLabels(labels, canvas) {

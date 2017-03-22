@@ -7,8 +7,10 @@ export default class TransformationService {
   }
 
   transformCanvasToMatrix(canvasSrv) {
-    let canvas = canvasSrv.getCanvas(),
-      shapesCollection = canvas._objects,
+    let {
+      canvas
+    } = canvasSrv,
+    shapesCollection = canvas._objects,
       transformedMatrix = [];
 
     console.log("vertex names: ", canvasSrv.getVertexNames());

@@ -9,8 +9,6 @@ import ReactMixin from "react-mixin";
 
 // // Services
 // import FirebaseService from "../../services/FirebaseService";
-// import CanvasService from "../../services/CanvasService";
-// import SettingsService from "../../services/SettingsService";
 
 
 
@@ -39,5 +37,4 @@ export default class Charts extends React.Component {
 
         // <CustomDialog
         //   firebaseRef={this.firebaseRef}
-        //   settingsService={this.settingsService}
         // />

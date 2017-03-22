@@ -11,7 +11,6 @@ import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Services
-import SettingsService from "../../../services/SettingsService";
 import FirebaseService from "../../../services/FirebaseService";
 
 // Styles
@@ -62,25 +61,25 @@ export default class CustomDialog extends React.Component {
   }
 
   handleLoadCollectionDialogSubmit = (event) => {
-    let { canvas, canvasActions, settingsActions, settings, settingsService, canvasSrv } = this.props,
+    let { canvas, canvasActions, settingsActions, settings, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
     canvasSrv.restoreCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
-    settingsService.disableConnectionMode();
-    settingsService.enableMigrationMode();
+    canvasSrv.disableConnectionMode(canvasSrv.canvas);
+    canvasSrv.enableMigrationMode(canvasSrv.canvas);
 
     settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleRemoveCollectionDialogSubmit = () => {
-    let { canvas, canvasActions, settings, settingsActions, settingsService } = this.props,
+    let { canvas, canvasActions, settings, settingsActions, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
     canvasActions.removeCanvasFromList({ name: this.state.selectedRadio });
-    settingsService.disableConnectionMode();
-    settingsService.enableMigrationMode();
+    canvasSrv.disableConnectionMode(canvasSrv.canvas);
+    canvasSrv.enableMigrationMode(canvasSrv.canvas);
 
     settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
@@ -91,7 +90,7 @@ export default class CustomDialog extends React.Component {
       dialogType = settings.dialogType;
 
     if (this.state.canvasName) {
-      let canvasObjects = this.firebaseService.getSerializedCanvasObjectsCollection(canvasSrv.getCanvas());
+      let canvasObjects = this.firebaseService.getSerializedCanvasObjectsCollection(canvasSrv.canvas);
 
       canvasActions.saveCanvasToList({ name: this.state.canvasName, canvasObjects: canvasObjects });
       this.setState({ errorMessage: "" });
@@ -106,12 +105,12 @@ export default class CustomDialog extends React.Component {
   handleSaveWeightDialogSubmit = (event) => {
     let { lineWeight } = this.state,
       { settings, settingsActions, canvasSrv } = this.props,
+      { canvas } = canvasSrv.canvas,
       isDialogOpened = settings.isDialogOpened,
       dialogType = settings.dialogType;
 
     if (/^\d+$/.test(lineWeight)) {
-      let canvas = canvasSrv.getCanvas(),
-        activeLabel = canvas.getActiveObject();
+      let activeLabel = canvas.getActiveObject();
 
       activeLabel.text = activeLabel.customProps.weight = this.state.lineWeight;
       canvasSrv.renderAll();

@@ -46,7 +46,7 @@ export default class Canvas extends React.Component {
   handleDblClick = (event) => {
     let { settings, settingsActions, canvasSrv } = this.props,
       isDialogOpened = !settings.isDialogOpened,
-      activeObject = canvasSrv.getCanvas().getActiveObject();
+      activeObject = canvasSrv.canvas.getActiveObject();
 
     if (this.isActiveObjectHasCustomProps(activeObject) && activeObject.customProps.type == "label") {
       settingsActions.toggleDialog({ isDialogOpened, dialogType: "label" });

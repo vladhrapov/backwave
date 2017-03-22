@@ -10,7 +10,6 @@ import Canvas from "./Canvas/Canvas.jsx";
 // Services
 import FirebaseService from "../../services/FirebaseService";
 import CanvasService from "../../services/CanvasService";
-import SettingsService from "../../services/SettingsService";
 
 // Styles
 import "./assets/_styles.scss";

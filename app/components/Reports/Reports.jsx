@@ -14,8 +14,6 @@ import * as CanvasActions from "../../actions/CanvasActions";
 
 // // Services
 // import FirebaseService from "../../services/FirebaseService";
-// import CanvasService from "../../services/CanvasService";
-// import SettingsService from "../../services/SettingsService";
 
 
 function mapStateToProps(state, ownProps) {
@@ -59,5 +57,4 @@ export default class Reports extends React.Component {
 
         // <CustomDialog
         //   firebaseRef={this.firebaseRef}
-        //   settingsService={this.settingsService}
         // />

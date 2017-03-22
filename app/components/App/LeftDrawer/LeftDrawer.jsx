@@ -57,13 +57,13 @@ export default class LeftDrawer extends React.Component {
     // if(location == "/charts/") {
     //   canvasActions.saveCanvasReportInfo({
     //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-    //     image: CanvasService.getCanvas().toDataURL("image/png")
+    //     image: CanvasService.canvas.toDataURL("image/png")
     //   });
     // }
     // else if (location == "/reports/") {
     //   canvasActions.saveCanvasReportInfo({
     //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-    //     image: CanvasService.getCanvas().toDataURL("image/png")
+    //     image: CanvasService.canvas.toDataURL("image/png")
     //   });
     // }
     browserHistory.push(location);

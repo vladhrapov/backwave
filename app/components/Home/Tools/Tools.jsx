@@ -11,7 +11,6 @@ import Chart from 'chart.js'
 
 // Services
 // import CanvasService from "../../../services/CanvasService";
-import SettingsService from "../../../services/SettingsService";
 import TransformationService from "../../../services/TransformationService";
 import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
 import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService";
@@ -19,7 +18,6 @@ import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService
 export default class Tools extends React.Component {
   constructor(props) {
     super(props);
-    this.settingsService = new SettingsService();
   }
 
   state = {
@@ -38,23 +36,31 @@ export default class Tools extends React.Component {
   }
 
   handleAddButton = () => {
-    this.settingsService.addNewVertex();
+    let { canvasSrv } = this.props;
+
+    canvasSrv.addNewVertex(canvasSrv.canvas);
   }
 
   handleRemoveButton = () => {
-    this.settingsService.removeVertex();
+    let { canvasSrv } = this.props;
+
+    canvasSrv.removeVertex(canvasSrv.canvas);
   }
 
   handleMigrationMode = () => {
+    let { canvasSrv } = this.props;
+
     console.log("handleMigrationMode");
-    this.settingsService.disableConnectionMode();
-    this.settingsService.enableMigrationMode();
+    canvasSrv.disableConnectionMode(canvasSrv.canvas);
+    canvasSrv.enableMigrationMode(canvasSrv.canvas);
   }
 
   handleConnectionMode = () => {
+    let { canvasSrv } = this.props;
+
     console.log("handleConnectionMode");
-    this.settingsService.disableMigrationMode();
-    this.settingsService.enableConnectionMode();
+    canvasSrv.disableMigrationMode(canvasSrv.canvas);
+    canvasSrv.enableConnectionMode(canvasSrv.canvas);
   }
 
   // handleGetTransformedMatrix = () => {
@@ -73,7 +79,7 @@ export default class Tools extends React.Component {
     console.log(this.waResult);
     canvasSrv.drawRoutes(this.waResult, vertexFrom, vertexTo);
 
-    this.routesInfo = this.settingsService.showRoutesInfo(this.waResult);
+    this.routesInfo = canvasSrv.showRoutesInfo(this.waResult);
     this.setState({ isRoutesButtonDisabled: false });
   }
 
@@ -86,7 +92,7 @@ export default class Tools extends React.Component {
     console.log(this.bwaResult);
     canvasSrv.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
-    this.routesInfo = this.settingsService.showRoutesInfo(this.bwaResult);
+    this.routesInfo = canvasSrv.showRoutesInfo(this.bwaResult);
     this.setState({ isRoutesButtonDisabled: false });
   }
 
@@ -134,7 +140,7 @@ export default class Tools extends React.Component {
       win.document.body.innerHTML += `<br /> ${index + 1})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
     });
 
-    win.document.body.innerHTML += `<div><img src="${canvasSrv.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
+    win.document.body.innerHTML += `<div><img src="${canvasSrv.canvas.toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
     win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="400" height="400" /></div>`;
     win.window.print();
     // win.window.close();

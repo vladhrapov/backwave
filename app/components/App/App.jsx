@@ -10,7 +10,6 @@ import Header from "./Header/Header.jsx";
 // Services
 import FirebaseService from "../../services/FirebaseService";
 import CanvasService from "../../services/CanvasService";
-import SettingsService from "../../services/SettingsService";
 
 
 import { firebaseRef } from "../../constants/FirebaseConfig";
@@ -20,7 +19,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.firebaseService = new FirebaseService();
-    this.settingsService = new SettingsService();
     this.canvasSrv = new CanvasService();
   }
 
@@ -57,7 +55,6 @@ class App extends React.Component {
         {children}
         <CustomDialog
           firebaseRef={firebaseRef}
-          settingsService={this.settingsService}
           canvasSrv={this.canvasSrv}
         />
       </div>

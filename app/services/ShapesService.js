@@ -1,10 +1,16 @@
-import { fabric } from "fabric";
+import {
+  fabric
+} from "fabric";
 
 export default class ShapesService {
   constructor() {}
 
   createVertex(props) {
-    let { left, top, name } = props;
+    let {
+      left,
+      top,
+      name
+    } = props;
 
     let circle = new fabric.Circle({
       strokeWidth: 3,
@@ -21,7 +27,7 @@ export default class ShapesService {
       originY: 'center'
     });
 
-    return new fabric.Group([ circle, text ], {
+    return new fabric.Group([circle, text], {
       left,
       top,
       customProps: {
@@ -33,7 +39,12 @@ export default class ShapesService {
   }
 
   createLabel(props) {
-    let { left, top, name, weight } = props;
+    let {
+      left,
+      top,
+      name,
+      weight
+    } = props;
 
     return new fabric.Text(`${weight}`, {
       left,
@@ -50,10 +61,14 @@ export default class ShapesService {
   }
 
   createLine(props) {
-    let { isCustom } = props;
+    let {
+      isCustom
+    } = props;
 
     if (!isCustom) {
-      let { points } = props;
+      let {
+        points
+      } = props;
 
       return new fabric.Line(points, {
         strokeWidth: 2,
@@ -62,8 +77,7 @@ export default class ShapesService {
         originX: "center",
         originY: "center"
       });
-    }
-    else {
+    } else {
       let {
         points,
         name,

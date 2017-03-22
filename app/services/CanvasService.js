@@ -2,7 +2,7 @@ import {
   fabric
 } from "fabric";
 import FirebaseService from "./FirebaseService";
-import SettingsService from "./SettingsService";
+import ShapesService from "./ShapesService";
 
 // Constants
 import {
@@ -14,43 +14,48 @@ import {
 
 
 export default class CanvasService {
-  constructor() {}
+  constructor() {
+    this.shapesService = new ShapesService();
+  }
 
-  static getCanvas() {
-    if (this.canvas) {
-      return this.canvas;
+  // static canvas {
+
+  // }
+
+  get canvas() {
+    if (this._canvas) {
+      return this._canvas;
     }
 
-    this.canvas = new fabric.Canvas('canvas', {
+    this._canvas = new fabric.Canvas('canvas', {
       width: window.screen.width - 200,
       height: window.screen.height - 260,
       selectionColor: 'rgba(100, 100, 255, 0.3)',
       backgroundColor: 'white',
-      color: "black"
+      color: "black",
+      shapesCounter: 0,
+      lineCounter: 0
     });
 
-    return this.canvas;
-  }
-
-  getCanvas() {
-    return CanvasService.getCanvas();
+    return this._canvas;
+    // return CanvasService.canvas;
   }
 
   renderAll() {
-    this.getCanvas().renderAll();
+    this.canvas.renderAll();
   }
 
   refreshCanvas() {
-    if (this.getCanvas()._objects && this.getCanvas()._objects.length) {
-      this.getCanvas().clear();
-      SettingsService.shapesCounter = 0;
-      SettingsService.lineCounter = 0;
+    if (this.canvas._objects && this.canvas._objects.length) {
+      this.canvas.clear();
+      this.canvas.shapesCounter = 0;
+      this.canvas.lineCounter = 0;
     }
   }
 
   restoreCanvas(collection) {
     this.refreshCanvas();
-    new FirebaseService().deserializeCanvasObjectsCollection(collection, this.getCanvas());
+    new FirebaseService().deserializeCanvasObjectsCollection(collection, this.canvas);
     this.renderAll();
   }
 
@@ -59,7 +64,7 @@ export default class CanvasService {
       lineCount = 0,
       labelCount = 0;
 
-    this.getCanvas()._objects.forEach((shape) => {
+    this.canvas._objects.forEach((shape) => {
       let {
         type
       } = shape.customProps;
@@ -81,7 +86,7 @@ export default class CanvasService {
   }
 
   getVertexNames() {
-    let shapes = this.getCanvas()._objects;
+    let shapes = this.canvas._objects;
 
     if (shapes) {
       return shapes
@@ -99,7 +104,7 @@ export default class CanvasService {
 
 
   refreshRoutes() {
-    this.getCanvas()._objects.forEach((shape) => {
+    this.canvas._objects.forEach((shape) => {
       if (shape && shape.customProps.type == "line") {
         shape.fill = "#666";
         shape.stroke = "#666";
@@ -114,7 +119,7 @@ export default class CanvasService {
 
 
   drawRoutes(routes, startVertex, finishVertex) {
-    let shapes = this.getCanvas()._objects;
+    let shapes = this.canvas._objects;
 
     if (shapes && shapes.length && routes && routes.length) {
       this.refreshRoutes();
@@ -153,7 +158,7 @@ export default class CanvasService {
                   // shape._objects[1].fill = "#372";
                   shape.set("fill", "rgb(27, 146, 42)"); //.fill = "#372";
                   shape._objects[1].fill = "#fff";
-                  // this.getCanvas().bringToFront(shape);
+                  // this.canvas.bringToFront(shape);
                 } else if (name == `A${finishVertex}`) {
                   shape.set("fill", "#234eae"); //.fill = "#372";
                   shape._objects[1].fill = "#fff";
@@ -197,6 +202,229 @@ export default class CanvasService {
     }
 
     this.renderAll();
+  }
+
+
+  getRandomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+
+  addNewVertex(canvas) {
+    this.canvas.shapesCounter++;
+
+    let vertex = this.shapesService.createVertex({
+      left: this.getRandomInt(20, 700),
+      top: this.getRandomInt(20, 500),
+      name: `A${this.canvas.shapesCounter}`
+    });
+
+    this.setObjectMigration(vertex, false);
+
+    canvas.add(vertex);
+  }
+
+  removeVertex(canvas) {
+    if (canvas.getActiveObject() && canvas.getActiveObject()._objects.length > 1) {
+      // // for (let i = 0; i < canvas.getActiveObject()._objects.length; i++) {
+      // //   canvas.getActiveObject()._objects[i].remove();
+      // // }
+      // // canvas.getActiveObject().forEachObject(function(o){ canvas.remove(o) });
+      // // canvas.discardActiveGroup().renderAll();
+      // // } else {
+      // // canvas.remove(canvas.getActiveObject());
+      // // }
+      // var curSelectedObjects = canvas.getActiveObject();//canvas.getObjects(
+      //   canvas.setActiveGroup(curSelectedObjects).remove();//;//);
+      //
+      //   CanvasService.refreshCanvas();
+      //   //canvas.renderAll();
+      //   //canvas.clear();
+      //   canvas.renderAll.bind(canvas);
+      // console.log(curSelectedObjects);
+      // console.log(canvas);
+      canvas.remove(canvas.getActiveObject());
+    } else if (canvas.getActiveObject()) {
+      canvas.getActiveObject().remove();
+    } else {
+      for (let i = 0; i < canvas.getActiveGroup()._objects.length; i++) {
+        canvas.getActiveGroup()._objects[i].remove();
+      }
+    }
+  }
+
+  enableConnectionMode(canvas) {
+    let x1, y1, x2, y2, vertexFrom, vertexTo,
+      line, label, isDown;
+
+    canvas.on("mouse:down", (o) => {
+      let pointer = canvas.getPointer(o.e);
+      isDown = true;
+
+      if (o.target && o.target.type == "group") {
+        x1 = o.target.left + 30;
+        y1 = o.target.top + 30;
+        vertexFrom = o.target;
+        let points = [x1, y1, x1, y1];
+
+        line = this.shapesService.createLine({
+          isCustom: false,
+          points,
+        });
+
+        canvas.add(line);
+        canvas.sendToBack(line);
+      }
+    });
+
+    canvas.on("mouse:move", (o) => {
+      if (!isDown) return;
+      let pointer = canvas.getPointer(o.e);
+
+      line.set({
+        x2: pointer.x,
+        y2: pointer.y
+      });
+      canvas.renderAll();
+
+      if (o.target && o.target.type == "group") {
+        line.set({
+          x2: o.target.left + 30,
+          y2: o.target.top + 30
+        });
+        x2 = o.target.left + 30;
+        y2 = o.target.top + 30;
+        canvas.renderAll();
+      }
+    });
+
+    canvas.on("mouse:up", (o) => {
+      isDown = false;
+
+      if (o.target && o.target.type == "group") {
+        canvas.remove(line);
+        vertexTo = o.target;
+
+        this.canvas.lineCounter++;
+
+        label = this.shapesService.createLabel({
+          left: ((x1 + x2) / 2),
+          top: ((y1 + y2) / 2),
+          name: `Line${this.canvas.lineCounter}`,
+          weight: 1
+        });
+
+        line = this.shapesService.createLine({
+          isCustom: true,
+          points: [x1, y1, x2, y2],
+          name: `Line${this.canvas.lineCounter}`,
+          vertexFromName: vertexFrom.customProps.name,
+          vertexFromLink: vertexFrom,
+          vertexToName: vertexTo.customProps.name,
+          vertexToLink: vertexTo,
+          label
+        });
+
+        canvas.add(line);
+        canvas.add(label);
+        canvas.sendToBack(line);
+
+        line.customProps.vertex.from.link.customProps.lines.push(line);
+        line.customProps.vertex.to.link.customProps.lines.push(line);
+
+        canvas.renderAll();
+      } else {
+        canvas.remove(line);
+        canvas.renderAll();
+      }
+    });
+
+  }
+
+  disableConnectionMode(canvas) {
+    canvas.off("mouse:down");
+    canvas.off("mouse:move");
+    canvas.off("mouse:up");
+
+    canvas._objects.forEach((item) => {
+      this.setObjectMigration(item, false);
+    });
+  }
+
+  enableMigrationMode(canvas) {
+    canvas.on("object:moving", (o) => {
+      let {
+        left,
+        top,
+        type,
+        customProps,
+        ...props
+      } = o.target;
+
+      if (type && type == "group" && customProps && customProps.type == "vertex") {
+
+        customProps.lines.forEach((line) => {
+          if (line.customProps.vertex.from.name == o.target.customProps.name) {
+            line.set({
+              x1: (o.target.left + 30),
+              y1: (o.target.top + 30)
+            });
+            line.customProps.label.set({
+              left: ((line.x1 + line.x2) / 2),
+              top: ((line.y1 + line.y2) / 2),
+            });
+          } else {
+            line.set({
+              x2: (o.target.left + 30),
+              y2: (o.target.top + 30)
+            });
+            line.customProps.label.set({
+              left: ((line.x1 + line.x2) / 2),
+              top: ((line.y1 + line.y2) / 2)
+            });
+          }
+        });
+
+        canvas.renderAll();
+      }
+    });
+  }
+
+  disableMigrationMode(canvas) {
+    canvas._objects.forEach((item) => {
+      this.setObjectMigration(item, true);
+    });
+  }
+
+  setObjectMigration(obj, isEnabled) {
+    obj.lockScalingX = obj.lockScalingY = obj.lockRotation = obj.lockMovementX = obj.lockMovementY = isEnabled;
+    obj.selectable = !isEnabled;
+  }
+
+  showRoutesInfo(routes) {
+    return routes.map((path, i) => {
+      let pathInfo = {
+        vertices: "",
+        weight: 0
+      };
+
+      path.map((vertex, index) => {
+        let {
+          weight,
+          name
+        } = vertex;
+
+        pathInfo.weight += weight;
+
+        if (index == path.length - 1) {
+          pathInfo.vertices += `${name}`;
+          pathInfo.reliability = "0." + (this.getRandomInt(10, 30));
+          return pathInfo;
+        } else {
+          pathInfo.vertices += `${name} - `;
+        }
+
+      });
+
+      return pathInfo;
+    });
   }
 
 }
