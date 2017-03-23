@@ -96,6 +96,11 @@ export default class LeftDrawer extends React.Component {
           Reports
         </MenuItem>
         <MenuItem
+          onClick={() => this.navigateTo("/settings/")}
+        >
+          Settings
+        </MenuItem>
+        <MenuItem
           primaryText="Case Tools"
           rightIcon={<ArrowDropRight />}
           menuItems={[
