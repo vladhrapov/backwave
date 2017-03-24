@@ -53,6 +53,26 @@ export default class Canvas extends React.Component {
     }
   }
 
+  componentDidMount() {
+    let { canvas } = this.props.canvasSrv;
+
+    canvas.on('mouse:over', function (e) {
+      if (e.target && e.target.setFill) {
+        //e.target.setFill('red');
+        //canvas.renderAll();
+        console.log("HoVER####");
+      }
+    });
+
+    canvas.on('mouse:out', function (e) {
+      if (e.target && e.target.setFill) {
+        //e.target.setFill('white');
+        //canvas.renderAll();
+        console.log("OUT----------##");
+      }
+    });
+  }
+
   render() {
     return (
       <div>

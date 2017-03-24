@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
 import Toggle from 'material-ui/Toggle';
+import RaisedButton from 'material-ui/RaisedButton';
 
 const styles = {
   propContainer: {
@@ -12,6 +13,10 @@ const styles = {
   propToggleHeader: {
     margin: '20px auto 10px',
   },
+};
+
+const style = {
+  margin: 12,
 };
 
 const tableData = [
@@ -75,6 +80,10 @@ export default class Grid extends React.Component {
     this.setState({ height: event.target.value });
   };
 
+  handleAddNewDataType = () => {
+
+  }
+
   render() {
     return (
       <div>
@@ -90,16 +99,17 @@ export default class Grid extends React.Component {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              <TableHeaderColumn colSpan="3" tooltip="Super Header" style={{ textAlign: 'center' }}>
+              <TableHeaderColumn colSpan="5" tooltip="Super Header" style={{ textAlign: 'center' }}>
                 Super Header
               </TableHeaderColumn>
             </TableRow>
             <TableRow>
               <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The Name">Data type</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The Status">Minimum amount</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The Status">Maximum amount</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The Status">Packet color</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The data type name">Data type</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The minimum amount of the type of data">Minimum amount</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The maximum amount of the type of data">Maximum amount</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The color of the packet">Packet color</TableHeaderColumn>
+              <TableHeaderColumn colSpan="2"></TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
@@ -115,6 +125,10 @@ export default class Grid extends React.Component {
                 <TableRowColumn>{row.status}</TableRowColumn>
                 <TableRowColumn>{row.status}</TableRowColumn>
                 <TableRowColumn>{row.status}</TableRowColumn>
+                <TableRowColumn colSpan="2">
+                  <RaisedButton label="Edit" primary={true} style={style} />
+                  <RaisedButton label="Delete" primary={true} style={style} />
+                </TableRowColumn>
               </TableRow>
             ))}
           </TableBody>
@@ -122,11 +136,34 @@ export default class Grid extends React.Component {
             adjustForCheckbox={this.state.showCheckboxes}
           >
             <TableRow>
-              <TableRowColumn>ID</TableRowColumn>
-              <TableRowColumn>Name</TableRowColumn>
-              <TableRowColumn>Status</TableRowColumn>
-              <TableRowColumn>Status</TableRowColumn>
-              <TableRowColumn>Status</TableRowColumn>
+              <TableRowColumn>
+                <TextField
+                  hintText="Id"
+                />
+              </TableRowColumn>
+              <TableRowColumn>
+                <TextField
+                  hintText="Data type"
+                />
+              </TableRowColumn>
+              <TableRowColumn>
+                <TextField
+                  hintText="Minimum amount"
+                />
+              </TableRowColumn>
+              <TableRowColumn>
+                <TextField
+                  hintText="Maximum amount"
+                />
+              </TableRowColumn>
+              <TableRowColumn>
+                <TextField
+                  hintText="Packet color"
+                />
+              </TableRowColumn>
+              <TableRowColumn>
+                <RaisedButton label="Add" primary={true} style={style} onTouchTap={this.handleAddNewDataType} />
+              </TableRowColumn>
             </TableRow>
           </TableFooter>
         </Table>
