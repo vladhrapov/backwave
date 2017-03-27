@@ -41,17 +41,17 @@ export default class Settings extends Component {
             <BottomNavigationItem
               label="Data Types"
               icon={recentsIcon}
-              onTouchTap={(event) => this.select("data_types")}
+              onTouchTap={(event) => this.select("global")}
             />
             <BottomNavigationItem
               label="Favorites"
               icon={favoritesIcon}
-              onTouchTap={() => this.select("favourites")}
+              onTouchTap={() => this.select("data_types")}
             />
             <BottomNavigationItem
               label="Nearby"
               icon={nearbyIcon}
-              onTouchTap={(event) => this.select("nearby")}
+              onTouchTap={(event) => this.select("logger")}
             />
           </BottomNavigation>
         </Paper>
