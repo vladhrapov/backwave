@@ -22,22 +22,21 @@ export default class Settings extends Component {
   }
 
   state = {
-    selectedRoute: 0,
+    selectedIndex: 0,
   };
 
   select = (segment) => {
-    this.setState({ selectedRoute: segment });
+    this.setState({ selectedIndex: segment });
     browserHistory.push(`/settings/${segment}`);
   }
 
   render() {
     return (
       <div>
-        <div>HERE IS SETTINGS</div>
         {this.props.children}
 
         <Paper zDepth={1} className="bottom-navigation">
-          <BottomNavigation selectedRoute={this.state.selectedRoute}>
+          <BottomNavigation selectedIndex={this.state.selectedIndex}>
             <BottomNavigationItem
               label="Data Types"
               icon={recentsIcon}

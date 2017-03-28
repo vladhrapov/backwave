@@ -1,5 +1,6 @@
 import { loadCanvasListRequest, saveCanvasToListRequest, removeCanvasFromListRequest } from "./CanvasSaga";
 import { toggleDialogRequest, toggleDrawerRequest } from "./SettingsSaga";
+import { loadDataTypesRequest, addDataTypeRequest } from "./DataTypesSaga";
 
 export function* rootSaga() {
   yield [
@@ -7,6 +8,8 @@ export function* rootSaga() {
     saveCanvasToListRequest(),
     removeCanvasFromListRequest(),
     toggleDialogRequest(),
-    toggleDrawerRequest()
+    toggleDrawerRequest(),
+    loadDataTypesRequest(),
+    addDataTypeRequest()
   ]
 }

@@ -15,7 +15,6 @@ import Visibility from 'material-ui/svg-icons/action/visibility';
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 // Actions
-// import * as DrawerActions from "../../../actions/DrawerActions";
 import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
