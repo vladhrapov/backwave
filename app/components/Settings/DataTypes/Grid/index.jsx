@@ -8,6 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import * as DataTypesActions from "../../../../actions/DataTypesActions";
 
+import { orange500, blue500, cyan500 } from 'material-ui/styles/colors';
+
 const styles = {
   propContainer: {
     width: 200,
@@ -17,6 +19,18 @@ const styles = {
   propToggleHeader: {
     margin: '20px auto 10px',
   },
+  floatingLabelStyle: {
+    color: cyan500,
+  },
+  floatingLabelFocusStyle: {
+    color: cyan500,
+  },
+  widthAutoTextField: {
+    width: "100%"
+  },
+  rowTextCenter: {
+    textAlign: "center"
+  }
 };
 
 const style = {
@@ -56,27 +70,47 @@ export default class Grid extends React.Component {
       type: "",
       minAmount: "",
       maxAmount: "",
-      color: ""
+      color: "",
+      updatedTable: []
     };
   }
 
 
-  handleInputChange = (event) => {
-    let { name, value } = event.target;
+  // handleInputChange = (event) => {
+  //   let { name, value } = event.target;
 
-    this.setState({ [name]: value });
-    console.log("this.state::::", this.state);
-  };
+  //   this.setState({ [name]: value });
+  //   console.log("this.state::::", this.state);
+  // };
 
-  handleInputChange2 = (event, rowNum, editedFieldName, editedFieldValue) => {
-    let { name, value } = event.target;
+  setUpdatedTable(row, value, editedFieldName, editedFieldValue) {
+    let newRow = { ...row, [editedFieldName]: value },
+      rowToUpdate = this.state.updatedTable.filter(row => row.id == newRow.id);
 
-    let newRow = { ...rowNum, [editedFieldName]: editedFieldValue };
+    if (rowToUpdate.length) {
+      let newTable = [...this.state.updatedTable].map(row => {
+        if (row.id == newRow.id) return { ...newRow };
 
-    this.setState({ [name]: value });
-    console.log("this.state::::", this.state);
+        return row;
+      });
+
+      this.setState((prevState, props) => ({ updatedTable: [...newTable] }));
+    }
+    else {
+      this.setState((prevState, props) => ({ updatedTable: [...prevState.updatedTable, newRow] }));
+    }
 
     console.log("ROWNUM: ___ ", newRow);
+  }
+
+  handleTableCellUpdate = (event, row, editedFieldName, editedFieldValue) => {
+    let { name, value } = event.target;
+
+    this.setState({ [name]: value });
+
+    if (row && editedFieldName && editedFieldValue) {
+      this.setUpdatedTable(row, value, editedFieldName, editedFieldValue);
+    }
   }
 
   handleAddNewDataType = (event) => {
@@ -84,7 +118,7 @@ export default class Grid extends React.Component {
       { dataTypes, dataTypesActions } = this.props,
       id = +dataTypes[dataTypes.length - 1].id + 1;
 
-    this.setState((prevState, props) => ({ id: +dataTypes[dataTypes.length - 1].id + 1, type: "", minAmount: "", maxAmount: "", color: "" }));
+    this.setState((prevState, props) => ({ id: id + 1, type: "", minAmount: "", maxAmount: "", color: "" }));
     // this.setState({ id: "" });
 
     dataTypesActions.addDataType({ id, type, minAmount, maxAmount, color });
@@ -94,18 +128,23 @@ export default class Grid extends React.Component {
     console.log(`Row number clicked`, event.target, " -- ", rowNum);
   }
 
+  handleSaveClick = () => {
+    const { dataTypes, dataTypesActions } = this.props;
+
+    dataTypesActions.saveDataTypes([...this.state.updatedTable]);
+  }
+  
+  shouldComponentUpdate() {
+    console.log("shouldComponentUpdate::::this.state::::", this.state);
+    
+    return true;
+  }
+
   componentWillMount() {
     const { dataTypes, dataTypesActions } = this.props;
 
     dataTypesActions.loadDataTypes();
-
   }
-
-  // componentDidMount() {
-  //   const { dataTypes, dataTypesActions } = this.props;
-
-  //   this.setState((prevState, props) => ({ id: +dataTypes[dataTypes.length - 1].id + 2 }));
-  // }
 
   render() {
     return (
@@ -132,7 +171,7 @@ export default class Grid extends React.Component {
               <TableHeaderColumn tooltip="The minimum amount of the type of data">Minimum amount</TableHeaderColumn>
               <TableHeaderColumn tooltip="The maximum amount of the type of data">Maximum amount</TableHeaderColumn>
               <TableHeaderColumn tooltip="The color of the packet">Packet color</TableHeaderColumn>
-              <TableHeaderColumn colSpan="2"></TableHeaderColumn>
+              <TableHeaderColumn colSpan="2" style={styles.rowTextCenter}></TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
@@ -146,11 +185,43 @@ export default class Grid extends React.Component {
               //onTouchTap = {(event) => this.handleTableRowClick(event, row)}
               return (<TableRow key={index} >
                 <TableRowColumn>{index}</TableRowColumn>
-                <TableRowColumn colSpan="2">{row.type}</TableRowColumn>
-                <TableRowColumn><TextField name={`type_${index}`} value={this.state[`type_${index}`] || row.minAmount} onChange={(event) => this.handleInputChange2(event, row, "type", this.state[`type_${index}`])} /></TableRowColumn>
-                <TableRowColumn>{row.maxAmount}</TableRowColumn>
-                <TableRowColumn>{row.color}</TableRowColumn>
                 <TableRowColumn colSpan="2">
+                  <TextField
+                    name={`type_${index}`}
+                    value={this.state[`type_${index}`] || row.type}
+                    underlineShow={false}
+                    style={styles.widthAutoTextField}
+                    onChange={(event) => this.handleTableCellUpdate(event, row, "type", this.state[`type_${index}`])}
+                  />
+                </TableRowColumn>
+                <TableRowColumn>
+                  <TextField
+                    name={`minAmount_${index}`}
+                    value={this.state[`minAmount_${index}`] || row.minAmount}
+                    underlineShow={false}
+                    style={styles.widthAutoTextField}
+                    onChange={(event) => this.handleTableCellUpdate(event, row, "minAmount", this.state[`minAmount_${index}`])}
+                  />
+                  </TableRowColumn>
+                <TableRowColumn>
+                  <TextField
+                    name={`maxAmount_${index}`}
+                    value={this.state[`maxAmount_${index}`] || row.maxAmount}
+                    underlineShow={false}
+                    style={styles.widthAutoTextField}
+                    onChange={(event) => this.handleTableCellUpdate(event, row, "maxAmount", this.state[`maxAmount_${index}`])}
+                  />
+                </TableRowColumn>
+                <TableRowColumn>
+                  <TextField
+                    name={`color_${index}`}
+                    value={this.state[`color_${index}`] || row.color}
+                    underlineShow={false}
+                    style={styles.widthAutoTextField}
+                    onChange={(event) => this.handleTableCellUpdate(event, row, "color", this.state[`color_${index}`])}
+                  />
+                </TableRowColumn>
+                <TableRowColumn colSpan="2" style={styles.rowTextCenter}>
                   <RaisedButton label="Edit" primary={true} style={style} />
                   <RaisedButton label="Delete" primary={true} style={style} />
                 </TableRowColumn>
@@ -164,50 +235,64 @@ export default class Grid extends React.Component {
               <TableRowColumn>
                 <TextField
                   name="id"
-                  hintText="Id"
+                  floatingLabelText="Id"
                   disabled={true}
                   value={this.props.dataTypes.length}
-                  onChange={this.handleInputChange}
+                  onChange={(event) => this.handleTableCellUpdate(event)}
                 />
               </TableRowColumn>
-              <TableRowColumn>
+              <TableRowColumn colSpan="2">
                 <TextField
                   name="type"
-                  hintText="Data type"
+                  floatingLabelText="Data type"
+                  floatingLabelStyle={styles.floatingLabelStyle}
+                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+                  style={styles.widthAutoTextField}
                   value={this.state.type}
-                  onChange={this.handleInputChange}
+                  onChange={(event) => this.handleTableCellUpdate(event)}
                 />
               </TableRowColumn>
               <TableRowColumn>
                 <TextField
                   name="minAmount"
-                  hintText="Minimum amount"
+                  floatingLabelText="Minimum amount"
+                  floatingLabelStyle={styles.floatingLabelStyle}
+                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+                  style={styles.widthAutoTextField}
                   value={this.state.minAmount}
-                  onChange={this.handleInputChange}
+                  onChange={(event) => this.handleTableCellUpdate(event)}
                 />
               </TableRowColumn>
               <TableRowColumn>
                 <TextField
                   name="maxAmount"
-                  hintText="Maximum amount"
+                  floatingLabelText="Maximum amount"
+                  floatingLabelStyle={styles.floatingLabelStyle}
+                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+                  style={styles.widthAutoTextField}
                   value={this.state.maxAmount}
-                  onChange={this.handleInputChange}
+                  onChange={(event) => this.handleTableCellUpdate(event)}
                 />
               </TableRowColumn>
               <TableRowColumn>
                 <TextField
                   name="color"
-                  hintText="Packet color"
+                  floatingLabelText="Packet color"
+                  floatingLabelStyle={styles.floatingLabelStyle}
+                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+                  style={styles.widthAutoTextField}
                   value={this.state.color}
-                  onChange={this.handleInputChange}
+                  onChange={(event) => this.handleTableCellUpdate(event)}
                 />
               </TableRowColumn>
-              <TableRowColumn>
+              <TableRowColumn colSpan="2" style={styles.rowTextCenter}>
                 <RaisedButton label="Add" primary={true} style={style} onTouchTap={this.handleAddNewDataType} />
               </TableRowColumn>
             </TableRow>
           </TableFooter>
         </Table>
+        
+        <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
       </div>
     );
   }

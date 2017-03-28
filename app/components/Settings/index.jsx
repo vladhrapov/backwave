@@ -36,19 +36,19 @@ export default class Settings extends Component {
         {this.props.children}
 
         <Paper zDepth={1} className="bottom-navigation">
-          <BottomNavigation selectedIndex={this.state.selectedIndex}>
+          <BottomNavigation>
             <BottomNavigationItem
-              label="Data Types"
+              label="Global"
               icon={recentsIcon}
               onTouchTap={(event) => this.select("global")}
             />
             <BottomNavigationItem
-              label="Favorites"
+              label="Data types"
               icon={favoritesIcon}
               onTouchTap={() => this.select("data_types")}
             />
             <BottomNavigationItem
-              label="Nearby"
+              label="Logger"
               icon={nearbyIcon}
               onTouchTap={(event) => this.select("logger")}
             />

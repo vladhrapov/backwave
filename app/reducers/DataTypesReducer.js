@@ -12,6 +12,10 @@ export default function dataTypesReducer(state = initialState.dataTypes, action)
         ...state,
         { ...action.payload }
       ];
+    case "SAVE_DATA_TYPES_SUCCEEDED":
+      return [
+        ...action.payload
+      ];
     // case "REMOVE_CANVAS_FROM_LIST_SUCCEEDED":
     //   return [
     //     ...state.filter(canvas => canvas.key != action.payload.name)

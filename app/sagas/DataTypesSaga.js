@@ -1,6 +1,6 @@
 import { delay } from 'redux-saga';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { loadDataTypesApi, addDataTypeApi } from "../api/DataTypesApi";
+import { loadDataTypesApi, addDataTypeApi, saveDataTypesApi } from "../api/DataTypesApi";
 
 function* loadDataTypesAsync() {
   try {
@@ -30,4 +30,22 @@ function* addDataTypeAsync(action) {
 
 export function* addDataTypeRequest() {
   yield takeLatest("ADD_DATA_TYPE", addDataTypeAsync);
+}
+
+function* saveDataTypesAsync(action) {
+  console.clear();
+  try {
+    const { payload } = action;
+    console.log("payload saveDataTypesAsync ", payload);
+    const payloadWithOldDataTypes = yield call(loadDataTypesApi);
+    const data = yield call(saveDataTypesApi, payload, payloadWithOldDataTypes);
+    yield put({ type: "SAVE_DATA_TYPES_SUCCEEDED", payload: data });
+  }
+  catch (err) {
+
+  }
+}
+
+export function* saveDataTypesRequest() {
+  yield takeLatest("SAVE_DATA_TYPES", saveDataTypesAsync);
 }
