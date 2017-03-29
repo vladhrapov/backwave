@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
-import Toggle from 'material-ui/Toggle';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import * as DataTypesActions from "../../../../actions/DataTypesActions";
@@ -99,10 +98,10 @@ export default class Grid extends React.Component {
 
     dataTypesActions.saveDataTypes([...this.state.updatedTable]);
   }
-  
+
   shouldComponentUpdate() {
     console.log("shouldComponentUpdate::::this.state::::", this.state);
-    
+
     return true;
   }
 
@@ -121,7 +120,7 @@ export default class Grid extends React.Component {
           selectable={this.state.selectable}
           multiSelectable={this.state.multiSelectable}
         >
-          {Header({...this.state})}
+          {Header({ ...this.state })}
           <TableBody
             displayRowCheckbox={this.state.showCheckboxes}
             deselectOnClickaway={this.state.deselectOnClickaway}
@@ -150,7 +149,7 @@ export default class Grid extends React.Component {
                     style={styles.widthAutoTextField}
                     onChange={(event) => this.handleTableCellUpdate(event, row, "minAmount", this.state[`minAmount_${index}`])}
                   />
-                  </TableRowColumn>
+                </TableRowColumn>
                 <TableRowColumn>
                   <TextField
                     name={`maxAmount_${index}`}
@@ -169,16 +168,15 @@ export default class Grid extends React.Component {
                     onChange={(event) => this.handleTableCellUpdate(event, row, "color", this.state[`color_${index}`])}
                   />
                 </TableRowColumn>
-                <TableRowColumn colSpan="2" style={styles.rowTextCenter}>
-                  <RaisedButton label="Edit" primary={true} style={styles.buttonsMargin} />
+                <TableRowColumn style={styles.rowTextCenter}>
                   <RaisedButton label="Delete" primary={true} style={styles.buttonsMargin} />
                 </TableRowColumn>
               </TableRow>)
             })}
           </TableBody>
-          {Footer({...this.state, ...this.props}, { handleTableCellUpdate: this.handleTableCellUpdate, handleAddNewDataType: this.handleAddNewDataType })}
+          {Footer({ ...this.state, ...this.props }, { handleTableCellUpdate: this.handleTableCellUpdate, handleAddNewDataType: this.handleAddNewDataType })}
         </Table>
-        
+
         <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
       </div>
     );

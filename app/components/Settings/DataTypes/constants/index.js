@@ -32,7 +32,7 @@ export const headerRowData = [
       {
         tooltip: "Super Header",
         contentText: "Super Header",
-        colSpan: "8",
+        colSpan: "7",
         style: styles.rowTextCenter
       }
     ]
@@ -61,7 +61,6 @@ export const headerRowData = [
         contentText: "Packet color"
       },
       {
-        colSpan: "2",
         style: styles.rowTextCenter
       }
     ]
@@ -107,7 +106,6 @@ export const footerColumnData = [
     label: "Add",
     primary: true,
     style: styles.buttonsMargin,
-    columnStyle: styles.rowTextCenter,
-    colSpan: "2"
+    columnStyle: styles.rowTextCenter
   }
 ];

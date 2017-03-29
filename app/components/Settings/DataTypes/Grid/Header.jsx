@@ -3,23 +3,24 @@ import { TableHeader, TableHeaderColumn, TableRow } from 'material-ui/Table';
 
 import { styles, headerRowData } from "../constants";
 
-const renderHeaderColumn = (column) => {
+const renderHeaderColumn = (column, index) => {
   return (
     <TableHeaderColumn
+      key={index}
       colSpan={column.colSpan || "1"}
       tooltip={column.tooltip || ""}
       style={column.style || {}}
     >
-      {column.contentText}  
+      {column.contentText}
     </TableHeaderColumn>
   );
 };
 
 const renderRows = () => {
-  return headerRowData.columns.map((column, index) => {
+  return headerRowData.map((row, index) => {
     return (
       <TableRow key={index}>
-        {renderHeaderColumn(column)}
+        {row.columns.map((column, index) => renderHeaderColumn(column, index))}
       </TableRow>
     );
   });
