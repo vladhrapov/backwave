@@ -26,7 +26,7 @@ const renderRows = () => {
   });
 };
 
-export const Header = (props) => {
+export const renderHeader = (props) => {
   let { showCheckboxes, enableSelectAll } = props;
 
   return (

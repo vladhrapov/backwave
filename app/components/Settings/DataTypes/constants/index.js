@@ -70,38 +70,31 @@ export const headerRowData = [
 export const bodyColumnData = [
   {},
   {
-    colSpan: "2",
     name: "type",
-    value: "",
     underlineShow: false,
     style: styles.widthAutoTextField,
-    onChange: ""
+    colSpan: "2"
   },
   {
     name: "minAmount",
-    value: "",
     underlineShow: false,
-    style: styles.widthAutoTextField,
-    onChange: ""
+    style: styles.widthAutoTextField
   },
   {
     name: "maxAmount",
-    value: "",
     underlineShow: false,
-    style: styles.widthAutoTextField,
-    onChange: ""
+    style: styles.widthAutoTextField
   },
   {
     name: "color",
-    value: "",
     underlineShow: false,
-    style: styles.widthAutoTextField,
-    onChange: ""
+    style: styles.widthAutoTextField
   },
   {
     label: "Delete",
     primary: true,
-    style: styles.buttonsMargin
+    style: styles.buttonsMargin,
+    columnStyle: styles.rowTextCenter
   }
 ];
 

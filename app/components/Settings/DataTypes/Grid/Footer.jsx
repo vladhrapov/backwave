@@ -53,7 +53,7 @@ const renderRowColumns = (props, callbacks) => {
   });
 };
 
-export const Footer = (props, callbacks) => {
+export const renderFooter = (props, callbacks) => {
   const { showCheckboxes } = props;
 
   return (

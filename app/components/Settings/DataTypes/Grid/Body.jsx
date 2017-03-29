@@ -30,7 +30,7 @@ const renderRowColumnContent = (props, callbacks, row, rowIndex, column, index) 
       style={column.style}
     />
   );
-}
+};
 
 const renderRowColumns = (props, callbacks, row, rowIndex) => {
   return bodyColumnData.map((column, index) => {
@@ -38,29 +38,29 @@ const renderRowColumns = (props, callbacks, row, rowIndex) => {
       <TableRowColumn
         key={index}
         colSpan={column.colSpan || "1"}
+        style={column.columnStyle || {}}
       >
         {renderRowColumnContent(props, callbacks, row, rowIndex, column, index)}
       </TableRowColumn>
     );
   });
-}
+};
 
 const renderRows = (props, callbacks) => {
-  return props.dataTypes.map((row, index) => {
-    if (!row) return;
+  return props.dataTypes
+    .filter(row => !!row)
+    .map((row, index) => {
+      if (!row) return;
 
-    return (
-      <TableRow key={index} >
-        {renderRowColumns(props, callbacks, row, index)}
-        <TableRowColumn style={styles.rowTextCenter}>
+      return (
+        <TableRow key={index} >
+          {renderRowColumns(props, callbacks, row, index)}
+        </TableRow>
+      );
+    });
+};
 
-        </TableRowColumn>
-      </TableRow>
-    );
-  });
-}
-
-export const Body = (props, callbacks) => {
+export const renderBody = (props, callbacks) => {
   const {
     showCheckboxes,
     deselectOnClickaway,
@@ -78,44 +78,4 @@ export const Body = (props, callbacks) => {
       {renderRows(props, callbacks)}
     </TableBody>
   );
-}
-
-
-/*
-<TableRowColumn>{index}</TableRowColumn>
-  <TableRowColumn colSpan="2">
-    <TextField
-      name={`type_${index}`}
-      value={props[`type_${index}`] || row.type}
-      underlineShow={false}
-      style={styles.widthAutoTextField}
-      onChange={(event) => handleTableCellUpdate(event, row, "type", props[`type_${index}`])}
-    />
-  </TableRowColumn>
-  <TableRowColumn>
-    <TextField
-      name={`minAmount_${index}`}
-      value={props[`minAmount_${index}`] || row.minAmount}
-      underlineShow={false}
-      style={styles.widthAutoTextField}
-      onChange={(event) => handleTableCellUpdate(event, row, "minAmount", props[`minAmount_${index}`])}
-    />
-  </TableRowColumn>
-  <TableRowColumn>
-    <TextField
-      name={`maxAmount_${index}`}
-      value={props[`maxAmount_${index}`] || row.maxAmount}
-      underlineShow={false}
-      style={styles.widthAutoTextField}
-      onChange={(event) => handleTableCellUpdate(event, row, "maxAmount", props[`maxAmount_${index}`])}
-    />
-  </TableRowColumn>
-  <TableRowColumn>
-    <TextField
-      name={`color_${index}`}
-      value={props[`color_${index}`] || row.color}
-      underlineShow={false}
-      style={styles.widthAutoTextField}
-      onChange={(event) => handleTableCellUpdate(event, row, "color", props[`color_${index}`])}
-    />
-  </TableRowColumn>*/
+};
