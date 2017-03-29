@@ -55,61 +55,55 @@ export default class Grid extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      fixedHeader: true,
-      stripedRows: false,
-      showRowHover: false,
-      selectable: false,
-      multiSelectable: false,
-      enableSelectAll: false,
-      deselectOnClickaway: true,
-      showCheckboxes: false,
-      height: '60vh',
-
-      id: "",
-      type: "",
-      minAmount: "",
-      maxAmount: "",
-      color: "",
-      updatedTable: []
-    };
   }
 
+  state = {
+    fixedHeader: true,
+    stripedRows: false,
+    showRowHover: false,
+    selectable: false,
+    multiSelectable: false,
+    enableSelectAll: false,
+    deselectOnClickaway: true,
+    showCheckboxes: false,
+    height: '60vh',
 
-  // handleInputChange = (event) => {
-  //   let { name, value } = event.target;
-
-  //   this.setState({ [name]: value });
-  //   console.log("this.state::::", this.state);
-  // };
-
-  setUpdatedTable(row, value, editedFieldName, editedFieldValue) {
-    let newRow = { ...row, [editedFieldName]: value },
-      rowToUpdate = this.state.updatedTable.filter(row => row.id == newRow.id);
-
-    if (rowToUpdate.length) {
-      let newTable = [...this.state.updatedTable].map(row => {
-        if (row.id == newRow.id) return { ...newRow };
-
-        return row;
-      });
-
-      this.setState((prevState, props) => ({ updatedTable: [...newTable] }));
-    }
-    else {
-      this.setState((prevState, props) => ({ updatedTable: [...prevState.updatedTable, newRow] }));
-    }
-
-    console.log("ROWNUM: ___ ", newRow);
-  }
+    id: "",
+    type: "",
+    minAmount: "",
+    maxAmount: "",
+    color: "",
+    updatedTable: []
+  };
 
   handleTableCellUpdate = (event, row, editedFieldName, editedFieldValue) => {
     let { name, value } = event.target;
 
     this.setState({ [name]: value });
 
-    if (row && editedFieldName && editedFieldValue) {
+    if (row) {
       this.setUpdatedTable(row, value, editedFieldName, editedFieldValue);
+    }
+  }
+
+  setUpdatedTable(row, value, editedFieldName, editedFieldValue) {
+    let rowToUpdate = this.state.updatedTable.filter(utrow => utrow.id == row.id);
+
+    if (rowToUpdate.length) {
+      let newTable = [...this.state.updatedTable].map(utrow => {
+        if (utrow.id == row.id) return { ...utrow, [editedFieldName]: value };
+
+        return utrow;
+      });
+
+      this.setState((prevState, props) => ({ updatedTable: [...newTable] }));
+      console.log("TABLENEW: ___ ", newTable);
+    }
+    else {
+      let newRow = { ...row, [editedFieldName]: value };
+
+      this.setState((prevState, props) => ({ updatedTable: [...prevState.updatedTable, newRow] }));
+      console.log("NEWROW: ___ ", newRow);
     }
   }
 
@@ -119,13 +113,8 @@ export default class Grid extends React.Component {
       id = +dataTypes[dataTypes.length - 1].id + 1;
 
     this.setState((prevState, props) => ({ id: id + 1, type: "", minAmount: "", maxAmount: "", color: "" }));
-    // this.setState({ id: "" });
 
     dataTypesActions.addDataType({ id, type, minAmount, maxAmount, color });
-  }
-
-  handleTableRowClick = (event, rowNum) => {
-    console.log(`Row number clicked`, event.target, " -- ", rowNum);
   }
 
   handleSaveClick = () => {
@@ -182,7 +171,7 @@ export default class Grid extends React.Component {
           >
             {this.props.dataTypes.map((row, index) => {
               if (!row) return;
-              //onTouchTap = {(event) => this.handleTableRowClick(event, row)}
+
               return (<TableRow key={index} >
                 <TableRowColumn>{index}</TableRowColumn>
                 <TableRowColumn colSpan="2">
