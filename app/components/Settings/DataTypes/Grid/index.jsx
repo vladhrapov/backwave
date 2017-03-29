@@ -8,6 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import * as DataTypesActions from "../../../../actions/DataTypesActions";
 
 import { Header } from "./Header";
+import { Body } from "./Body";
 import { Footer } from "./Footer";
 
 import { styles } from "../constants";
@@ -121,59 +122,7 @@ export default class Grid extends React.Component {
           multiSelectable={this.state.multiSelectable}
         >
           {Header({ ...this.state })}
-          <TableBody
-            displayRowCheckbox={this.state.showCheckboxes}
-            deselectOnClickaway={this.state.deselectOnClickaway}
-            showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}
-          >
-            {this.props.dataTypes.map((row, index) => {
-              if (!row) return;
-
-              return (<TableRow key={index} >
-                <TableRowColumn>{index}</TableRowColumn>
-                <TableRowColumn colSpan="2">
-                  <TextField
-                    name={`type_${index}`}
-                    value={this.state[`type_${index}`] || row.type}
-                    underlineShow={false}
-                    style={styles.widthAutoTextField}
-                    onChange={(event) => this.handleTableCellUpdate(event, row, "type", this.state[`type_${index}`])}
-                  />
-                </TableRowColumn>
-                <TableRowColumn>
-                  <TextField
-                    name={`minAmount_${index}`}
-                    value={this.state[`minAmount_${index}`] || row.minAmount}
-                    underlineShow={false}
-                    style={styles.widthAutoTextField}
-                    onChange={(event) => this.handleTableCellUpdate(event, row, "minAmount", this.state[`minAmount_${index}`])}
-                  />
-                </TableRowColumn>
-                <TableRowColumn>
-                  <TextField
-                    name={`maxAmount_${index}`}
-                    value={this.state[`maxAmount_${index}`] || row.maxAmount}
-                    underlineShow={false}
-                    style={styles.widthAutoTextField}
-                    onChange={(event) => this.handleTableCellUpdate(event, row, "maxAmount", this.state[`maxAmount_${index}`])}
-                  />
-                </TableRowColumn>
-                <TableRowColumn>
-                  <TextField
-                    name={`color_${index}`}
-                    value={this.state[`color_${index}`] || row.color}
-                    underlineShow={false}
-                    style={styles.widthAutoTextField}
-                    onChange={(event) => this.handleTableCellUpdate(event, row, "color", this.state[`color_${index}`])}
-                  />
-                </TableRowColumn>
-                <TableRowColumn style={styles.rowTextCenter}>
-                  <RaisedButton label="Delete" primary={true} style={styles.buttonsMargin} />
-                </TableRowColumn>
-              </TableRow>)
-            })}
-          </TableBody>
+          {Body({ ...this.state, ...this.props }, { handleTableCellUpdate: this.handleTableCellUpdate })}
           {Footer({ ...this.state, ...this.props }, { handleTableCellUpdate: this.handleTableCellUpdate, handleAddNewDataType: this.handleAddNewDataType })}
         </Table>
 

@@ -67,6 +67,44 @@ export const headerRowData = [
   }
 ];
 
+export const bodyColumnData = [
+  {},
+  {
+    colSpan: "2",
+    name: "type",
+    value: "",
+    underlineShow: false,
+    style: styles.widthAutoTextField,
+    onChange: ""
+  },
+  {
+    name: "minAmount",
+    value: "",
+    underlineShow: false,
+    style: styles.widthAutoTextField,
+    onChange: ""
+  },
+  {
+    name: "maxAmount",
+    value: "",
+    underlineShow: false,
+    style: styles.widthAutoTextField,
+    onChange: ""
+  },
+  {
+    name: "color",
+    value: "",
+    underlineShow: false,
+    style: styles.widthAutoTextField,
+    onChange: ""
+  },
+  {
+    label: "Delete",
+    primary: true,
+    style: styles.buttonsMargin
+  }
+];
+
 export const footerColumnData = [
   {
     name: "id",

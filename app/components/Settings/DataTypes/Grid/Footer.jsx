@@ -28,16 +28,15 @@ const renderRowColumnContent = (props, callbacks, column) => {
       />
     );
   }
-  else {
-    return (
-      <RaisedButton
-        label={column.label}
-        primary={column.primary || false}
-        style={column.style || {}}
-        onTouchTap={handleAddNewDataType}
-      />
-    );
-  }
+
+  return (
+    <RaisedButton
+      label={column.label}
+      primary={column.primary || false}
+      style={column.style || {}}
+      onTouchTap={handleAddNewDataType}
+    />
+  );
 };
 
 const renderRowColumns = (props, callbacks) => {
