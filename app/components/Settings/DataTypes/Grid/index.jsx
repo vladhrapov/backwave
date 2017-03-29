@@ -8,34 +8,11 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import * as DataTypesActions from "../../../../actions/DataTypesActions";
 
-import { orange500, blue500, cyan500 } from 'material-ui/styles/colors';
+import { Header } from "./Header";
+import { Footer } from "./Footer";
 
-const styles = {
-  propContainer: {
-    width: 200,
-    overflow: 'hidden',
-    margin: '20px auto 0',
-  },
-  propToggleHeader: {
-    margin: '20px auto 10px',
-  },
-  floatingLabelStyle: {
-    color: cyan500,
-  },
-  floatingLabelFocusStyle: {
-    color: cyan500,
-  },
-  widthAutoTextField: {
-    width: "100%"
-  },
-  rowTextCenter: {
-    textAlign: "center"
-  }
-};
+import { styles } from "../constants";
 
-const style = {
-  margin: 12,
-};
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -144,25 +121,7 @@ export default class Grid extends React.Component {
           selectable={this.state.selectable}
           multiSelectable={this.state.multiSelectable}
         >
-          <TableHeader
-            displaySelectAll={this.state.showCheckboxes}
-            adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}
-          >
-            <TableRow>
-              <TableHeaderColumn colSpan="8" tooltip="Super Header" style={{ textAlign: 'center' }}>
-                Super Header
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The data type name" colSpan="2">Data type</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The minimum amount of the type of data">Minimum amount</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The maximum amount of the type of data">Maximum amount</TableHeaderColumn>
-              <TableHeaderColumn tooltip="The color of the packet">Packet color</TableHeaderColumn>
-              <TableHeaderColumn colSpan="2" style={styles.rowTextCenter}></TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
+          {Header({...this.state})}
           <TableBody
             displayRowCheckbox={this.state.showCheckboxes}
             deselectOnClickaway={this.state.deselectOnClickaway}
@@ -211,74 +170,13 @@ export default class Grid extends React.Component {
                   />
                 </TableRowColumn>
                 <TableRowColumn colSpan="2" style={styles.rowTextCenter}>
-                  <RaisedButton label="Edit" primary={true} style={style} />
-                  <RaisedButton label="Delete" primary={true} style={style} />
+                  <RaisedButton label="Edit" primary={true} style={styles.buttonsMargin} />
+                  <RaisedButton label="Delete" primary={true} style={styles.buttonsMargin} />
                 </TableRowColumn>
               </TableRow>)
             })}
           </TableBody>
-          <TableFooter
-            adjustForCheckbox={this.state.showCheckboxes}
-          >
-            <TableRow>
-              <TableRowColumn>
-                <TextField
-                  name="id"
-                  floatingLabelText="Id"
-                  disabled={true}
-                  value={this.props.dataTypes.length}
-                  onChange={(event) => this.handleTableCellUpdate(event)}
-                />
-              </TableRowColumn>
-              <TableRowColumn colSpan="2">
-                <TextField
-                  name="type"
-                  floatingLabelText="Data type"
-                  floatingLabelStyle={styles.floatingLabelStyle}
-                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
-                  style={styles.widthAutoTextField}
-                  value={this.state.type}
-                  onChange={(event) => this.handleTableCellUpdate(event)}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <TextField
-                  name="minAmount"
-                  floatingLabelText="Minimum amount"
-                  floatingLabelStyle={styles.floatingLabelStyle}
-                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
-                  style={styles.widthAutoTextField}
-                  value={this.state.minAmount}
-                  onChange={(event) => this.handleTableCellUpdate(event)}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <TextField
-                  name="maxAmount"
-                  floatingLabelText="Maximum amount"
-                  floatingLabelStyle={styles.floatingLabelStyle}
-                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
-                  style={styles.widthAutoTextField}
-                  value={this.state.maxAmount}
-                  onChange={(event) => this.handleTableCellUpdate(event)}
-                />
-              </TableRowColumn>
-              <TableRowColumn>
-                <TextField
-                  name="color"
-                  floatingLabelText="Packet color"
-                  floatingLabelStyle={styles.floatingLabelStyle}
-                  floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
-                  style={styles.widthAutoTextField}
-                  value={this.state.color}
-                  onChange={(event) => this.handleTableCellUpdate(event)}
-                />
-              </TableRowColumn>
-              <TableRowColumn colSpan="2" style={styles.rowTextCenter}>
-                <RaisedButton label="Add" primary={true} style={style} onTouchTap={this.handleAddNewDataType} />
-              </TableRowColumn>
-            </TableRow>
-          </TableFooter>
+          {Footer({...this.state, ...this.props}, { handleTableCellUpdate: this.handleTableCellUpdate, handleAddNewDataType: this.handleAddNewDataType })}
         </Table>
         
         <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
