@@ -5,20 +5,21 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import { styles, bodyColumnData } from "../constants";
 
-const renderRowColumnContent = (props, callbacks, row, rowIndex, column, index) => {
-  const { handleTableCellUpdate } = callbacks,
+const renderRowColumnContent = (props, callbacks, row, column, index) => {
+  const { handleTableCellUpdate, handleRemoveDataType } = callbacks,
+    { id } = row,
     { name } = column;
 
-  if (!index) return rowIndex;
+  if (!index) return id;
 
   if (name) {
     return (
       <TextField
-        name={`${name}_${rowIndex}`}
-        value={props[`${name}_${rowIndex}`] || row[name]}
+        name={`${name}_${id}`}
+        value={props[`${name}_${id}`] || row[name]}
         underlineShow={column.underlineShow || false}
         style={column.style}
-        onChange={(event) => handleTableCellUpdate(event, row, name, props[`${name}_${rowIndex}`])}
+        onChange={(event) => handleTableCellUpdate(event, row, name, props[`${name}_${id}`])}
       />
     );
   }
@@ -28,11 +29,12 @@ const renderRowColumnContent = (props, callbacks, row, rowIndex, column, index) 
       label={column.label || ""}
       primary={column.primary || true}
       style={column.style}
+      onTouchTap={(event) => handleRemoveDataType(event, id)}
     />
   );
 };
 
-const renderRowColumns = (props, callbacks, row, rowIndex) => {
+const renderRowColumns = (props, callbacks, row) => {
   return bodyColumnData.map((column, index) => {
     return (
       <TableRowColumn
@@ -40,7 +42,7 @@ const renderRowColumns = (props, callbacks, row, rowIndex) => {
         colSpan={column.colSpan || "1"}
         style={column.columnStyle || {}}
       >
-        {renderRowColumnContent(props, callbacks, row, rowIndex, column, index)}
+        {renderRowColumnContent(props, callbacks, row, column, index)}
       </TableRowColumn>
     );
   });
@@ -54,7 +56,7 @@ const renderRows = (props, callbacks) => {
 
       return (
         <TableRow key={index} >
-          {renderRowColumns(props, callbacks, row, index)}
+          {renderRowColumns(props, callbacks, row)}
         </TableRow>
       );
     });

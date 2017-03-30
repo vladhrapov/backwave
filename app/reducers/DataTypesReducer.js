@@ -1,7 +1,6 @@
 import { initialState } from "./";
 
 export default function dataTypesReducer(state = initialState.dataTypes, action) {
-  console.log("dataTypesReducer REDUCER: ", action, state);
   switch (action.type) {
     case "LOAD_DATA_TYPES_SUCCEEDED":
       return [
@@ -16,15 +15,10 @@ export default function dataTypesReducer(state = initialState.dataTypes, action)
       return [
         ...action.payload
       ];
-    // case "REMOVE_CANVAS_FROM_LIST_SUCCEEDED":
-    //   return [
-    //     ...state.filter(canvas => canvas.key != action.payload.name)
-    //   ];
-    // // case types.SAVE_CANVAS_INFO:
-    // //   return {
-    // //     ...state,
-    // //     ...action.canvasInfo
-    // //   };
+    case "REMOVE_DATA_TYPE_SUCCEEDED":
+      return [
+        ...state.filter(row => row.id != action.payload.id)
+      ];
     default:
       return state;
   }

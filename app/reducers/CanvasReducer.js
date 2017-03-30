@@ -1,15 +1,10 @@
 import { initialState } from "./";
 
 export default function canvasReducer(state = initialState.canvas, action) {
-  console.log("Canvas REDUCER: ", action, state);
   switch (action.type) {
     case "LOAD_CANVAS_LIST_SUCCEEDED":
       return [
         ...action.payload
-        // ...state,
-        // canvasShapesList: [
-        //   ...action.payload
-        // ]
       ];
     case "SAVE_CANVAS_TO_LIST_SUCCEEDED":
       return [

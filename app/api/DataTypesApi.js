@@ -47,10 +47,10 @@ export const saveDataTypesApi = (payload, payloadWithOldDataTypes) => {
   return newSET;
 }
 
-// export const removeCanvasFromListApi = payload => {
-//   let { name } = payload;
+export const removeDataTypeApi = payload => {
+  let { id } = payload;
 
-//   return firebaseRef
-//     .ref(`canvasCollection/${name}`)
-//     .remove();
-// }
+  return firebaseRef
+    .ref(`dataTypesCollection/${id}`)
+    .remove();
+}

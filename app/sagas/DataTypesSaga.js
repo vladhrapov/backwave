@@ -1,6 +1,6 @@
 import { delay } from 'redux-saga';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { loadDataTypesApi, addDataTypeApi, saveDataTypesApi } from "../api/DataTypesApi";
+import { loadDataTypesApi, addDataTypeApi, saveDataTypesApi, removeDataTypeApi } from "../api/DataTypesApi";
 
 function* loadDataTypesAsync() {
   try {
@@ -48,4 +48,19 @@ function* saveDataTypesAsync(action) {
 
 export function* saveDataTypesRequest() {
   yield takeLatest("SAVE_DATA_TYPES", saveDataTypesAsync);
+}
+
+function* removeDataTypeAsync(action) {
+  try {
+    let { payload } = action;
+    yield call(removeDataTypeApi, payload);
+    yield put({ type: "REMOVE_DATA_TYPE_SUCCEEDED", payload });
+  }
+  catch (err) {
+
+  }
+}
+
+export function* removeDataTypeRequest() {
+  yield takeLatest("REMOVE_DATA_TYPE", removeDataTypeAsync);
 }

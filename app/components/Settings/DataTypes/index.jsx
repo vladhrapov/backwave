@@ -79,9 +79,22 @@ export default class DataTypes extends Component {
       { dataTypes, dataTypesActions } = this.props,
       id = +dataTypes[dataTypes.length - 1].id + 1;
 
-    this.setState((prevState, props) => ({ id: id + 1, type: "", minAmount: "", maxAmount: "", color: "" }));
+    this.setState((prevState, props) => ({
+      id: id + 1,
+      type: "",
+      minAmount: "",
+      maxAmount: "",
+      color: ""
+    }));
 
     dataTypesActions.addDataType({ id, type, minAmount, maxAmount, color });
+  }
+
+  handleRemoveDataType = (event, id) => {
+    const { dataTypes, dataTypesActions } = this.props;
+    console.log(`removed ${id}`);
+
+    dataTypesActions.removeDataType({ id });
   }
 
   handleSaveClick = () => {
@@ -103,14 +116,18 @@ export default class DataTypes extends Component {
   }
 
   render() {
-    const { handleTableCellUpdate, handleAddNewDataType } = this;
+    const {
+      handleTableCellUpdate,
+      handleAddNewDataType,
+      handleRemoveDataType
+    } = this;
 
     return (
       <div>
         <Grid
           {...this.state}
           {...this.props}
-          callbacks={{ handleTableCellUpdate, handleAddNewDataType }}
+          callbacks={{ handleTableCellUpdate, handleAddNewDataType, handleRemoveDataType }}
         />
         <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
       </div>
