@@ -50,7 +50,6 @@ export default class Tools extends React.Component {
   handleMigrationMode = () => {
     let { canvasSrv } = this.props;
 
-    console.log("handleMigrationMode");
     canvasSrv.disableConnectionMode(canvasSrv.canvas);
     canvasSrv.enableMigrationMode(canvasSrv.canvas);
   }
@@ -58,7 +57,6 @@ export default class Tools extends React.Component {
   handleConnectionMode = () => {
     let { canvasSrv } = this.props;
 
-    console.log("handleConnectionMode");
     canvasSrv.disableMigrationMode(canvasSrv.canvas);
     canvasSrv.enableConnectionMode(canvasSrv.canvas);
   }
@@ -75,8 +73,6 @@ export default class Tools extends React.Component {
     // let wa = new WaveAlgorithmService(1, 5);
     let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
     this.waResult = wa.invoke(canvasSrv);
-    console.clear();
-    console.log(this.waResult);
     canvasSrv.drawRoutes(this.waResult, vertexFrom, vertexTo);
 
     this.routesInfo = canvasSrv.showRoutesInfo(this.waResult);
@@ -88,8 +84,6 @@ export default class Tools extends React.Component {
       { canvasSrv } = this.props;
     let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
     this.bwaResult = bwa.invoke(canvasSrv);
-    // console.clear();
-    console.log(this.bwaResult);
     canvasSrv.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
     this.routesInfo = canvasSrv.showRoutesInfo(this.bwaResult);

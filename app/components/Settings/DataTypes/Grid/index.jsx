@@ -7,20 +7,16 @@ import { renderFooter } from "./Footer";
 
 import { styles } from "../constants";
 
-export default class Grid extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const {
-      height,
-      fixedHeader,
-      selectable,
-      multiSelectable,
-      callbacks
-    } = this.props;
-
+export default function Grid({
+  height,
+  fixedHeader,
+  selectable,
+  multiSelectable,
+  handleTableCellUpdate,
+  handleAddNewDataType,
+  handleRemoveDataType,
+  ...props
+}) {
     return (
       <Table
         height={height}
@@ -28,10 +24,9 @@ export default class Grid extends Component {
         selectable={selectable}
         multiSelectable={multiSelectable}
       >
-        {renderHeader({ ...this.props })}
-        {renderBody({ ...this.props }, callbacks)}
-        {renderFooter({ ...this.props }, callbacks)}
+        {renderHeader(props)}
+        {renderBody(props, { handleTableCellUpdate, handleRemoveDataType })}
+        {renderFooter(props, { handleTableCellUpdate, handleAddNewDataType })}
       </Table>
     );
-  }
 }

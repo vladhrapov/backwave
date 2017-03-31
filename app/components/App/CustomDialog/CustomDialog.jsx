@@ -18,7 +18,6 @@ import "../../Shared/assets/_styles.scss";
 
 
 function mapStateToProps(state, ownProps) {
-  console.log("STATE: ============= ", state, ownProps);
   return {
     canvas: state.canvas,
     settings: state.settings

@@ -127,7 +127,9 @@ export default class DataTypes extends Component {
         <Grid
           {...this.state}
           {...this.props}
-          callbacks={{ handleTableCellUpdate, handleAddNewDataType, handleRemoveDataType }}
+          handleTableCellUpdate={handleTableCellUpdate}
+          handleAddNewDataType={handleAddNewDataType}
+          handleRemoveDataType={handleRemoveDataType}
         />
         <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
       </div>

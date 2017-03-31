@@ -1,10 +1,10 @@
 import React from 'react';
 import { Router, Route, IndexRoute, hashHistory, browserHistory } from 'react-router';
 
-import App from "./App/App.jsx";
+import App from "./App";
 import Home from "./Home/Home.jsx";
-import Charts from "./Charts/Charts.jsx";
-import Reports from "./Reports/Reports.jsx";
+import Charts from "./Charts";
+import Reports from "./Reports";
 import Settings from "./Settings";
 import DataTypes from "./Settings/DataTypes";
 import Global from "./Settings/Global";

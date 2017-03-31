@@ -19,7 +19,6 @@ import "../../Shared/assets/_styles.scss";
 
 
 function mapStateToProps(state, ownProps) {
-  console.log("STATE: ============= ", state, ownProps);
   return {
     settings: state.settings
   };
@@ -60,7 +59,7 @@ export default class Canvas extends React.Component {
       if (e.target && e.target.setFill) {
         //e.target.setFill('red');
         //canvas.renderAll();
-        console.log("HoVER####");
+        // console.log("HoVER####");
       }
     });
 
@@ -68,7 +67,7 @@ export default class Canvas extends React.Component {
       if (e.target && e.target.setFill) {
         //e.target.setFill('white');
         //canvas.renderAll();
-        console.log("OUT----------##");
+        // console.log("OUT----------##");
       }
     });
   }
