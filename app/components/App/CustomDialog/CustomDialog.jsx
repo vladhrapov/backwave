@@ -61,14 +61,19 @@ export default class CustomDialog extends React.Component {
 
   handleLoadCollectionDialogSubmit = (event) => {
     let { canvas, canvasActions, settingsActions, settings, canvasSrv } = this.props,
+      { selectedRadio } = this.state,
       isDialogOpened = !settings.isDialogOpened,
       dialogType = settings.dialogType;
 
-    canvasSrv.restoreCanvas(canvas.filter(item => item.key == this.state.selectedRadio)[0].canvasObjects);
+    canvasSrv.restoreCanvas(canvas.filter(item => item.key == selectedRadio)[0].canvasObjects);
     canvasSrv.disableConnectionMode(canvasSrv.canvas);
     canvasSrv.enableMigrationMode(canvasSrv.canvas);
 
-    settingsActions.toggleDialog({ isDialogOpened, dialogType });
+    settingsActions.toggleDialog({
+      isDialogOpened,
+      dialogType,
+      canvasLoadedSchema: selectedRadio
+    });
   }
 
   handleRemoveCollectionDialogSubmit = () => {

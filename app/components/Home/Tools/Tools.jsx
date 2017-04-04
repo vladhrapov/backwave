@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
@@ -15,6 +17,23 @@ import TransformationService from "../../../services/TransformationService";
 import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
 import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService";
 
+// Actions
+import * as LoggerActions from "../../../actions/LoggerActions";
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    logger: state.logger
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    loggerActions: bindActionCreators(LoggerActions, dispatch)
+  }
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Tools extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +88,7 @@ export default class Tools extends React.Component {
 
   handleWaveAlgorithmClick = () => {
     let { vertexFrom, vertexTo } = this.state,
-      { canvasSrv } = this.props;
+      { canvasSrv, logger, loggerActions } = this.props;
     // let wa = new WaveAlgorithmService(1, 5);
     let wa = new WaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
     this.waResult = wa.invoke(canvasSrv);
@@ -77,17 +96,31 @@ export default class Tools extends React.Component {
 
     this.routesInfo = canvasSrv.showRoutesInfo(this.waResult);
     this.setState({ isRoutesButtonDisabled: false });
+
+    loggerActions.logRoutesInfo({
+      algorithm: "wave",
+      vertexFrom: this.state.vertexFrom,
+      vertexTo: this.state.vertexTo,
+      routes: this.waResult
+    });
   }
 
   handleBackWaveAlgorithmClick = () => {
     let { vertexFrom, vertexTo } = this.state,
-      { canvasSrv } = this.props;
+      { canvasSrv, logger, loggerActions } = this.props;
     let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
     this.bwaResult = bwa.invoke(canvasSrv);
     canvasSrv.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
     this.routesInfo = canvasSrv.showRoutesInfo(this.bwaResult);
     this.setState({ isRoutesButtonDisabled: false });
+
+    loggerActions.logRoutesInfo({
+      algorithm: "backwave",
+      vertexFrom: this.state.vertexFrom,
+      vertexTo: this.state.vertexTo,
+      routes: this.bwaResult
+    });
   }
 
   handleSelectVertexNameClick = (event, key, payload) => {
@@ -301,6 +334,8 @@ export default class Tools extends React.Component {
   }
 
   render() {
+    const { vertexFrom, vertexTo } = this.props.logger.routesInfo;
+
     return (
       <div className="settings" >
         <div className="btn-add-remove-container">
@@ -327,8 +362,8 @@ export default class Tools extends React.Component {
           />
         </RadioButtonGroup>
 
-        {this.renderCanvasVerticeNames("From", this.state.vertexFrom, this.handleSelectVertexFromNameChange)}
-        {this.renderCanvasVerticeNames("To", this.state.vertexTo, this.handleSelectVertexToNameChange)}
+        {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
+        {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
 
         {
           //   <RaisedButton

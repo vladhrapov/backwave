@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import canvas from "./CanvasReducer";
 import dataTypes from "./DataTypesReducer";
 import settings from "./SettingsReducer";
+import logger from "./LoggerReducer";
 
 export const initialState = {
   canvas: [],
@@ -9,12 +10,17 @@ export const initialState = {
   settings: {
     isDrawerOpened: false,
     isDialogOpened: false,
-    dialogType: ""
+    dialogType: "",
+    canvasLoadedSchema: ""
+  },
+  logger: {
+    routesInfo: {}
   }
 }
 
 export const rootReducer = combineReducers({
   canvas,
   dataTypes,
-  settings
+  settings,
+  logger
 });

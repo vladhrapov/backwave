@@ -22,7 +22,9 @@ function App({ children }) {
       <Header
         canvasSrv={canvasSrv}
       />
-      <LeftDrawer />
+      <LeftDrawer
+        canvasSrv={canvasSrv}
+      />
       {childComponent}
       <CustomDialog
         canvasSrv={canvasSrv}

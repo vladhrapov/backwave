@@ -1,0 +1,1 @@
+export const logRoutesInfo = payload => ({ type: "LOG_ROUTES_INFO", payload });

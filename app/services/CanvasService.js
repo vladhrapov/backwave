@@ -37,8 +37,14 @@ export default class CanvasService {
       lineCounter: 0
     });
 
+    window.cnvs = this.canvas;
+
     return this._canvas;
     // return CanvasService.canvas;
+  }
+
+  get isCanvasEmpty() {
+    return this.canvas._objects && this.canvas._objects.length;
   }
 
   renderAll() {
@@ -47,6 +53,7 @@ export default class CanvasService {
 
   refreshCanvas() {
     if (this.canvas._objects && this.canvas._objects.length) {
+      this._canvas = null;
       this.canvas.clear();
       this.canvas.shapesCounter = 0;
       this.canvas.lineCounter = 0;

@@ -50,21 +50,26 @@ export default class LeftDrawer extends React.Component {
   }
 
   navigateTo = (location) => {
-    let { settings, settingsActions, canvasInfo, canvasActions } = this.props;
+    let { settings, settingsActions, canvas, canvasActions, canvasSrv } = this.props;
 
     settingsActions.toggleDrawer({ isDrawerOpened: false });
+
     // if(location == "/charts/") {
-    //   canvasActions.saveCanvasReportInfo({
-    //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-    //     image: CanvasService.canvas.toDataURL("image/png")
-    //   });
+    //   // canvasActions.saveCanvasReportInfo({
+    //   //   routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+    //   //   image: CanvasService.canvas.toDataURL("image/png")
+    //   // });
     // }
     // else if (location == "/reports/") {
-    //   canvasActions.saveCanvasReportInfo({
-    //     routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
-    //     image: CanvasService.canvas.toDataURL("image/png")
-    //   });
+    //   // canvasActions.saveCanvasReportInfo({
+    //   //   routes: ["A1 -A2-A3....", "A1 - A5 - A7....."],
+    //   //   image: CanvasService.canvas.toDataURL("image/png")
+    //   // });
     // }
+    // else {
+    //   canvasSrv.restoreCanvas(canvas.filter(item => item.key == selectedRadio)[0].canvasObjects);
+    // }
+
     browserHistory.push(location);
   }
 
