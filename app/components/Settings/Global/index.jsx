@@ -14,19 +14,20 @@ export default class Global extends Component {
   }
 
   state = {
-    vertexShape: 1
+    vertexShape: 1,
+    algorithmType: 1
   }
 
   render() {
     return (
       <div className="global-container">
         Global settings
-        1) Vertex naming
-        2) Vertex shape (optional)
-        3) Trafic distribution (step by step or in time)
-        4) Algorithm type
-        5) Bind canvas vertices from/to to first/last
-        6) Random value for line (from - to)
+        1) Vertex naming+
+        2) Vertex shape (optional)+
+        3) Trafic distribution (step by step or in time)+
+        4) Algorithm type+
+        5) Bind canvas vertices to first/last+
+        6) Random value for line (from - to)+
         <Paper style={{ padding: 35, margin: 45 }}>
           <h2>Schema settings</h2>
           <div className="global-row">
@@ -48,23 +49,43 @@ export default class Global extends Component {
             </SelectField>
           </div>
           <div className="global-row">
-            from to label
+            <Toggle
+              label="Bind canvas to range vertices"
+              style={{ marginBottom: 16, width: 250 }}
+            />
+          </div>
+          <div className="global-row">
+            Random line value from:
             <TextField
               hintText="Hint Text"
               floatingLabelText="Floating Label Text"
             />
+            to:
             <TextField
               hintText="Hint Text"
               floatingLabelText="Floating Label Text"
             />
           </div>
         </Paper>
-        <div className="global-row">
-          <Toggle
-            label="Automatic trafic distribution"
-            style={{ marginBottom: 16, width: 250}}
-          />
-        </div>
+        <Paper style={{ padding: 35, margin: 45 }}>
+          <h2>Trafic distribution settings</h2>
+          <div className="global-row">
+            <Toggle
+              label="Automatic trafic distribution"
+              style={{ marginBottom: 16, width: 250}}
+            />
+          </div>
+          <div className="global-row">
+            <SelectField
+              floatingLabelText="Algorithm type"
+              value={this.state.algorithmType}
+              onChange={this.handleChange}
+            >
+              <MenuItem value={1} primaryText="Wave algorithm" />
+              <MenuItem value={2} primaryText="Backwave algorithm" />
+            </SelectField>
+          </div>
+        </Paper>
       </div>
     );
   }
