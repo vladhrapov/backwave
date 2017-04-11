@@ -66,6 +66,15 @@ export default class Tools extends React.Component {
     canvasSrv.removeVertex(canvasSrv.canvas);
   }
 
+  handleAddPacketClick = () => {
+    let { canvasSrv } = this.props;
+
+    canvasSrv.addPacket(canvasSrv.canvas, {
+      vertexFrom: this.state.vertexFrom,
+      vertexTo: this.state.vertexTo
+    });
+  }
+
   handleMigrationMode = () => {
     let { canvasSrv } = this.props;
 
@@ -424,6 +433,13 @@ export default class Tools extends React.Component {
           disabled={this.state.isRoutesButtonDisabled}
           primary={true}
           label="Show Chart"
+        />
+
+        <RaisedButton
+          onTouchTap={this.handleAddPacketClick}
+          className="custom-btn-default"
+          primary={true}
+          label="Add Packet"
         />
 
 

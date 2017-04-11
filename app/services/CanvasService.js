@@ -228,6 +228,34 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
+  addPacket(canvas, { vertexFrom }) {
+    const vertex = this.getVertexByName(vertexFrom);
+    const packet = this.shapesService.createPacket({
+      left: vertex.left + 40,
+      top: vertex.top - 40,
+      name: "packet",
+      fill: "red",
+      stroke: "#000"
+    });
+
+    this.setObjectMigration(packet, false);
+
+    canvas.add(packet);
+    canvas.sendToBack(packet);
+    // should be call for iteration through
+    // all lines and labels and send them to back
+  }
+
+  getVertexByName(vertexFrom) {
+    return this.canvas._objects.filter(shape => {
+      let { type, name } = shape.customProps;
+
+      if (type == "vertex" && name == `A${vertexFrom}`) {
+        return shape;
+      }
+    })[0];
+  }
+
   removeVertex(canvas) {
     if (canvas.getActiveObject() && canvas.getActiveObject()._objects.length > 1) {
       // // for (let i = 0; i < canvas.getActiveObject()._objects.length; i++) {

@@ -113,4 +113,43 @@ export default class ShapesService {
     }
   }
 
+  createPacket(props) {
+    let {
+      left,
+      top,
+      name,
+      fill,
+      stroke
+    } = props;
+
+    let rectangle = new fabric.Rect({
+      originX: 'center',
+      originY: 'center',
+      width: 25,
+      height: 17,
+      strokeWidth: 1,
+      stroke,
+      fill
+    });
+
+    let triangle = new fabric.Triangle({
+      originX: 'center',
+      originY: 'top',
+      width: 25,
+      height: 9,
+      angle: "180",
+      strokeWidth: 1,
+      stroke,
+      fill
+    });
+
+    return new fabric.Group([rectangle, triangle], {
+      left,
+      top,
+      customProps: {
+        type: "packet",
+        name
+      }
+    });
+  }
 }
