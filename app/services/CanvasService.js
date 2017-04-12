@@ -229,11 +229,13 @@ export default class CanvasService {
   }
 
   addPacket(canvas, { vertexFrom }) {
-    const vertex = this.getVertexByName(vertexFrom);
+    const vertexName = `A${vertexFrom}`;
+    const vertex = this.getVertexByName(vertexName);
     const packet = this.shapesService.createPacket({
-      left: vertex.left + 40,
-      top: vertex.top - 40,
+      left: vertex.left + 50,
+      top: vertex.top - 20,
       name: "packet",
+      relatedVertex: vertexName,
       fill: "red",
       stroke: "#000"
     });
@@ -246,11 +248,11 @@ export default class CanvasService {
     // all lines and labels and send them to back
   }
 
-  getVertexByName(vertexFrom) {
+  getVertexByName(vertexName) {
     return this.canvas._objects.filter(shape => {
       let { type, name } = shape.customProps;
 
-      if (type == "vertex" && name == `A${vertexFrom}`) {
+      if (type == "vertex" && name == vertexName) {
         return shape;
       }
     })[0];

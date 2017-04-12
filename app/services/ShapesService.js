@@ -118,6 +118,7 @@ export default class ShapesService {
       left,
       top,
       name,
+      relatedVertex,
       fill,
       stroke
     } = props;
@@ -148,7 +149,8 @@ export default class ShapesService {
       top,
       customProps: {
         type: "packet",
-        name
+        name,
+        relatedVertex
       }
     });
   }
