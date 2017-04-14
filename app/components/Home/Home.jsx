@@ -1,15 +1,7 @@
 import React from 'react';
-import ReactFire from "reactfire";
-import ReactMixin from "react-mixin";
 
 // Components
 import Canvas from "./Canvas/Canvas.jsx";
-// import CustomDialog from "../CustomDialog/CustomDialog.jsx";
-// import LeftDrawer from "../AppLeftDrawer/LeftDrawer.jsx";
-
-// Services
-import FirebaseService from "../../services/FirebaseService";
-import CanvasService from "../../services/CanvasService";
 
 // Styles
 import "./assets/_styles.scss";

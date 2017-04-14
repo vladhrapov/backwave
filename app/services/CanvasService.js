@@ -3,6 +3,7 @@ import {
 } from "fabric";
 import FirebaseService from "./FirebaseService";
 import ShapesService from "./ShapesService";
+import { TrafficSimulationService } from "./traffic";
 
 // Constants
 import {
@@ -16,6 +17,7 @@ import {
 export default class CanvasService {
   constructor() {
     this.shapesService = new ShapesService();
+    this.simulationService = new TrafficSimulationService();
   }
 
   // static canvas {
@@ -228,7 +230,24 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  addPacket(canvas, { vertexFrom }) {
+  doNextIteration(vertexFrom, packets) {
+    // const { vertexFrom, vertexTo } = props;
+
+    // Step 1: move existing packets to the next vertices.
+    // should be a call of traffic simulation service with packets param
+    packets = this.simulationService.doNextIteration(packets);
+    // last one will be that needs to be added
+
+    // Step 2: add new packet to the start vertex
+    // this will be on canvas
+    this.addPacket({
+      vertexFrom
+    });
+
+    return packets;
+  }
+
+  addPacket({ vertexFrom }) {
     const vertexName = `A${vertexFrom}`;
     const vertex = this.getVertexByName(vertexName);
     const packet = this.shapesService.createPacket({
@@ -242,10 +261,24 @@ export default class CanvasService {
 
     this.setObjectMigration(packet, false);
 
-    canvas.add(packet);
-    canvas.sendToBack(packet);
+    this.canvas.add(packet);
+    this.canvas.sendToBack(packet);
     // should be call for iteration through
     // all lines and labels and send them to back
+    this.setShapesTypeToBack("label");
+    this.setShapesTypeToBack("line");
+  }
+
+  setShapesTypeToBack(shapeType) {
+    this.canvas._objects.forEach(shape => {
+      let { type, name } = shape.customProps;
+
+      if (type == shapeType) {
+        this.canvas.sendToBack(shape);
+      }
+    });
+
+    this.renderAll();
   }
 
   getVertexByName(vertexName) {

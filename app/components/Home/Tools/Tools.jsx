@@ -66,13 +66,17 @@ export default class Tools extends React.Component {
     canvasSrv.removeVertex(canvasSrv.canvas);
   }
 
-  handleAddPacketClick = () => {
+  handleNextStepClick = () => {
     let { canvasSrv } = this.props;
+    let { vertexFrom } = this.state;
 
-    canvasSrv.addPacket(canvasSrv.canvas, {
-      vertexFrom: this.state.vertexFrom,
-      vertexTo: this.state.vertexTo
-    });
+    // Step 1: Get all packets from redux like []
+    // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
+
+    // Step 2: Put packets [] here
+    const packets = canvasSrv.doNextIteration(vertexFrom, [ /* [] */ ]);
+
+    // Step 3: Log packets in the redux
   }
 
   handleMigrationMode = () => {
@@ -436,10 +440,10 @@ export default class Tools extends React.Component {
         />
 
         <RaisedButton
-          onTouchTap={this.handleAddPacketClick}
+          onTouchTap={this.handleNextStepClick}
           className="custom-btn-default"
           primary={true}
-          label="Add Packet"
+          label="Next step"
         />
 
 
