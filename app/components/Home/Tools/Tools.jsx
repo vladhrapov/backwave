@@ -67,16 +67,17 @@ export default class Tools extends React.Component {
   }
 
   handleNextStepClick = () => {
-    let { canvasSrv } = this.props;
+    let { logger, loggerActions, canvasSrv } = this.props;
     let { vertexFrom } = this.state;
 
     // Step 1: Get all packets from redux like []
     // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
 
     // Step 2: Put packets [] here
-    const packets = canvasSrv.doNextIteration(vertexFrom, [ /* [] */ ]);
+    const packets = canvasSrv.doNextIteration(vertexFrom, logger.packetsInfo, logger.routesInfo);
 
     // Step 3: Log packets in the redux
+    loggerActions.logPacketsInfo(packets);
   }
 
   handleMigrationMode = () => {

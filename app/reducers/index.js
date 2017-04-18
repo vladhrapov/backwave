@@ -14,7 +14,8 @@ export const initialState = {
     canvasLoadedSchema: ""
   },
   logger: {
-    routesInfo: {}
+    routesInfo: {},
+    packetsInfo: []
   }
 }
 

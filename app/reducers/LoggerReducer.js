@@ -10,6 +10,13 @@ export default function loggerReducer(state = initialState.logger, action) {
           ...action.payload
         }
       };
+    case "LOG_PACKETS_INFO":
+      return {
+        ...state,
+        packetsInfo: [
+          ...action.payload
+        ]
+      };
     default:
       return state;
   }

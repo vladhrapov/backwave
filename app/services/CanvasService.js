@@ -1,17 +1,11 @@
-import {
-  fabric
-} from "fabric";
+import { fabric } from "fabric";
 import FirebaseService from "./FirebaseService";
 import ShapesService from "./ShapesService";
 import { TrafficSimulationService } from "./traffic";
 
 // Constants
-import {
-  COLORS
-} from "../constants/Colors";
-import {
-  firebaseRef
-} from "../constants/FirebaseConfig";
+import { COLORS } from "../constants/Colors";
+import { firebaseRef } from "../constants/FirebaseConfig";
 
 
 export default class CanvasService {
@@ -230,30 +224,46 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(vertexFrom, packets) {
+  doNextIteration(vertexFrom, packetsInfo, routesInfo) {
     // const { vertexFrom, vertexTo } = props;
+
+    this.updateVertexCharacteristics();
 
     // Step 1: move existing packets to the next vertices.
     // should be a call of traffic simulation service with packets param
-    packets = this.simulationService.doNextIteration(packets);
+    let packets = this.simulationService.doNextIteration({
+      packetsInfo: [...packetsInfo],
+      routesInfo,
+      vertexFrom
+    });
     // last one will be that needs to be added
 
     // Step 2: add new packet to the start vertex
     // this will be on canvas
     this.addPacket({
-      vertexFrom
+      vertexFrom,
+      packetIndex: packetsInfo.length
     });
 
     return packets;
   }
 
-  addPacket({ vertexFrom }) {
+  updateVertexCharacteristics() {
+    this.canvas._objects.forEach((shape) => {
+      let { type } = shape.customProps;
+      if (type == "vertex") {
+        shape.customProps.safety = this.getRandomInt(80, 100) / 100;
+      }
+    });
+  }
+
+  addPacket({ vertexFrom, packetIndex }) {
     const vertexName = `A${vertexFrom}`;
     const vertex = this.getVertexByName(vertexName);
     const packet = this.shapesService.createPacket({
       left: vertex.left + 50,
       top: vertex.top - 20,
-      name: "packet",
+      name: `Packet_${packetIndex}`,
       relatedVertex: vertexName,
       fill: "red",
       stroke: "#000"
