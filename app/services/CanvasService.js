@@ -224,7 +224,7 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(vertexFrom, packetsInfo, routesInfo) {
+  doNextIteration(packetsInfo, routesInfo) {
     // const { vertexFrom, vertexTo } = props;
 
     this.updateVertexCharacteristics();
@@ -233,17 +233,21 @@ export default class CanvasService {
     // should be a call of traffic simulation service with packets param
     let packets = this.simulationService.doNextIteration({
       packetsInfo: [...packetsInfo],
-      routesInfo,
-      vertexFrom
+      routesInfo
     });
     // last one will be that needs to be added
+    this.updatePacketsCharacteristics(packets);
+    this.updatePacketsLocation(packets);
 
     // Step 2: add new packet to the start vertex
     // this will be on canvas
     this.addPacket({
-      vertexFrom,
+      vertexFrom: routesInfo.vertexFrom,
       packetIndex: packetsInfo.length
     });
+
+    // this.setShapesTypeToBack("label");
+    // this.setShapesTypeToBack("line");
 
     return packets;
   }
@@ -251,10 +255,42 @@ export default class CanvasService {
   updateVertexCharacteristics() {
     this.canvas._objects.forEach((shape) => {
       let { type } = shape.customProps;
+
       if (type == "vertex") {
         shape.customProps.safety = this.getRandomInt(80, 100) / 100;
       }
     });
+  }
+
+  updatePacketsCharacteristics(packets) {
+    this.canvas._objects.forEach((shape) => {
+      let { type, name } = shape.customProps;
+      if (type == "packet") {
+        shape.customProps.relatedVertex = packets
+          .filter(packet => packet.name == name)[0]
+          .currentVertex.name;
+      }
+    });
+  }
+
+  updatePacketsLocation(packets) {
+    let vertices = this.canvas._objects
+      .filter(shape => shape.customProps.type == "vertex");
+
+    this.canvas._objects
+      .filter(shape => shape.customProps.type == "packet")
+      .forEach(packet => {
+        let { relatedVertex } = packet.customProps;
+
+        vertices.forEach(vertex => {
+          let { name } = vertex.customProps;
+
+          if (name == relatedVertex) {
+            packet.left = vertex.left + 50;
+            packet.top = vertex.top - 20;
+          }
+        });
+      });
   }
 
   addPacket({ vertexFrom, packetIndex }) {
