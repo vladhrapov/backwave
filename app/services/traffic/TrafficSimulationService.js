@@ -46,15 +46,16 @@ export default class TrafficSimulationService {
 
   movePacketsToNextVertex(packets, routesInfo) {
     // logic for setting vertex to nextVertex, updating nextVertex, isFinishVertex, etc ...
-    packets = packets.map(packet => {
-      let location = this.updatePacketLocation(packet, routesInfo);
-
-      packet = { ...packet, ...location };
-      return packet;
-    });
 
     // should return updated [] with packets
-    return packets;
+    return packets
+      .filter(packet => !packet.isFinishVertex)
+      .map(packet => {
+        let location = this.updatePacketLocation(packet, routesInfo);
+
+        packet = { ...packet, ...location };
+        return packet;
+      });
   }
 
   updatePacketLocation(packet, routesInfo) {
@@ -65,20 +66,36 @@ export default class TrafficSimulationService {
         let { nextVertex } = packet;
 
         if (routeVertex.index == nextVertex.index) {
-          return {
+          let nextVertexFromRoute = routesInfo.routes[path.index][routeVertexIndex + 1];
+          
+          let updatedPacket = {
             currentVertex: {
               index: nextVertex.index + 1,
               name: nextVertex.name
-            },
-            nextVertex: {
-              index: routesInfo.routes[path.index][routeVertexIndex + 1].index,
-              name: routesInfo.routes[path.index][routeVertexIndex + 1].name
             },
             path: {
               ...path,
               nextVertexIndex: routeVertexIndex + 1
             }
           };
+
+          if (nextVertexFromRoute) {
+            updatedPacket = {
+              ...updatedPacket,
+              nextVertex: {
+                index: nextVertexFromRoute.index,
+                name: nextVertexFromRoute.name
+              }
+            }
+          }
+          else {
+            updatedPacket = {
+              ...updatedPacket,
+              isFinishVertex: true
+            }
+          }
+
+          return updatedPacket;
         }
       })
       .filter(routeVertex => !!routeVertex)[0];
