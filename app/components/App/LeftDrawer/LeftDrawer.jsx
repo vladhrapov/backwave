@@ -42,13 +42,6 @@ export default class LeftDrawer extends React.Component {
     super(props);
   }
 
-  handleToggle = () => {
-    let { settings, settingsActions } = this.props,
-      isDrawerOpened = !settings.isDrawerOpened;
-
-    settingsActions.toggleDrawer({ isDrawerOpened });
-  }
-
   navigateTo = (location) => {
     let { settings, settingsActions, canvas, canvasActions, canvasSrv } = this.props;
 
@@ -78,12 +71,12 @@ export default class LeftDrawer extends React.Component {
       <Drawer
         open={this.props.settings.isDrawerOpened}
         docked={false}
-        onRequestChange={this.handleToggle}
+        onRequestChange={this.props.onToggle}
         width={370}>
         <AppBar
           title="Title"
           iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-          onLeftIconButtonTouchTap={this.handleToggle} />
+          onLeftIconButtonTouchTap={this.props.onToggle} />
         <MenuItem
           onClick={() => this.navigateTo("/")}
         >

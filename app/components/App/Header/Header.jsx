@@ -46,13 +46,6 @@ export default class Header extends React.Component {
     super(props);
   }
 
-  handleToggle = () => {
-    const { settings, settingsActions } = this.props;
-    const isDrawerOpened = !settings.isDrawerOpened;
-
-    settingsActions.toggleDrawer({ isDrawerOpened });
-  }
-
   handleMenuItemClick = (event, dialogType, needsReload) => {
     const { settings, settingsActions, canvasActions, canvasSrv } = this.props;
     const isDialogOpened = !settings.isDialogOpened;
@@ -89,7 +82,7 @@ export default class Header extends React.Component {
             <MenuItem primaryText="Remove" onClick={(e) => this.handleMenuItemClick(e, "remove", true)} />
           </IconMenu>
         }
-        onLeftIconButtonTouchTap={this.handleToggle} />
+        onLeftIconButtonTouchTap={this.props.onToggle} />
     );
   }
 }
