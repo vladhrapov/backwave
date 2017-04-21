@@ -269,13 +269,13 @@ export default class CanvasService {
   updatePacketsCharacteristics(packets) {
     this.canvas._objects.forEach((shape) => {
       let { type, name } = shape.customProps;
+      
       if (type == "packet") {
-        let a = packets
+        let packet = packets
           .filter(packet => packet.name == name)[0];
         
-        if (a) {
-        shape.customProps.relatedVertex = 
-          a.currentVertex.name;
+        if (packet) {
+          shape.customProps.relatedVertex = packet.currentVertex.name;
         }
       }
     });
