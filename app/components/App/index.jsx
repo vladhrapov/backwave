@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactFire from "reactfire";
 import ReactMixin from "react-mixin";
+import { compose, withHandlers } from 'recompose'
 
 // Components
 import CustomDialog from "./CustomDialog/CustomDialog.jsx";

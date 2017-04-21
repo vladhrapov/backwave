@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { compose, withHandlers } from 'recompose'
 import AppBar from 'material-ui/AppBar';
 import Checkbox from 'material-ui/Checkbox';
 import Drawer from 'material-ui/Drawer';
@@ -46,39 +47,26 @@ export default class Header extends React.Component {
   }
 
   handleToggle = () => {
-    let { settings, settingsActions } = this.props,
-      isDrawerOpened = !settings.isDrawerOpened;
+    const { settings, settingsActions } = this.props;
+    const isDrawerOpened = !settings.isDrawerOpened;
 
     settingsActions.toggleDrawer({ isDrawerOpened });
   }
 
-  handleRefreshClick = (event) => {
-    let { dialog, dialogActions, canvasActions, firebaseRef, canvasSrv } = this.props;
-    canvasSrv.refreshCanvas();
-  }
+  handleMenuItemClick = (event, dialogType, needsReload) => {
+    const { settings, settingsActions, canvasActions, canvasSrv } = this.props;
+    const isDialogOpened = !settings.isDialogOpened;
 
-  handleLoadClick = (event) => {
-    let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
-      isDialogOpened = !settings.isDialogOpened;
+    if (!dialogType) {
+      canvasSrv.refreshCanvas();
+      return;
+    }
 
-    canvasActions.loadCanvasList();
-    // canvasActions.loadCanvasList(firebaseRef);
-    settingsActions.toggleDialog({ isDialogOpened, dialogType: "load" });
-  }
+    if (needsReload) {
+      canvasActions.loadCanvasList();
+    }
 
-  handleSaveClick = (event) => {
-    let { settings, settingsActions, canvasActions } = this.props,
-      isDialogOpened = !settings.isDialogOpened;
-
-    settingsActions.toggleDialog({ isDialogOpened, dialogType: "save" });
-  }
-
-  handleRemoveClick = (event) => {
-    let { settings, settingsActions, canvasActions, firebaseRef } = this.props,
-      isDialogOpened = !settings.isDialogOpened;
-
-    canvasActions.loadCanvasList(firebaseRef);
-    settingsActions.toggleDialog({ isDialogOpened, dialogType: "remove" });
+    settingsActions.toggleDialog({ isDialogOpened, dialogType});
   }
 
   render() {
@@ -95,10 +83,10 @@ export default class Header extends React.Component {
             targetOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
-            <MenuItem primaryText="Refresh" onClick={this.handleRefreshClick} />
-            <MenuItem primaryText="Load" onClick={this.handleLoadClick} />
-            <MenuItem primaryText="Save" onClick={this.handleSaveClick} />
-            <MenuItem primaryText="Remove" onClick={this.handleRemoveClick} />
+            <MenuItem primaryText="Refresh" onClick={(e) => this.handleMenuItemClick(e)} />
+            <MenuItem primaryText="Load" onClick={(e) => this.handleMenuItemClick(e, "load", true)} />
+            <MenuItem primaryText="Save" onClick={(e) => this.handleMenuItemClick(e, "save")} />
+            <MenuItem primaryText="Remove" onClick={(e) => this.handleMenuItemClick(e, "remove", true)} />
           </IconMenu>
         }
         onLeftIconButtonTouchTap={this.handleToggle} />
