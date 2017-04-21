@@ -30,7 +30,8 @@ export default class CanvasService {
       backgroundColor: 'white',
       color: "black",
       shapesCounter: 0,
-      lineCounter: 0
+      lineCounter: 0,
+      packetCounter: 0
     });
 
     window.cnvs = this.canvas;
@@ -226,6 +227,7 @@ export default class CanvasService {
 
   doNextIteration(packetsInfo, routesInfo) {
     // const { vertexFrom, vertexTo } = props;
+    const { packetCounter } = this.canvas;
 
     this.updateVertexCharacteristics();
 
@@ -233,21 +235,23 @@ export default class CanvasService {
     // should be a call of traffic simulation service with packets param
     let packets = this.simulationService.doNextIteration({
       packetsInfo: [...packetsInfo],
-      routesInfo
+      routesInfo,
+      packetCounter
     });
+    console.log("CanvasService - doNextIteration: ", packets);
     // last one will be that needs to be added
     this.updatePacketsCharacteristics(packets);
     this.updatePacketsLocation(packets);
+    this.refreshPacketsOnCanvas(packets);
 
     // Step 2: add new packet to the start vertex
     // this will be on canvas
     this.addPacket({
       vertexFrom: routesInfo.vertexFrom,
-      packetIndex: packetsInfo.length
+      packetIndex: packetCounter
     });
 
-    // this.setShapesTypeToBack("label");
-    // this.setShapesTypeToBack("line");
+    this.canvas.packetCounter += 1;
 
     return packets;
   }
@@ -266,9 +270,13 @@ export default class CanvasService {
     this.canvas._objects.forEach((shape) => {
       let { type, name } = shape.customProps;
       if (type == "packet") {
-        shape.customProps.relatedVertex = packets
-          .filter(packet => packet.name == name)[0]
-          .currentVertex.name;
+        let a = packets
+          .filter(packet => packet.name == name)[0];
+        
+        if (a) {
+        shape.customProps.relatedVertex = 
+          a.currentVertex.name;
+        }
       }
     });
   }
@@ -313,6 +321,20 @@ export default class CanvasService {
     // all lines and labels and send them to back
     this.setShapesTypeToBack("label");
     this.setShapesTypeToBack("line");
+  }
+
+  refreshPacketsOnCanvas(packets) {
+    this.canvas._objects = this.canvas._objects
+      .filter((shape, index) => {
+        let { type, name } = shape.customProps;
+        let packet = packets.filter(packet => packet.name == name)[0];
+
+        if (type != "packet" || (type == "packet" && !!packet)) {
+          return shape;
+        }
+      });
+    
+    this.renderAll();
   }
 
   setShapesTypeToBack(shapeType) {

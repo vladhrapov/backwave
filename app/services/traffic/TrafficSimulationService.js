@@ -5,10 +5,10 @@ export default class TrafficSimulationService {
     this.distributionService = new TrafficDistributionService();
   }
   
-  doNextIteration({ packetsInfo: packets, routesInfo }) {
+  doNextIteration({ packetsInfo: packets, routesInfo, packetCounter }) {
     // get first packet
     const packet = this.getNextPacketFromQueue({
-      index: packets.length,
+      index: packetCounter,
       currentVertex: routesInfo.vertexFrom - 1,
       routesInfo
     });

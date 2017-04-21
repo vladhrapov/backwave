@@ -75,6 +75,7 @@ export default class Tools extends React.Component {
 
     // Step 2: Put packets [] here
     let packets = canvasSrv.doNextIteration(logger.packetsInfo, logger.routesInfo);
+    console.log("Tools.jsx - handleNextStepClick: ", packets);
 
     // Step 3: Log packets in the redux
     loggerActions.logPacketsInfo(packets);
