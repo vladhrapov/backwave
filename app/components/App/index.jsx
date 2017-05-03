@@ -6,9 +6,9 @@ import ReactMixin from "react-mixin";
 import { compose, withHandlers } from 'recompose'
 
 // Components
-import CustomDialog from "./CustomDialog/CustomDialog.jsx";
-import LeftDrawer from "./LeftDrawer/LeftDrawer.jsx";
-import Header from "./Header/Header.jsx";
+import CustomDialog from "./CustomDialog";
+import Navigation from "./Navigation";
+import Header from "./Header";
 
 // Actions
 import * as SettingsActions from "../../actions/SettingsActions";
@@ -42,7 +42,7 @@ function App({ children, onToggle }) {
         canvasSrv={canvasSrv}
         onToggle={onToggle}
       />
-      <LeftDrawer
+      <Navigation
         canvasSrv={canvasSrv}
         onToggle={onToggle}
       />

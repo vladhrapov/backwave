@@ -17,30 +17,20 @@ import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import IconMenu from 'material-ui/IconMenu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
+import Strip from "./Strip";
+
 // Actions
 import * as CanvasActions from "../../../actions/CanvasActions";
 import * as SettingsActions from "../../../actions/SettingsActions";
 
-// Services
 
-import { store } from "../../../store/Store";
-
-
-function mapStateToProps(state, ownProps) {
-  return {
-    canvas: state.canvas,
-    settings: state.settings
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
+@connect(
+  ({ canvas, settings }) => ({ canvas, settings }),
+  (dispatch) => ({
     canvasActions: bindActionCreators(CanvasActions, dispatch),
     settingsActions: bindActionCreators(SettingsActions, dispatch)
-  }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
+  })
+)
 export default class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -64,25 +54,10 @@ export default class Header extends React.Component {
 
   render() {
     return (
-      <AppBar
-        showMenuIconButton={true}
-        title="Title"
-        iconElementRight={
-          <IconMenu
-
-            iconButtonElement={
-              <IconButton><MoreVertIcon /></IconButton>
-            }
-            targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-          >
-            <MenuItem primaryText="Refresh" onClick={(e) => this.handleMenuItemClick(e)} />
-            <MenuItem primaryText="Load" onClick={(e) => this.handleMenuItemClick(e, "load", true)} />
-            <MenuItem primaryText="Save" onClick={(e) => this.handleMenuItemClick(e, "save")} />
-            <MenuItem primaryText="Remove" onClick={(e) => this.handleMenuItemClick(e, "remove", true)} />
-          </IconMenu>
-        }
-        onLeftIconButtonTouchTap={this.props.onToggle} />
+      <Strip 
+        {...this.props}
+        handleMenuItemClick={this.handleMenuItemClick}
+      />
     );
   }
 }
