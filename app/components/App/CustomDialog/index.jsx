@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import FlatButton from 'material-ui/FlatButton';
@@ -17,22 +17,14 @@ import FirebaseService from "../../../services/FirebaseService";
 import "../../Shared/assets/_styles.scss";
 
 
-function mapStateToProps(state, ownProps) {
-  return {
-    canvas: state.canvas,
-    settings: state.settings
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
+@connect(
+  ({ canvas, settings }) => ({ canvas, settings }),
+  (dispatch) => ({
     canvasActions: bindActionCreators(CanvasActions, dispatch),
     settingsActions: bindActionCreators(SettingsActions, dispatch)
-  }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-export default class CustomDialog extends React.Component {
+  })
+)
+export default class CustomDialog extends Component {
   constructor(props) {
     super(props);
     this.firebaseService = new FirebaseService();
@@ -194,44 +186,52 @@ export default class CustomDialog extends React.Component {
     ];
   }
 
-  render() {
-    let { dialogType } = this.props.settings,
-      dialogBody, dialogControls;
+  renderDialogByType(dialogType) {
+    let body, controls;
 
-    if (dialogType) {
       switch (dialogType) {
         case "load":
-          dialogBody = this.renderLoadOrRemoveDialogBody();
-          dialogControls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
+          body = this.renderLoadOrRemoveDialogBody();
+          controls = this.renderDialogControls(this.handleLoadCollectionDialogSubmit, "Submit");
           break;
         case "save":
-          dialogBody = this.renderSaveDialogBody(this.state.canvasName);
-          dialogControls = this.renderDialogControls(this.handleSaveCollectionDialogSubmit, "Save");
+          body = this.renderSaveDialogBody(this.state.canvasName);
+          controls = this.renderDialogControls(this.handleSaveCollectionDialogSubmit, "Save");
           break;
         case "remove":
-          dialogBody = this.renderLoadOrRemoveDialogBody();
-          dialogControls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");
+          body = this.renderLoadOrRemoveDialogBody();
+          controls = this.renderDialogControls(this.handleRemoveCollectionDialogSubmit, "Submit");
           break;
         case "label":
-          dialogBody = this.renderSaveDialogBody(this.state.lineWeight);
-          dialogControls = this.renderDialogControls(this.handleSaveWeightDialogSubmit, "Save");
+          body = this.renderSaveDialogBody(this.state.lineWeight);
+          controls = this.renderDialogControls(this.handleSaveWeightDialogSubmit, "Save");
           break;
         default:
           throw new Error("Not supported type of the dialog window");
           break;
       }
+
+    return { body, controls };
+  }
+
+  render() {
+    let { dialogType } = this.props.settings;
+    let dlg;
+
+    if (dialogType) {
+      dlg = this.renderDialogByType(dialogType);
     }
 
     return (
       <Dialog
         title="Please fill the form"
-        actions={dialogControls || null}
+        actions={(dlg && dlg.controls) || null}
         modal={false}
         open={this.props.settings.isDialogOpened || false}
         onRequestClose={this.handleDialogClose}
         autoScrollBodyContent={true}
       >
-        {dialogBody || null}
+        {(dlg && dlg.body) || null}
       </Dialog>
     );
   }
