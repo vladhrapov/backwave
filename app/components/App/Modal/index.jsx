@@ -47,16 +47,21 @@ export default class Modal extends Component {
     }
   }
 
+  get inputProperties() {
+    const { canvas, canvasActions, settings, settingsActions, canvasSrv } = this.props;
+    const { selectedRadio, lineWeight } = this.state;
+    const isDialogOpened = !settings.isDialogOpened;
+    const dialogType = settings.dialogType;
+
+    return { canvas, canvasActions, settings, settingsActions, canvasSrv, selectedRadio, lineWeight, isDialogOpened, dialogType };
+  }
+
   handleLoadCollectionDialogSubmit = (event) => {
-    let { canvas, settingsActions, settings, canvasSrv } = this.props,
-      { selectedRadio } = this.state,
-      isDialogOpened = !settings.isDialogOpened,
-      dialogType = settings.dialogType;
+    const { canvas, canvasSrv, settingsActions, selectedRadio, isDialogOpened, dialogType } = this.inputProperties;
 
     canvasSrv.restoreCanvas(canvas.filter(item => item.key == selectedRadio)[0].canvasObjects);
     canvasSrv.disableConnectionMode(canvasSrv.canvas);
     canvasSrv.enableMigrationMode(canvasSrv.canvas);
-
     settingsActions.toggleDialog({
       isDialogOpened,
       dialogType,
@@ -65,21 +70,16 @@ export default class Modal extends Component {
   }
 
   handleRemoveCollectionDialogSubmit = () => {
-    let { canvasActions, settings, settingsActions, canvasSrv } = this.props,
-      isDialogOpened = !settings.isDialogOpened,
-      dialogType = settings.dialogType;
+    const { canvasActions, canvasSrv, settings, settingsActions, selectedRadio, isDialogOpened, dialogType } = this.inputProperties;
 
-    canvasActions.removeCanvasFromList({ name: this.state.selectedRadio });
+    canvasActions.removeCanvasFromList({ name: selectedRadio });
     canvasSrv.disableConnectionMode(canvasSrv.canvas);
     canvasSrv.enableMigrationMode(canvasSrv.canvas);
-
     settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleSaveCollectionDialogSubmit = () => {
-    let { canvasActions, settings, settingsActions, canvasSrv } = this.props,
-      isDialogOpened = !settings.isDialogOpened,
-      dialogType = settings.dialogType;
+    const { canvasActions, canvasSrv, settings, settingsActions, isDialogOpened, dialogType } = this.inputProperties;
 
     if (this.state.canvasName) {
       let canvasObjects = canvasSrv.getSerializedCanvasObjectsCollection();
@@ -94,10 +94,9 @@ export default class Modal extends Component {
   }
 
   handleSaveWeightDialogSubmit = (event) => {
-    let { lineWeight } = this.state,
-      { settings, settingsActions, canvasSrv } = this.props,
-      isDialogOpened = settings.isDialogOpened,
-      dialogType = settings.dialogType;
+    let { canvasSrv, settings, settingsActions, isDialogOpened, dialogType, lineWeight } = this.inputProperties;
+
+    isDialogOpened = !isDialogOpened;
 
     if (/^\d+$/.test(lineWeight)) {
       let activeLabel = canvasSrv.canvas.getActiveObject();
@@ -106,22 +105,19 @@ export default class Modal extends Component {
       canvasSrv.renderAll();
       isDialogOpened = !settings.isDialogOpened;
       this.setState({ errorMessage: "", lineWeight: "" });
-
       settingsActions.toggleDialog({ isDialogOpened, dialogType });
+
       return;
     }
 
     this.setState({ errorMessage: "Please enter a valid number weight!" });
-
     settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   handleDialogClose = (event) => {
-    let { settings, settingsActions } = this.props,
-      isDialogOpened = !settings.isDialogOpened;
+    let { settings, settingsActions, isDialogOpened } = this.inputProperties;
 
     this.setState({ errorMessage: "", canvasName: "" });
-
     settingsActions.toggleDialog({ isDialogOpened });
   }
 
@@ -163,7 +159,7 @@ export default class Modal extends Component {
   }
 
   render() {
-    const { dialogType } = this.props.settings;
+    const { dialogType } = this.inputProperties;
 
     if (dialogType) {
       var { controls, body } = this.renderDialogByType(dialogType);

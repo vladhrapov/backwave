@@ -49,12 +49,12 @@ export default class Header extends React.Component {
       canvasActions.loadCanvasList();
     }
 
-    settingsActions.toggleDialog({ isDialogOpened, dialogType});
+    settingsActions.toggleDialog({ isDialogOpened, dialogType });
   }
 
   render() {
     return (
-      <Strip 
+      <Strip
         {...this.props}
         handleMenuItemClick={this.handleMenuItemClick}
       />
