@@ -12,6 +12,7 @@ export default class CanvasService {
   constructor() {
     this.shapesService = new ShapesService();
     this.simulationService = new TrafficSimulationService();
+    this.firebaseService = new FirebaseService();
   }
 
   // static canvas {
@@ -61,6 +62,10 @@ export default class CanvasService {
     this.refreshCanvas();
     new FirebaseService().deserializeCanvasObjectsCollection(collection, this.canvas);
     this.renderAll();
+  }
+
+  getSerializedCanvasObjectsCollection() {
+    return this.firebaseService.getSerializedCanvasObjectsCollection(this.canvas);
   }
 
   getShapeTypeGroupCount() {
@@ -269,11 +274,11 @@ export default class CanvasService {
   updatePacketsCharacteristics(packets) {
     this.canvas._objects.forEach((shape) => {
       let { type, name } = shape.customProps;
-      
+
       if (type == "packet") {
         let packet = packets
           .filter(packet => packet.name == name)[0];
-        
+
         if (packet) {
           shape.customProps.relatedVertex = packet.currentVertex.name;
         }
@@ -333,7 +338,7 @@ export default class CanvasService {
           return shape;
         }
       });
-    
+
     this.renderAll();
   }
 

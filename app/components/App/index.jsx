@@ -6,7 +6,7 @@ import ReactMixin from "react-mixin";
 import { compose, withHandlers } from 'recompose'
 
 // Components
-import CustomDialog from "./CustomDialog";
+import Modal from "./Modal";
 import Navigation from "./Navigation";
 import Header from "./Header";
 
@@ -47,7 +47,7 @@ function App({ children, onToggle }) {
         onToggle={onToggle}
       />
       {childComponent}
-      <CustomDialog
+      <Modal
         canvasSrv={canvasSrv}
       />
     </div>
@@ -61,4 +61,4 @@ export default connect(
   })
 )(
   enhance(({ children, onToggle }) => App({ children, onToggle }))
-);
+  );
