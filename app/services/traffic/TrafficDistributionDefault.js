@@ -1,4 +1,4 @@
-export default class TrafficDistributionService {
+export default class TrafficDistributionDefault {
   constructor() { }
 
   // should be logic for selecting correct path

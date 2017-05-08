@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
-import FirebaseService from "./FirebaseService";
+import FirebaseService from "./firebase";
 import ShapesService from "./ShapesService";
-import { TrafficSimulationService } from "./traffic";
+import TrafficSimulationService from "./traffic";
 
 // Constants
 import { COLORS } from "../constants/Colors";
@@ -12,12 +12,8 @@ export default class CanvasService {
   constructor() {
     this.shapesService = new ShapesService();
     this.simulationService = new TrafficSimulationService();
-    this.firebaseService = new FirebaseService();
+    this.firebaseService = new FirebaseService(this.shapesService);
   }
-
-  // static canvas {
-
-  // }
 
   get canvas() {
     if (this._canvas) {
@@ -51,16 +47,26 @@ export default class CanvasService {
 
   refreshCanvas() {
     if (this.canvas._objects && this.canvas._objects.length) {
-      this._canvas = null;
       this.canvas.clear();
       this.canvas.shapesCounter = 0;
       this.canvas.lineCounter = 0;
     }
   }
 
-  restoreCanvas(collection) {
-    this.refreshCanvas();
-    new FirebaseService().deserializeCanvasObjectsCollection(collection, this.canvas);
+  reinitCanvas() {
+    this._canvas = null;
+    this.canvas.shapesCounter = 0;
+    this.canvas.lineCounter = 0;
+  }
+
+  restoreCanvas(collection, needsReinit = false) {
+    if (needsReinit) {
+      this.reinitCanvas();
+    }
+    else {
+      this.refreshCanvas();
+    }
+    this.firebaseService.deserializeCanvasObjectsCollection(collection, this.canvas);
     this.renderAll();
   }
 
