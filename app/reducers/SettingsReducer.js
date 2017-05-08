@@ -13,6 +13,11 @@ export default function settingsReducer(state = initialState.settings, action) {
         ...state,
         ...action.payload
       };
+    case "REFRESH_CANVAS_SCHEMA":
+      return {
+        ...state,
+        ...action.payload
+      };
     default:
       return state;
   }

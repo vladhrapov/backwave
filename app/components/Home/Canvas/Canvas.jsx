@@ -58,29 +58,31 @@ export default class Canvas extends React.Component {
   }
 
   componentDidMount() {
-    let { canvas, canvasSrv, settings, logger } = this.props,
-      { canvas: canvas2 } = canvasSrv;
+    let { canvas, canvasSrv, settings, logger } = this.props;
+    // { canvas: canvas2 } = canvasSrv;
 
-    canvas2.on('mouse:over', function (e) {
-      if (e.target && e.target.setFill) {
-        //e.target.setFill('red');
-        //canvas.renderAll();
-        // console.log("HoVER####");
-      }
-    });
+    // canvas2.on('mouse:over', function (e) {
+    //   if (e.target && e.target.setFill) {
+    //     //e.target.setFill('red');
+    //     //canvas.renderAll();
+    //     // console.log("HoVER####");
+    //   }
+    // });
 
-    canvas2.on('mouse:out', function (e) {
-      if (e.target && e.target.setFill) {
-        //e.target.setFill('white');
-        //canvas.renderAll();
-        // console.log("OUT----------##");
-      }
-    });
+    // canvas2.on('mouse:out', function (e) {
+    //   if (e.target && e.target.setFill) {
+    //     //e.target.setFill('white');
+    //     //canvas.renderAll();
+    //     // console.log("OUT----------##");
+    //   }
+    // });
 
     const canvasLoadedSchema = canvas.filter(item => item.key == settings.canvasLoadedSchema)[0];
 
+
     if (!!canvasLoadedSchema) {
-      canvasSrv.restoreCanvas(canvasLoadedSchema.canvasObjects);
+      canvasSrv.restoreCanvas(canvasLoadedSchema.canvasObjects, true);
+      console.log("canvasLoadedSchema: ", canvasLoadedSchema, !!canvasLoadedSchema);
       if (logger && logger.routesInfo && logger.routesInfo.routes) {
         const { routes, vertexFrom, vertexTo } = logger.routesInfo;
 

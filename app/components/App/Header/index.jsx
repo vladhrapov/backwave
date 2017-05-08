@@ -42,6 +42,7 @@ export default class Header extends React.Component {
 
     if (!dialogType) {
       canvasSrv.refreshCanvas();
+      settingsActions.refreshCanvasSchema({ canvasLoadedSchema: "" });
       return;
     }
 
