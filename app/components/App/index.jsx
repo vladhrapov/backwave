@@ -16,6 +16,9 @@ import * as SettingsActions from "../../actions/SettingsActions";
 // Services
 import CanvasService from "../../services/CanvasService";
 
+// Styles
+import "./assets/_styles.scss";
+
 const canvasSrv = new CanvasService();
 
 const enhance = compose(
@@ -37,7 +40,7 @@ function App({ children, onToggle }) {
   });
 
   return (
-    <div>
+    <div className="app">
       <Header
         canvasSrv={canvasSrv}
         onToggle={onToggle}

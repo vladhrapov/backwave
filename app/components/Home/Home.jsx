@@ -7,6 +7,7 @@ import * as DataTypesActions from "../../actions/DataTypesActions";
 
 // Components
 import Canvas from "./Canvas/Canvas.jsx";
+import Tools from "./Tools/Tools.jsx";
 
 // Styles
 import "./assets/_styles.scss";
@@ -34,6 +35,7 @@ export default class Home extends React.Component {
     return (
       <div>
         <Canvas canvasSrv={this.props.canvasSrv} />
+        <Tools canvasSrv={this.props.canvasSrv} />
       </div>
     );
   }

@@ -9,7 +9,7 @@ import * as SettingsActions from "../../../actions/SettingsActions";
 import * as LoggerActions from "../../../actions/LoggerActions";
 
 // Components
-import Tools from "../Tools/Tools.jsx";
+// import Tools from "../Tools/Tools.jsx";
 
 // Services
 // import CanvasService from "../../../services/CanvasService";
@@ -95,19 +95,21 @@ export default class Canvas extends React.Component {
   render() {
     return (
       <div>
-        <Tabs className="tab-canvas" value={"canvas"}>
+        <canvas id="canvas" onDoubleClick={this.handleDblClick}></canvas>
+
+      </div>
+    );
+  }
+}
+
+        /*<Tabs className="tab-canvas" value={"canvas"}>
           <Tab label="Canvas" value="canvas">
             <div>
-              <canvas id="canvas" onDoubleClick={this.handleDblClick}></canvas>
             </div>
           </Tab>
         </Tabs>
         <Tabs className="tab-settings" value={"settings"}>
           <Tab label="Settings" value="settings">
-            <Tools canvasSrv={this.props.canvasSrv} />
+            
           </Tab>
-        </Tabs>
-      </div>
-    );
-  }
-}
+        </Tabs>*/

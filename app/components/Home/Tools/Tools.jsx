@@ -9,6 +9,13 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import NavigationExpandLessIcon from 'material-ui/svg-icons/navigation/expand-less';
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
 import Chart from 'chart.js'
 
 // Services
@@ -19,6 +26,9 @@ import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService
 
 // Actions
 import * as LoggerActions from "../../../actions/LoggerActions";
+
+// Styles
+import "./assets/_styles.scss";
 
 
 function mapStateToProps(state, ownProps) {
@@ -45,7 +55,33 @@ export default class Tools extends React.Component {
     vertexNamesCollection: [],
     popoverOpened: false,
     isAlgorithmsButtonDisabled: true,
-    isRoutesButtonDisabled: true
+    isRoutesButtonDisabled: true,
+    isBottomDrawerOpened: false,
+    canvasMode: 1
+  }
+
+  componentDidUpdate() {
+    this.initCanvasMode();
+  }
+
+  initCanvasMode() {
+    const { canvasSrv } = this.props;
+    const { canvasMode } = this.state;
+
+    switch (canvasMode) {
+      case 1:
+        canvasSrv.disableConnectionMode(canvasSrv.canvas);
+        canvasSrv.disableMigrationMode(canvasSrv.canvas);
+        break;
+      case 2:
+        canvasSrv.disableConnectionMode(canvasSrv.canvas);
+        canvasSrv.enableMigrationMode(canvasSrv.canvas);
+        break;
+      case 3:
+        canvasSrv.disableMigrationMode(canvasSrv.canvas);
+        canvasSrv.enableConnectionMode(canvasSrv.canvas);
+        break;
+    }
   }
 
   toggleAlgorithmsButtons(vertexFrom, vertexTo) {
@@ -81,19 +117,6 @@ export default class Tools extends React.Component {
     loggerActions.logPacketsInfo(packets);
   }
 
-  handleMigrationMode = () => {
-    let { canvasSrv } = this.props;
-
-    canvasSrv.disableConnectionMode(canvasSrv.canvas);
-    canvasSrv.enableMigrationMode(canvasSrv.canvas);
-  }
-
-  handleConnectionMode = () => {
-    let { canvasSrv } = this.props;
-
-    canvasSrv.disableMigrationMode(canvasSrv.canvas);
-    canvasSrv.enableConnectionMode(canvasSrv.canvas);
-  }
 
   // handleGetTransformedMatrix = () => {
   //   let { vertexFrom, vertexTo } = this.state;
@@ -350,107 +373,138 @@ export default class Tools extends React.Component {
 
   render() {
     const { vertexFrom, vertexTo } = this.props.logger.routesInfo;
+    const { isBottomDrawerOpened, canvasMode } = this.state;
 
     return (
-      <div className="settings" >
-        <div className="btn-add-remove-container">
-          <FloatingActionButton onClick={this.handleAddButton}>
-            <ContentAdd />
-          </FloatingActionButton>
-          <FloatingActionButton onClick={this.handleRemoveButton}>
-            <ContentRemove />
-          </FloatingActionButton>
+      <div className={"tools tools-wrapper " + (this.state.isBottomDrawerOpened ? "tools-wrapper-opened" : "")}>
+        <div className="tools-panel">
+          <Toolbar>
+            <ToolbarGroup firstChild={true}>
+              <DropDownMenu value={canvasMode} onChange={(event, index, value) => this.setState({ canvasMode: value })}>
+                <MenuItem value={1} primaryText="Simulation mode" />
+                <MenuItem value={2} primaryText="Moving mode" />
+                <MenuItem value={3} primaryText="Linking mode" />
+              </DropDownMenu>
+            </ToolbarGroup>
+            <ToolbarGroup>
+              <FloatingActionButton
+                mini={true}
+                onClick={this.handleAddButton}
+              >
+                <ContentAdd />
+              </FloatingActionButton>
+              <FloatingActionButton
+                mini={true}
+                style={{ marginLeft: 10 }}
+                onClick={this.handleRemoveButton}
+              >
+                <ContentRemove />
+              </FloatingActionButton>
+              <ToolbarSeparator />
+              <RaisedButton
+                onTouchTap={this.handleNextStepClick}
+                style={{ marginRight: 10 }}
+                className="custom-btn-default"
+                primary={true}
+                label="Next step"
+              />
+              <RaisedButton
+                onTouchTap={() => ({})}
+                style={{ margin: 20 }}
+                className="custom-btn-default"
+                primary={true}
+                label="Simulate"
+              />
+              <IconButton
+                touch={true}
+                onClick={() => this.setState({ isBottomDrawerOpened: !isBottomDrawerOpened })}
+              >
+                {
+                  isBottomDrawerOpened ? <NavigationExpandMoreIcon /> : <NavigationExpandLessIcon />
+                }
+              </IconButton>
+            </ToolbarGroup>
+          </Toolbar>
+
+
+          <div className="settings">
+            <div className="btn-add-remove-container">
+
+            </div>
+
+            {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
+            {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
+
+            {
+              //   <RaisedButton
+              //   label="Get Matrix"
+              //   className="custom-btn-default"
+              //   secondary={true}
+              //   onClick={this.handleGetTransformedMatrix}
+              // />
+            }
+
+            <RaisedButton
+              label="Wave Algorithm"
+              className="custom-btn-default"
+              disabled={this.state.isAlgorithmsButtonDisabled}
+              secondary={true}
+              onClick={this.handleWaveAlgorithmClick}
+            />
+
+            <RaisedButton
+              label="Back Wave Algorithm"
+              className="custom-btn-default"
+              disabled={this.state.isAlgorithmsButtonDisabled}
+              secondary={true}
+              onClick={this.handleBackWaveAlgorithmClick}
+            />
+
+            <RaisedButton
+              onTouchTap={this.handlePopoverClick}
+              className="custom-btn-default"
+              disabled={this.state.isRoutesButtonDisabled}
+              primary={true}
+              label="Routes List"
+            />
+            <Popover
+              open={this.state.popoverOpened}
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{ "horizontal": "middle", "vertical": "top" }}
+              targetOrigin={{ "horizontal": "middle", "vertical": "bottom" }}
+              onRequestClose={this.handlePopoverClick}
+            >
+              <Menu>
+                {this.renderPaths()}
+              </Menu>
+            </Popover>
+
+            <RaisedButton
+              onTouchTap={this.handleReportsClick}
+              className="custom-btn-default"
+              disabled={this.state.isRoutesButtonDisabled}
+              primary={true}
+              label="Render Report"
+            />
+
+
+            <RaisedButton
+              onTouchTap={this.handleChartClick}
+              className="custom-btn-default"
+              disabled={this.state.isRoutesButtonDisabled}
+              primary={true}
+              label="Show Chart"
+            />
+
+
+
+
+            <div>{this.renderChart()}</div>
+          </div>
+
+
+
         </div>
-
-        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-          <RadioButton
-            className="radio-btn"
-            value="not_light"
-            label="Moving mode"
-            onClick={this.handleMigrationMode}
-          />
-          <RadioButton
-            className="radio-btn"
-            value="light"
-            label="Linking mode"
-            onClick={this.handleConnectionMode}
-          />
-        </RadioButtonGroup>
-
-        {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
-        {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
-
-        {
-          //   <RaisedButton
-          //   label="Get Matrix"
-          //   className="custom-btn-default"
-          //   secondary={true}
-          //   onClick={this.handleGetTransformedMatrix}
-          // />
-        }
-
-        <RaisedButton
-          label="Wave Algorithm"
-          className="custom-btn-default"
-          disabled={this.state.isAlgorithmsButtonDisabled}
-          secondary={true}
-          onClick={this.handleWaveAlgorithmClick}
-        />
-
-        <RaisedButton
-          label="Back Wave Algorithm"
-          className="custom-btn-default"
-          disabled={this.state.isAlgorithmsButtonDisabled}
-          secondary={true}
-          onClick={this.handleBackWaveAlgorithmClick}
-        />
-
-        <RaisedButton
-          onTouchTap={this.handlePopoverClick}
-          className="custom-btn-default"
-          disabled={this.state.isRoutesButtonDisabled}
-          primary={true}
-          label="Routes List"
-        />
-        <Popover
-          open={this.state.popoverOpened}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{ "horizontal": "middle", "vertical": "top" }}
-          targetOrigin={{ "horizontal": "middle", "vertical": "bottom" }}
-          onRequestClose={this.handlePopoverClick}
-        >
-          <Menu>
-            {this.renderPaths()}
-          </Menu>
-        </Popover>
-
-        <RaisedButton
-          onTouchTap={this.handleReportsClick}
-          className="custom-btn-default"
-          disabled={this.state.isRoutesButtonDisabled}
-          primary={true}
-          label="Render Report"
-        />
-
-
-        <RaisedButton
-          onTouchTap={this.handleChartClick}
-          className="custom-btn-default"
-          disabled={this.state.isRoutesButtonDisabled}
-          primary={true}
-          label="Show Chart"
-        />
-
-        <RaisedButton
-          onTouchTap={this.handleNextStepClick}
-          className="custom-btn-default"
-          primary={true}
-          label="Next step"
-        />
-
-
-        <div>{this.renderChart()}</div>
-
       </div>
     );
   }
