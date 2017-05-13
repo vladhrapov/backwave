@@ -3,6 +3,8 @@ import { TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import ColorIcon from "../../../Shared/ColorIcon";
+
 import { styles, bodyColumnData } from "../constants";
 
 const renderRowColumnContent = (props, callbacks, row, column, index) => {
@@ -13,15 +15,26 @@ const renderRowColumnContent = (props, callbacks, row, column, index) => {
   if (!index) return id;
 
   if (name) {
-    return (
-      <TextField
-        name={`${name}_${id}`}
-        value={props[`${name}_${id}`] || row[name]}
-        underlineShow={column.underlineShow || false}
-        style={column.style}
-        onChange={(event) => handleTableCellUpdate(event, row, name, props[`${name}_${id}`])}
-      />
-    );
+    const Field = <TextField
+      name={`${name}_${id}`}
+      value={props[`${name}_${id}`] || row[name]}
+      underlineShow={column.underlineShow || false}
+      style={column.style}
+      onChange={(event) => handleTableCellUpdate(event, row, name, props[`${name}_${id}`])}
+    />
+
+    if (name === "color") {
+      return (
+        <div>
+          <ColorIcon
+            color={props[`${name}_${id}`] || row[name]}
+          />
+          {Field}
+        </div>
+      );
+    }
+
+    return Field;
   }
 
   return (
