@@ -32,7 +32,7 @@ export const headerRowData = [
       {
         tooltip: "Super Header",
         contentText: "Super Header",
-        colSpan: "7",
+        colSpan: "8",
         style: styles.rowTextCenter
       }
     ]
@@ -61,6 +61,10 @@ export const headerRowData = [
         contentText: "Packet color"
       },
       {
+        tooltip: "The frequency of getting this data type",
+        contentText: "Frequency"
+      },
+      {
         style: styles.rowTextCenter
       }
     ]
@@ -87,6 +91,11 @@ export const bodyColumnData = [
   },
   {
     name: "color",
+    underlineShow: false,
+    style: styles.widthAutoTextField
+  },
+  {
+    name: "frequency",
     underlineShow: false,
     style: styles.widthAutoTextField
   },
@@ -129,6 +138,13 @@ export const footerColumnData = [
   {
     name: "color",
     floatingLabelText: "Packet color",
+    floatingLabelStyle: styles.floatingLabelStyle,
+    floatingLabelFocusStyle: styles.floatingLabelFocusStyle,
+    style: styles.widthAutoTextField
+  },
+  {
+    name: "frequency",
+    floatingLabelText: "Frequency",
     floatingLabelStyle: styles.floatingLabelStyle,
     floatingLabelFocusStyle: styles.floatingLabelFocusStyle,
     style: styles.widthAutoTextField

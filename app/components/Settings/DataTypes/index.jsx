@@ -40,6 +40,7 @@ export default class DataTypes extends Component {
     minAmount: "",
     maxAmount: "",
     color: "",
+    frequency: "",
     updatedTable: []
   };
 
@@ -75,7 +76,7 @@ export default class DataTypes extends Component {
   }
 
   handleAddNewDataType = (event) => {
-    const { type, minAmount, maxAmount, color } = this.state,
+    const { type, minAmount, maxAmount, color, frequency } = this.state,
       { dataTypes, dataTypesActions } = this.props,
       id = +dataTypes[dataTypes.length - 1].id + 1;
 
@@ -84,10 +85,11 @@ export default class DataTypes extends Component {
       type: "",
       minAmount: "",
       maxAmount: "",
-      color: ""
+      color: "",
+      frequency: ""
     }));
 
-    dataTypesActions.addDataType({ id, type, minAmount, maxAmount, color });
+    dataTypesActions.addDataType({ id, type, minAmount, maxAmount, color, frequency });
   }
 
   handleRemoveDataType = (event, id) => {
