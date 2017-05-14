@@ -1,7 +1,8 @@
 import { fabric } from "fabric";
+import _ from 'lodash';
 import FirebaseService from "./firebase";
 import ShapesService from "./ShapesService";
-import TrafficSimulationService from "./traffic";
+import { TrafficSimulationService, TrafficGenerator } from "./traffic";
 
 // Constants
 import { COLORS } from "../constants/Colors";
@@ -13,6 +14,7 @@ export default class CanvasService {
     this.shapesService = new ShapesService();
     this.simulationService = new TrafficSimulationService();
     this.firebaseService = new FirebaseService(this.shapesService);
+    this.trafficGenerator = new TrafficGenerator(this.getRandomInt);
   }
 
   get canvas() {
@@ -236,7 +238,7 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(packetsInfo, routesInfo) {
+  doNextIteration(packetsInfo, routesInfo, color) {
     // const { vertexFrom, vertexTo } = props;
     const { packetCounter } = this.canvas;
 
@@ -259,7 +261,8 @@ export default class CanvasService {
     // this will be on canvas
     this.addPacket({
       vertexFrom: routesInfo.vertexFrom,
-      packetIndex: packetCounter
+      packetIndex: packetCounter,
+      color
     });
 
     this.canvas.packetCounter += 1;
@@ -312,7 +315,7 @@ export default class CanvasService {
       });
   }
 
-  addPacket({ vertexFrom, packetIndex }) {
+  addPacket({ vertexFrom, packetIndex, color }) {
     const vertexName = `A${vertexFrom}`;
     const vertex = this.getVertexByName(vertexName);
     const packet = this.shapesService.createPacket({
@@ -320,7 +323,7 @@ export default class CanvasService {
       top: vertex.top - 20,
       name: `Packet_${packetIndex}`,
       relatedVertex: vertexName,
-      fill: "red",
+      fill: color,
       stroke: "#000"
     });
 
@@ -574,6 +577,14 @@ export default class CanvasService {
 
       return pathInfo;
     });
+  }
+
+  updateTrafficQueue(dataTypes, trafficQueue) {
+    if (trafficQueue && trafficQueue.length) {
+      return this.trafficGenerator.updateTrafficQueue(dataTypes, _.cloneDeep(trafficQueue));
+    }
+
+    return this.trafficGenerator.initTrafficQueue(dataTypes);
   }
 
 }

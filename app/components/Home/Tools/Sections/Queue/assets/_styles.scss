@@ -1,0 +1,19 @@
+.data-type {
+  padding: 15px 0 0 0;
+
+  &-name {
+    font-size: 17px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  &-amount {
+    & > span {
+      font-weight: bold;
+    }
+  }
+
+  &-color {
+    margin-top: -3px;
+  }
+}

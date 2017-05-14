@@ -18,9 +18,12 @@ import NavigationExpandLessIcon from 'material-ui/svg-icons/navigation/expand-le
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from 'material-ui/Toolbar';
 import Chart from 'chart.js'
 
+// Components
+import Sections from "./Sections";
+
 // Services
 // import CanvasService from "../../../services/CanvasService";
-import TransformationService from "../../../services/TransformationService";
+// import TransformationService from "../../../services/TransformationService";
 import WaveAlgorithmService from "../../../services/WaveAlgorithmService";
 import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService";
 
@@ -31,19 +34,13 @@ import * as LoggerActions from "../../../actions/LoggerActions";
 import "./assets/_styles.scss";
 
 
-function mapStateToProps(state, ownProps) {
-  return {
-    logger: state.logger
-  };
-}
 
-function mapDispatchToProps(dispatch) {
-  return {
+@connect(
+  ({ logger, dataTypes }) => ({ logger, dataTypes }),
+  (dispatch) => ({
     loggerActions: bindActionCreators(LoggerActions, dispatch)
-  }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
+  })
+)
 export default class Tools extends React.Component {
   constructor(props) {
     super(props);
@@ -103,18 +100,23 @@ export default class Tools extends React.Component {
   }
 
   handleNextStepClick = () => {
-    let { logger, loggerActions, canvasSrv } = this.props;
+    let { logger, loggerActions, dataTypes, canvasSrv } = this.props;
     let { vertexFrom } = this.state;
+
+    // Prepare traffic queue: Update traffic queue
+    const trafficQueue = canvasSrv.updateTrafficQueue(dataTypes, logger.queueInfo);
+    const packetColor = trafficQueue[0].color;
 
     // Step 1: Get all packets from redux like []
     // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
 
     // Step 2: Put packets [] here
-    let packets = canvasSrv.doNextIteration(logger.packetsInfo, logger.routesInfo);
+    let packets = canvasSrv.doNextIteration(logger.packetsInfo, logger.routesInfo, packetColor);
     console.log("Tools.jsx - handleNextStepClick: ", packets);
 
-    // Step 3: Log packets in the redux
+    // Step 3: Log packets in the redux and queue
     loggerActions.logPacketsInfo(packets);
+    loggerActions.logQueueInfo(trafficQueue);
   }
 
 
@@ -379,13 +381,17 @@ export default class Tools extends React.Component {
       <div className={"tools tools-wrapper " + (this.state.isBottomDrawerOpened ? "tools-wrapper-opened" : "")}>
         <div className="tools-panel">
           <Toolbar>
+
             <ToolbarGroup firstChild={true}>
               <DropDownMenu value={canvasMode} onChange={(event, index, value) => this.setState({ canvasMode: value })}>
                 <MenuItem value={1} primaryText="Simulation mode" />
                 <MenuItem value={2} primaryText="Moving mode" />
                 <MenuItem value={3} primaryText="Linking mode" />
               </DropDownMenu>
+              {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
+              {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
             </ToolbarGroup>
+
             <ToolbarGroup>
               <FloatingActionButton
                 mini={true}
@@ -427,13 +433,13 @@ export default class Tools extends React.Component {
           </Toolbar>
 
 
+          <Sections {...this.props.logger} />
           <div className="settings">
             <div className="btn-add-remove-container">
 
             </div>
 
-            {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
-            {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
+
 
             {
               //   <RaisedButton

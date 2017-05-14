@@ -15,7 +15,8 @@ export const initialState = {
   },
   logger: {
     routesInfo: {},
-    packetsInfo: []
+    packetsInfo: [],
+    queueInfo: []
   }
 }
 

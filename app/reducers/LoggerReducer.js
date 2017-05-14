@@ -17,6 +17,13 @@ export default function loggerReducer(state = initialState.logger, action) {
           ...action.payload
         ]
       };
+    case "LOG_QUEUE_INFO":
+      return {
+        ...state,
+        queueInfo: [
+          ...action.payload
+        ]
+      };
     default:
       return state;
   }
