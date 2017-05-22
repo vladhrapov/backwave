@@ -23,27 +23,38 @@ export default class Global extends Component {
     super(props);
   }
 
-  // state = {
-  //   vertexShape: 1,
-  //   algorithmType: 1
-  // }
 
   handleStateChange = (event, prop, value) => {
     this.setState({ [prop]: value });
   }
 
   save = () => {
+    let { vertexName, vertexShape, isBindToRange, lineMinValue, lineMaxValue, isDistributionAutomatic, algorithmType } = this.props.settings;
+
+    if (this.state.vertexName) {
+      vertexName = this.state.vertexName.toUpperCase().slice(0, 1);
+    }
+
     console.log("saved!!");
     console.log(this.state);
     this.props.settingsActions.saveSettings({
+      vertexShape,
+      isBindToRange,
+      lineMinValue,
+      lineMaxValue,
+      isDistributionAutomatic,
+      algorithmType,
       ...this.state,
-      vertexName: this.state.vertexName.toUpperCase().slice(0, 1)
+      vertexName
     });
+  }
+
+  componentWillMount() {
+    this.props.settingsActions.loadSettings();
   }
 
   render() {
     console.log(this.state);
-
     return (
       <div className="global-container">
         Global settings
@@ -56,13 +67,13 @@ export default class Global extends Component {
 
         <Schema
           {...this.state}
-          {...this.props.settings}
+          settings={this.props.settings}
           handleStateChange={this.handleStateChange}
         />
 
         <Traffic
           {...this.state}
-          {...this.props.settings}
+          settings={this.props.settings}
           handleStateChange={this.handleStateChange}
         />
 

@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { saveSettingsApi } from "../api/SettingsApi";
+import { loadSettingsApi, saveSettingsApi } from "../api/SettingsApi";
 
 // function* toggleDialogHandler(action) {
 //   let { payload } = action;
@@ -18,6 +18,20 @@ import { saveSettingsApi } from "../api/SettingsApi";
 // export function* toggleDrawerRequest() {
 //   yield takeLatest('TOGGLE_DRAWER', toggleDrawerHandler);
 // }
+
+function* loadSettingsAsync() {
+  try {
+    const data = yield call(loadSettingsApi);
+    yield put({ type: "LOAD_SETTINGS_SUCCEEDED", payload: data });
+  } catch (error) {
+    console.log(error);
+    yield put({ type: "LOAD_SETTINGS_FAILED", error });
+  }
+}
+
+export function* loadSettingsRequest() {
+  yield takeLatest("LOAD_SETTINGS", loadSettingsAsync);
+}
 
 function* saveSettingsAsync(action) {
   try {

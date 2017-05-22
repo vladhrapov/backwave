@@ -6,6 +6,12 @@ export const toggleDrawer = payload => ({ type: types.TOGGLE_DRAWER, payload });
 
 export const refreshCanvasSchema = payload => ({ type: "REFRESH_CANVAS_SCHEMA", payload });
 
+export const loadSettings = () => ({ type: "LOAD_SETTINGS" });
+
+export const loadSettingsSucceeded = payload => ({ type: "LOAD_SETTINGS_SUCCEEDED", payload });
+
+export const loadSettingsFailed = error => ({ type: "LOAD_SETTINGS_FAILED", error });
+
 export const saveSettings = payload => ({ type: "SAVE_SETTINGS", payload });
 
 export const saveSettingsSucceeded = payload => ({ type: "SAVE_SETTINGS_SUCCEEDED", payload });
