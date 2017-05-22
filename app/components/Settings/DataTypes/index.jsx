@@ -44,6 +44,10 @@ export default class DataTypes extends Component {
     updatedTable: []
   };
 
+  getDataTypesNextId(dataTypes) {
+    return (dataTypes && dataTypes.length) ? +dataTypes[dataTypes.length - 1].id + 1 : 0;
+  }
+
   handleTableCellUpdate = (event, row, editedFieldName, editedFieldValue) => {
     let { name, value } = event.target;
 
@@ -78,7 +82,7 @@ export default class DataTypes extends Component {
   handleAddNewDataType = (event) => {
     const { type, minAmount, maxAmount, color, frequency } = this.state,
       { dataTypes, dataTypesActions } = this.props,
-      id = +dataTypes[dataTypes.length - 1].id + 1;
+      id = this.getDataTypesNextId(dataTypes);
 
     this.setState((prevState, props) => ({
       id: id + 1,

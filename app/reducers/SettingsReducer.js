@@ -18,6 +18,11 @@ export default function settingsReducer(state = initialState.settings, action) {
         ...state,
         ...action.payload
       };
+    case "SAVE_SETTINGS_SUCCEEDED":
+      return {
+        ...state,
+        ...action.payload
+      }
     default:
       return state;
   }
