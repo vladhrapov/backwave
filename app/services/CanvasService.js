@@ -263,7 +263,7 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(packetsInfo, routesInfo, color) {
+  doNextIteration(packetsInfo, routesInfo, color, distributionAlgorithm) {
     // const { vertexFrom, vertexTo } = props;
     const { packetCounter } = this.canvas;
 
@@ -274,7 +274,8 @@ export default class CanvasService {
     let packets = this.simulationService.doNextIteration({
       packetsInfo: [...packetsInfo],
       routesInfo,
-      packetCounter
+      packetCounter,
+      distributionAlgorithm
     });
     console.log("CanvasService - doNextIteration: ", packets);
     // last one will be that needs to be added

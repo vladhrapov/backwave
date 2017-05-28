@@ -13,9 +13,15 @@ export default function loggerReducer(state = initialState.logger, action) {
     case "LOG_PACKETS_INFO":
       return {
         ...state,
-        packetsInfo: [
-          ...action.payload
-        ]
+        packetsInfo: {
+          pending: [
+            ...action.payload
+          ],
+          sent: [
+            ...state.packetsInfo.sent,
+            ...action.payload.filter(packet => !!packet.isFinishVertex)
+          ]
+        }
       };
     case "LOG_QUEUE_INFO":
       return {

@@ -1,16 +1,20 @@
 import TrafficDistributionDefault from "./TrafficDistributionDefault";
+import TrafficDistributionCustom from "./TrafficDistributionCustom";
+import { ALGORITHM_DEFAULT, ALGORITHM_CUSTOM } from "./constants";
 
 export default class TrafficSimulationService {
   constructor() {
-    this.distributionService = new TrafficDistributionDefault();
+    this.distributionDefaultService = new TrafficDistributionDefault();
+    this.distributionCustomService = new TrafficDistributionCustom();
   }
 
-  doNextIteration({ packetsInfo: packets, routesInfo, packetCounter }) {
+  doNextIteration({ packetsInfo: packets, routesInfo, packetCounter, distributionAlgorithm }) {
     // get first packet
     const packet = this.getNextPacketFromQueue({
       index: packetCounter,
       currentVertex: routesInfo.vertexFrom - 1,
-      routesInfo
+      routesInfo,
+      distributionAlgorithm
     });
 
     // modify existing packets and move them next
@@ -23,7 +27,7 @@ export default class TrafficSimulationService {
     return packets;
   }
 
-  getNextPacketFromQueue({ routesInfo, currentVertex, index }) {
+  getNextPacketFromQueue({ routesInfo, currentVertex, index, distributionAlgorithm }) {
     // logic for getting next route for incoming traffic packets
     const packet = {
       name: "Packet_" + index,
@@ -35,13 +39,23 @@ export default class TrafficSimulationService {
       isFinishVertex: false
     };
 
-    const distributionInfo = this.distributionService.distributePacket(routesInfo, index, packet);
+    const distributionInfo = this.getDistributionService(distributionAlgorithm).distributePacket(routesInfo, index, packet, distributionAlgorithm);
 
     // should return updated packet {} with params
     return {
       ...packet,
       ...distributionInfo
     };
+  }
+
+  getDistributionService(distributionAlgorithm) {
+    switch (distributionAlgorithm) {
+      case ALGORITHM_DEFAULT:
+        return this.distributionDefaultService;
+      case ALGORITHM_CUSTOM:
+      default:
+        return this.distributionCustomService;
+    }
   }
 
   movePacketsToNextVertex(packets, routesInfo) {
