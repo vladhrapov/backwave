@@ -29,6 +29,7 @@ import BackwaveAlgorithmService from "../../../services/BackwaveAlgorithmService
 
 // Actions
 import * as LoggerActions from "../../../actions/LoggerActions";
+import * as SettingsActions from "../../../actions/SettingsActions";
 
 // Styles
 import "./assets/_styles.scss";
@@ -36,9 +37,10 @@ import "./assets/_styles.scss";
 
 
 @connect(
-  ({ logger, dataTypes }) => ({ logger, dataTypes }),
+  ({ logger, settings, dataTypes }) => ({ logger, settings, dataTypes }),
   (dispatch) => ({
-    loggerActions: bindActionCreators(LoggerActions, dispatch)
+    loggerActions: bindActionCreators(LoggerActions, dispatch),
+    settingsActions: bindActionCreators(SettingsActions, dispatch)
   })
 )
 export default class Tools extends React.Component {
@@ -55,6 +57,10 @@ export default class Tools extends React.Component {
     isRoutesButtonDisabled: true,
     isBottomDrawerOpened: false,
     canvasMode: 1
+  }
+
+  componentWillMount() {
+    this.props.settingsActions.loadSettings();
   }
 
   componentDidUpdate() {
@@ -100,8 +106,13 @@ export default class Tools extends React.Component {
   }
 
   handleNextStepClick = () => {
-    let { logger, loggerActions, dataTypes, canvasSrv } = this.props;
-    let { vertexFrom } = this.state;
+    let { settings, logger, loggerActions, dataTypes, canvasSrv } = this.props;
+    let { vertexFrom, vertexTo } = this.state;
+
+    // Prepare algorithm
+    if (!logger.routesInfo.algorithm) {
+      canvasSrv.initRouting({ vertexFrom, vertexTo, settings, loggerActions });
+    }
 
     // Prepare traffic queue: Update traffic queue
     const trafficQueue = canvasSrv.updateTrafficQueue(dataTypes, logger.queueInfo);
@@ -126,7 +137,7 @@ export default class Tools extends React.Component {
   //   new TransformationService().getTransformedMatrixFromCanvas();
   // }
 
-  handleWaveAlgorithmClick = () => {
+  /*handleWaveAlgorithmClick = () => {
     let { vertexFrom, vertexTo } = this.state,
       { canvasSrv, logger, loggerActions } = this.props;
     // let wa = new WaveAlgorithmService(1, 5);
@@ -143,9 +154,9 @@ export default class Tools extends React.Component {
       vertexTo: this.state.vertexTo,
       routes: this.waResult
     });
-  }
+  }*/
 
-  handleBackWaveAlgorithmClick = () => {
+  /*handleBackWaveAlgorithmClick = () => {
     let { vertexFrom, vertexTo } = this.state,
       { canvasSrv, logger, loggerActions } = this.props;
     let bwa = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
@@ -161,7 +172,7 @@ export default class Tools extends React.Component {
       vertexTo: this.state.vertexTo,
       routes: this.bwaResult
     });
-  }
+  }*/
 
   handleSelectVertexNameClick = (event, key, payload) => {
     let { canvasSrv } = this.props;
@@ -198,7 +209,7 @@ export default class Tools extends React.Component {
     return this.state.popoverOpened;
   }
 
-  handleReportsClick = () => {
+  /*handleReportsClick = () => {
     let win = window.open("", "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1150, height=900, top=0, left=0"),
       { canvasSrv } = this.props;
     win.document.body.innerHTML = "<h1 align='center'>Звіт</h1>";
@@ -211,7 +222,7 @@ export default class Tools extends React.Component {
     win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="400" height="400" /></div>`;
     win.window.print();
     // win.window.close();
-  }
+  }*/
 
   getIterations() {
     let waIterations = [],
@@ -450,7 +461,8 @@ export default class Tools extends React.Component {
               // />
             }
 
-            <RaisedButton
+
+            {/*<RaisedButton
               label="Wave Algorithm"
               className="custom-btn-default"
               disabled={this.state.isAlgorithmsButtonDisabled}
@@ -500,12 +512,12 @@ export default class Tools extends React.Component {
               disabled={this.state.isRoutesButtonDisabled}
               primary={true}
               label="Show Chart"
-            />
+            />*/}
 
 
 
 
-            <div>{this.renderChart()}</div>
+            {/*<div>{this.renderChart()}</div>*/}
           </div>
 
 

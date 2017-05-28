@@ -2,6 +2,8 @@ import { fabric } from "fabric";
 import _ from 'lodash';
 import FirebaseService from "./firebase";
 import ShapesService from "./ShapesService";
+import WaveAlgorithmService from "./WaveAlgorithmService";
+import BackwaveAlgorithmService from "./BackwaveAlgorithmService";
 import { TrafficSimulationService, TrafficGenerator } from "./traffic";
 
 // Constants
@@ -118,6 +120,29 @@ export default class CanvasService {
     return [];
   }
 
+  initRouting({ vertexFrom, vertexTo, settings, loggerActions }) {
+    const { algorithmType } = settings;
+    let algorithmService, algorithm, result;
+
+    if (algorithmType === 1) {
+      algorithmService = new WaveAlgorithmService(vertexFrom - 1, vertexTo - 1);
+      algorithm = "wave";
+    }
+    else if (algorithmType === 2) {
+      algorithmService = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
+      algorithm = "backwave";
+    }
+
+    result = algorithmService.invoke(this);
+    this.drawRoutes(result, vertexFrom, vertexTo);
+
+    loggerActions.logRoutesInfo({
+      algorithm,
+      vertexFrom: vertexFrom,
+      vertexTo: vertexTo,
+      routes: result
+    });
+  }
 
 
   refreshRoutes() {
