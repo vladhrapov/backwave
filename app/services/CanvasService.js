@@ -169,7 +169,7 @@ export default class CanvasService {
       routes.forEach((route, i) => {
         let color = COLORS[i];
 
-        route.forEach((vertex, index) => {
+        route.path.forEach((vertex, index) => {
           shapes.forEach((shape) => {
             if (shape && shape.customProps) {
               let {
@@ -183,13 +183,40 @@ export default class CanvasService {
                   to: vertexTo
                 } = shape.customProps.vertex;
 
-                if (vertexFrom.name == vertex.name && route[index + 1] && vertexTo.name == route[index + 1].name) {
-                  shape.fill = color;
-                  shape.stroke = color;
+                if (vertexFrom.name == vertex.name && route.path[index + 1] && vertexTo.name == route.path[index + 1].name) {
+                  if (!route.safety) {
+                    shape.fill = color;
+                    shape.stroke = color;
+                  }
+                  else {
+                    if (route.safety > 0.75) {
+                      shape.fill = "green";
+                      shape.stroke = "green";
+                    }
+                    else {
+                      shape.fill = "red";
+                      shape.stroke = "red";
+                    }
+                  }
+
                   shape.strokeWidth = 5;
-                } else if (vertexTo.name == vertex.name && route[index + 1] && vertexFrom.name == route[index + 1].name) {
-                  shape.fill = color;
-                  shape.stroke = color;
+                } else if (vertexTo.name == vertex.name && route.path[index + 1] && vertexFrom.name == route.path[index + 1].name) {
+                  if (!route.safety) {
+                    shape.fill = color;
+                    shape.stroke = color;
+                  }
+                  else {
+                    if (route.safety > 0.75) {
+                      shape.fill = "green";
+                      shape.stroke = "green";
+                    }
+                    else {
+                      shape.fill = "red";
+                      shape.stroke = "red";
+                    }
+                  }
+                  // shape.fill = color;
+                  // shape.stroke = color;
                   shape.strokeWidth = 5;
                 }
               }
@@ -218,7 +245,7 @@ export default class CanvasService {
       });
 
       let linkedPoints = routes.map((route) => {
-        return route.filter(vertex => !!vertex.isCenter)[0];
+        return route.path.filter(vertex => !!vertex.isCenter)[0];
       });
 
       if (!!linkedPoints && linkedPoints.filter(vertex => !!vertex).length) {
@@ -268,12 +295,13 @@ export default class CanvasService {
     const { packetCounter } = this.canvas;
 
     this.updateVertexCharacteristics();
+    const updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo));
 
     // Step 1: move existing packets to the next vertices.
     // should be a call of traffic simulation service with packets param
     let packets = this.simulationService.doNextIteration({
       packetsInfo: [...packetsInfo],
-      routesInfo,
+      routesInfo: updatedRoutes,
       packetCounter,
       distributionAlgorithm
     });
@@ -293,17 +321,49 @@ export default class CanvasService {
 
     this.canvas.packetCounter += 1;
 
-    return packets;
+    return {
+      packets,
+      updatedRoutes
+    };
   }
 
   updateVertexCharacteristics() {
-    this.canvas._objects.forEach((shape) => {
+    this.canvas._objects.forEach((shape, key) => {
       let { type } = shape.customProps;
 
       if (type == "vertex") {
-        shape.customProps.safety = this.getRandomInt(80, 100) / 100;
+        if (key % 3 == 0) {
+          shape.customProps.safety = this.getRandomInt(90, 100) / 100;
+        }
+        else if (key % 2 == 0) {
+          shape.customProps.safety = this.getRandomInt(97, 100) / 100;
+        }
+        else {
+          shape.customProps.safety = this.getRandomInt(99, 100) / 100;
+        }
       }
     });
+  }
+
+  updateRouteCharacteristics(routesInfo) {
+    console.log("routesInfo: ", routesInfo);
+    const vertices = this.canvas._objects.filter(shape => shape.customProps.type === "vertex");
+
+    routesInfo.routes.forEach((route, index) => {
+
+      const sum = route.path.reduce((sum, nextVertex) => {
+        console.log(nextVertex);
+        let safety = vertices.filter(vertex => vertex.customProps.name === nextVertex.name)[0].customProps.safety;
+
+        return sum * safety;
+      }, 1);
+
+      routesInfo.routes[index].safety = sum;
+    });
+
+    console.log(routesInfo);
+
+    return routesInfo;
   }
 
   updatePacketsCharacteristics(packets) {
@@ -576,34 +636,34 @@ export default class CanvasService {
     obj.selectable = !isEnabled;
   }
 
-  showRoutesInfo(routes) {
-    return routes.map((path, i) => {
-      let pathInfo = {
-        vertices: "",
-        weight: 0
-      };
+  // showRoutesInfo(routes) {
+  //   return routes.map((path, i) => {
+  //     let pathInfo = {
+  //       vertices: "",
+  //       weight: 0
+  //     };
 
-      path.map((vertex, index) => {
-        let {
-          weight,
-          name
-        } = vertex;
+  //     path.map((vertex, index) => {
+  //       let {
+  //         weight,
+  //         name
+  //       } = vertex;
 
-        pathInfo.weight += weight;
+  //       pathInfo.weight += weight;
 
-        if (index == path.length - 1) {
-          pathInfo.vertices += `${name}`;
-          pathInfo.reliability = "0." + (this.getRandomInt(10, 30));
-          return pathInfo;
-        } else {
-          pathInfo.vertices += `${name} - `;
-        }
+  //       if (index == path.length - 1) {
+  //         pathInfo.vertices += `${name}`;
+  //         pathInfo.reliability = "0." + (this.getRandomInt(10, 30));
+  //         return pathInfo;
+  //       } else {
+  //         pathInfo.vertices += `${name} - `;
+  //       }
 
-      });
+  //     });
 
-      return pathInfo;
-    });
-  }
+  //     return pathInfo;
+  //   });
+  // }
 
   updateTrafficQueue(dataTypes, trafficQueue) {
     if (trafficQueue && trafficQueue.length) {

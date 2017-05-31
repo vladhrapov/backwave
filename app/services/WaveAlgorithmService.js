@@ -282,6 +282,7 @@ export default class WaveAlgorithmService {
     return this.getRoutes()
       .filter((route, index) => {
         return route.isFinished;
-      });
+      })
+      .map(route => ({ path: route }));;
   }
 }

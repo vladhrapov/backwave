@@ -10,6 +10,13 @@ export default function loggerReducer(state = initialState.logger, action) {
           ...action.payload
         }
       };
+    case "LOG_UPDATED_ROUTES_INFO":
+      return {
+        ...state,
+        routesInfo: {
+          ...action.payload
+        }
+      }
     case "LOG_PACKETS_INFO":
       return {
         ...state,

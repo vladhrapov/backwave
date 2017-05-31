@@ -411,10 +411,10 @@ export default class BackwaveAlgorithmService {
         })
         .length &&
         this.path2
-        .filter((path, index) => {
-          return path && !path.hasOwnProperty("isFinished");
-        })
-        .length;
+          .filter((path, index) => {
+            return path && !path.hasOwnProperty("isFinished");
+          })
+          .length;
 
       // isAlgorithmNotFinished = false;
       // console.log(this.path1);
@@ -516,6 +516,8 @@ export default class BackwaveAlgorithmService {
     console.clear();
 
 
-    return this.getRoutes().filter(route => !!route);
+    return this.getRoutes()
+      .filter(route => !!route)
+      .map(route => ({ path: route }));
   }
 }

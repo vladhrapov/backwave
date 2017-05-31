@@ -5,7 +5,7 @@ export default class TrafficDistributionBase {
     // logic for getting next vertex
     let nextRouteIndex = this.selectRoute(routesInfo, index, packet);
 
-    let nextVertex = routesInfo.routes[nextRouteIndex][1];
+    let nextVertex = routesInfo.routes[nextRouteIndex].path[1];
 
     if (!nextVertex) return;
 
@@ -16,7 +16,7 @@ export default class TrafficDistributionBase {
       },
       path: {
         index: nextRouteIndex,
-        vertices: [...routesInfo.routes[nextRouteIndex]],
+        vertices: [...routesInfo.routes[nextRouteIndex].path],
         nextVertexIndex: 2
       },
       distributionAlgorithm

@@ -75,12 +75,12 @@ export default class TrafficSimulationService {
   updatePacketLocation(packet, routesInfo) {
     const { path } = packet;
 
-    return routesInfo.routes[path.index]
+    return routesInfo.routes[path.index].path
       .map((routeVertex, routeVertexIndex) => {
         let { nextVertex } = packet;
 
         if (routeVertex.index == nextVertex.index) {
-          let nextVertexFromRoute = routesInfo.routes[path.index][routeVertexIndex + 1];
+          let nextVertexFromRoute = routesInfo.routes[path.index].path[routeVertexIndex + 1];
 
           let updatedPacket = {
             currentVertex: {

@@ -123,10 +123,12 @@ export default class Tools extends React.Component {
     // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
 
     // Step 2: Put packets [] here
-    let packets = canvasSrv.doNextIteration(logger.packetsInfo.pending, logger.routesInfo, packetColor, window.alg || "default");
+    let { packets, updatedRoutes } = canvasSrv.doNextIteration(logger.packetsInfo.pending, logger.routesInfo, packetColor, window.alg || "default");
     console.log("Tools.jsx - handleNextStepClick: ", packets);
+    canvasSrv.drawRoutes(updatedRoutes.routes, vertexFrom, vertexTo);
 
     // Step 3: Log packets in the redux and queue
+    loggerActions.logUpdatedRoutesInfo(updatedRoutes);
     loggerActions.logPacketsInfo(packets);
     loggerActions.logQueueInfo(trafficQueue);
   }
