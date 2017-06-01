@@ -56,7 +56,8 @@ export default class Tools extends React.Component {
     isAlgorithmsButtonDisabled: true,
     isRoutesButtonDisabled: true,
     isBottomDrawerOpened: false,
-    canvasMode: 1
+    canvasMode: 1,
+    trafficSimulationAlgorithm: "default"
   }
 
   componentWillMount() {
@@ -107,7 +108,7 @@ export default class Tools extends React.Component {
 
   handleNextStepClick = () => {
     let { settings, logger, loggerActions, dataTypes, canvasSrv } = this.props;
-    let { vertexFrom, vertexTo } = this.state;
+    let { vertexFrom, vertexTo, trafficSimulationAlgorithm } = this.state;
 
     // Prepare algorithm
     if (!logger.routesInfo.algorithm) {
@@ -123,7 +124,7 @@ export default class Tools extends React.Component {
     // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
 
     // Step 2: Put packets [] here
-    let { packets, updatedRoutes } = canvasSrv.doNextIteration(logger.packetsInfo.pending, logger.routesInfo, packetColor, window.alg || "default");
+    let { packets, updatedRoutes } = canvasSrv.doNextIteration(logger.packetsInfo.pending, logger.routesInfo, packetColor, trafficSimulationAlgorithm);//window.alg || "default");
     console.log("Tools.jsx - handleNextStepClick: ", packets);
     canvasSrv.drawRoutes(updatedRoutes.routes, vertexFrom, vertexTo);
 
@@ -361,15 +362,17 @@ export default class Tools extends React.Component {
     }
 
     return (
-      <SelectField
+      <DropDownMenu
         className="select-vertex"
         floatingLabelText={labelText}
         value={labelValue}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        iconStyle={{ fill: "#666" }}
         onClick={this.handleSelectVertexNameClick}
         onChange={selectChangeHandler}
       >
         {menuCollection}
-      </SelectField>
+      </DropDownMenu>
     );
   }
 
@@ -389,7 +392,7 @@ export default class Tools extends React.Component {
 
   render() {
     const { vertexFrom, vertexTo } = this.props.logger.routesInfo;
-    const { isBottomDrawerOpened, canvasMode } = this.state;
+    const { isBottomDrawerOpened, canvasMode, trafficSimulationAlgorithm } = this.state;
 
     return (
       <div className={"tools tools-wrapper " + (this.state.isBottomDrawerOpened ? "tools-wrapper-opened" : "")}>
@@ -397,13 +400,25 @@ export default class Tools extends React.Component {
           <Toolbar>
 
             <ToolbarGroup firstChild={true}>
-              <DropDownMenu value={canvasMode} onChange={(event, index, value) => this.setState({ canvasMode: value })}>
+              <DropDownMenu
+                value={canvasMode}
+                iconStyle={{ fill: "#666" }}
+                onChange={(event, index, value) => this.setState({ canvasMode: value })}
+              >
                 <MenuItem value={1} primaryText="Simulation mode" />
                 <MenuItem value={2} primaryText="Moving mode" />
                 <MenuItem value={3} primaryText="Linking mode" />
               </DropDownMenu>
               {this.renderCanvasVerticeNames("From", this.state.vertexFrom || vertexFrom, this.handleSelectVertexFromNameChange)}
               {this.renderCanvasVerticeNames("To", this.state.vertexTo || vertexTo, this.handleSelectVertexToNameChange)}
+              <DropDownMenu
+                value={trafficSimulationAlgorithm}
+                iconStyle={{ fill: "#666" }}
+                onChange={(event, index, value) => this.setState({ trafficSimulationAlgorithm: value })}
+              >
+                <MenuItem value={"default"} primaryText="Default algorithm" />
+                <MenuItem value={"custom"} primaryText="Custom algorithm" />
+              </DropDownMenu>
             </ToolbarGroup>
 
             <ToolbarGroup>
