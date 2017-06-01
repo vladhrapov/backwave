@@ -29,7 +29,7 @@ export default class Global extends Component {
   }
 
   save = () => {
-    let { vertexName, vertexShape, isBindToRange, lineMinValue, lineMaxValue, isDistributionAutomatic, algorithmType } = this.props.settings;
+    let { vertexName, vertexShape, isBindToRange, lineMinValue, lineMaxValue, isDistributionAutomatic, algorithmType, simulationIterationsCount } = this.props.settings;
 
     if (this.state.vertexName) {
       vertexName = this.state.vertexName.toUpperCase().slice(0, 1);
@@ -44,6 +44,7 @@ export default class Global extends Component {
       lineMaxValue,
       isDistributionAutomatic,
       algorithmType,
+      simulationIterationsCount,
       ...this.state,
       vertexName
     });
@@ -79,6 +80,7 @@ export default class Global extends Component {
 
         <RaisedButton
           label="Save"
+          className="save"
           primary={true}
           onTouchTap={this.save}
         />
