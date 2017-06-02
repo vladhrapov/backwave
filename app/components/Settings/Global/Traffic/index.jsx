@@ -11,18 +11,27 @@ export default function Traffic({
   isDistributionAutomatic,
   algorithmType,
   simulationIterationsCount,
+  changesFrequency,
   settings
 }) {
   return (
     <Paper style={{ padding: 35, margin: "0 45px 45px 45px" }}>
       <h2>Traffic distribution settings</h2>
       <div className="global-row">
-        <div className="global-col-12">
+        <div className="global-col-6">
           <Toggle
             label="Automatic traffic distribution"
             style={{ marginBottom: 16, width: 290 }}
             defaultToggled={isDistributionAutomatic || settings.isDistributionAutomatic}
             onToggle={(event, isDistributionAutomatic) => handleStateChange(event, "isDistributionAutomatic", isDistributionAutomatic)}
+          />
+        </div>
+        <div className="global-col-6">
+          Changes frequency:
+          <TextField
+            hintText="Please fill frequency"
+            value={changesFrequency || settings.changesFrequency}
+            onChange={(event, changesFrequency) => handleStateChange(event, "changesFrequency", changesFrequency)}
           />
         </div>
       </div>

@@ -29,7 +29,17 @@ export default class Global extends Component {
   }
 
   save = () => {
-    let { vertexName, vertexShape, isBindToRange, lineMinValue, lineMaxValue, isDistributionAutomatic, algorithmType, simulationIterationsCount } = this.props.settings;
+    let {
+      vertexName,
+      vertexShape,
+      isBindToRange,
+      lineMinValue,
+      lineMaxValue,
+      isDistributionAutomatic,
+      algorithmType,
+      simulationIterationsCount,
+      changesFrequency
+    } = this.props.settings;
 
     if (this.state.vertexName) {
       vertexName = this.state.vertexName.toUpperCase().slice(0, 1);
@@ -45,6 +55,7 @@ export default class Global extends Component {
       isDistributionAutomatic,
       algorithmType,
       simulationIterationsCount,
+      changesFrequency,
       ...this.state,
       vertexName
     });

@@ -290,11 +290,14 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(packetsInfo, routesInfo, color, distributionAlgorithm) {
+  doNextIteration(packetsInfo, routesInfo, color, distributionAlgorithm, changesFrequency) {
     // const { vertexFrom, vertexTo } = props;
     const { packetCounter } = this.canvas;
 
-    this.updateVertexCharacteristics();
+    if (packetCounter % changesFrequency === 0) {
+      this.updateVertexCharacteristics();
+    }
+
     const updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo));
 
     // Step 1: move existing packets to the next vertices.
