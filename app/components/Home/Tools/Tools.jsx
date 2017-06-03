@@ -118,7 +118,7 @@ export default class Tools extends React.Component {
 
     // Prepare traffic queue: Update traffic queue
     const trafficQueue = canvasSrv.updateTrafficQueue(dataTypes, logger.queueInfo);
-    const packetColor = trafficQueue[0].color;
+    const dataType = trafficQueue[0];
 
     // Step 1: Get all packets from redux like []
     // [{ name, currentVertex, nextVertex, path, iterationIndex, isFinishVertex }, ...]
@@ -127,7 +127,7 @@ export default class Tools extends React.Component {
     let { packets, updatedRoutes } = canvasSrv.doNextIteration(
       logger.packetsInfo.pending,
       logger.routesInfo,
-      packetColor,
+      dataType,
       trafficSimulationAlgorithm,
       settings.changesFrequency
     );//window.alg || "default");

@@ -54,10 +54,10 @@ export default class TrafficGenerator {
 
   generateRandomDataType(queue) {
     let dataType = queue[this.random(0, queue.length)];
-    let { type, minAmount, maxAmount, color, frequency } = dataType;
+    let { type, minAmount, maxAmount, color, frequency, priority } = dataType;
     let amount = this.random(+minAmount, +maxAmount);
 
-    return { type, amount, color, frequency };
+    return { type, amount, color, frequency, priority };
   }
 
 }

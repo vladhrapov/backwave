@@ -290,7 +290,7 @@ export default class CanvasService {
     canvas.add(vertex);
   }
 
-  doNextIteration(packetsInfo, routesInfo, color, distributionAlgorithm, changesFrequency) {
+  doNextIteration(packetsInfo, routesInfo, dataType, distributionAlgorithm, changesFrequency) {
     // const { vertexFrom, vertexTo } = props;
     const { packetCounter } = this.canvas;
 
@@ -306,7 +306,8 @@ export default class CanvasService {
       packetsInfo: [...packetsInfo],
       routesInfo: updatedRoutes,
       packetCounter,
-      distributionAlgorithm
+      distributionAlgorithm,
+      dataType
     });
     console.log("CanvasService - doNextIteration: ", packets);
     // last one will be that needs to be added
@@ -319,7 +320,7 @@ export default class CanvasService {
     this.addPacket({
       vertexFrom: routesInfo.vertexFrom,
       packetIndex: packetCounter,
-      color
+      color: dataType.color
     });
 
     this.canvas.packetCounter += 1;

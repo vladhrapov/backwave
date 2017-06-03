@@ -11,6 +11,16 @@ export default class TrafficDistributionCustom extends TrafficDistributionBase {
 
   selectRoute(routesInfo, index, packet) {
     // ToDo: Remove this distribution logic
+    console.log(routesInfo);
+    console.log(index);
+    console.log(packet);
+
+    if (packet.priority === "yes") {
+
+    }
+    else {
+
+    }
 
     return 1;
   }

@@ -8,13 +8,14 @@ export default class TrafficSimulationService {
     this.distributionCustomService = new TrafficDistributionCustom();
   }
 
-  doNextIteration({ packetsInfo: packets, routesInfo, packetCounter, distributionAlgorithm }) {
+  doNextIteration({ packetsInfo: packets, routesInfo, packetCounter, distributionAlgorithm, dataType }) {
     // get first packet
     const packet = this.getNextPacketFromQueue({
       index: packetCounter,
       currentVertex: routesInfo.vertexFrom - 1,
       routesInfo,
-      distributionAlgorithm
+      distributionAlgorithm,
+      dataType
     });
 
     // modify existing packets and move them next
@@ -27,7 +28,7 @@ export default class TrafficSimulationService {
     return packets;
   }
 
-  getNextPacketFromQueue({ routesInfo, currentVertex, index, distributionAlgorithm }) {
+  getNextPacketFromQueue({ routesInfo, currentVertex, index, distributionAlgorithm, dataType }) {
     // logic for getting next route for incoming traffic packets
     const packet = {
       name: "Packet_" + index,
@@ -36,6 +37,7 @@ export default class TrafficSimulationService {
         name: `A${currentVertex + 1}`
       },
       iteration: index,
+      priority: dataType.priority,
       isFinishVertex: false
     };
 
