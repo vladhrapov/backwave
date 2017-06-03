@@ -32,7 +32,7 @@ export const headerRowData = [
       {
         tooltip: "Super Header",
         contentText: "Super Header",
-        colSpan: "8",
+        colSpan: "9",
         style: styles.rowTextCenter
       }
     ]
@@ -63,6 +63,10 @@ export const headerRowData = [
       {
         tooltip: "The frequency of getting this data type",
         contentText: "Frequency"
+      },
+      {
+        tooltip: "The frequency of getting this data type",
+        contentText: "Priority"
       },
       {
         style: styles.rowTextCenter
@@ -96,6 +100,11 @@ export const bodyColumnData = [
   },
   {
     name: "frequency",
+    underlineShow: false,
+    style: styles.widthAutoTextField
+  },
+  {
+    name: "priority",
     underlineShow: false,
     style: styles.widthAutoTextField
   },
@@ -145,6 +154,13 @@ export const footerColumnData = [
   {
     name: "frequency",
     floatingLabelText: "Frequency",
+    floatingLabelStyle: styles.floatingLabelStyle,
+    floatingLabelFocusStyle: styles.floatingLabelFocusStyle,
+    style: styles.widthAutoTextField
+  },
+  {
+    name: "priority",
+    floatingLabelText: "Priority",
     floatingLabelStyle: styles.floatingLabelStyle,
     floatingLabelFocusStyle: styles.floatingLabelFocusStyle,
     style: styles.widthAutoTextField
