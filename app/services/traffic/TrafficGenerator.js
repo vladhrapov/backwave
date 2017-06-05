@@ -1,7 +1,8 @@
+import { QUEUE_CAPACITY, MAX_PACKET_SIZE } from "./constants";
+
+
 export default class TrafficGenerator {
   constructor(randomCallback) {
-    this.queueCapacity = 10;
-    this.packetSize = 100;
     this.random = randomCallback;
   }
 
@@ -14,7 +15,7 @@ export default class TrafficGenerator {
   updateTrafficQueue(dataTypes, trafficQueue) {
     const first = trafficQueue[0];
 
-    first.amount -= this.packetSize;
+    first.amount -= MAX_PACKET_SIZE;
 
     if (first.amount <= 0) {
       const queue = this.createTrafficFrequencyQueue(dataTypes);
@@ -43,7 +44,7 @@ export default class TrafficGenerator {
   generateRandomDataTypes(queue) {
     const trafficQueue = [];
 
-    for (let i = 0; i < this.queueCapacity; i++) {
+    for (let i = 0; i < QUEUE_CAPACITY; i++) {
       let dataType = this.generateRandomDataType(queue);
 
       trafficQueue.push(dataType);

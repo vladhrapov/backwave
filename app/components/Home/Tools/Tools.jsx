@@ -57,7 +57,12 @@ export default class Tools extends React.Component {
     isRoutesButtonDisabled: true,
     isBottomDrawerOpened: false,
     canvasMode: 1,
-    trafficSimulationAlgorithm: "default"
+
+    simulation: {
+      trafficSimulationAlgorithm: "default",
+      label: "simulate",
+      enabled: false,
+    }
   }
 
   componentWillMount() {
@@ -108,7 +113,7 @@ export default class Tools extends React.Component {
 
   handleNextStepClick = () => {
     let { settings, logger, loggerActions, dataTypes, canvasSrv } = this.props;
-    let { vertexFrom, vertexTo, trafficSimulationAlgorithm } = this.state;
+    let { vertexFrom, vertexTo, simulation } = this.state;
 
     // Prepare algorithm
     if (!logger.routesInfo.algorithm) {
@@ -128,7 +133,7 @@ export default class Tools extends React.Component {
       logger.packetsInfo.pending,
       logger.routesInfo,
       dataType,
-      trafficSimulationAlgorithm,
+      simulation.trafficSimulationAlgorithm,
       settings.changesFrequency
     );//window.alg || "default");
 
@@ -139,6 +144,37 @@ export default class Tools extends React.Component {
     loggerActions.logUpdatedRoutesInfo(updatedRoutes);
     loggerActions.logPacketsInfo(packets);
     loggerActions.logQueueInfo(trafficQueue);
+  }
+
+  handleSimulationClick = (enabled) => {
+    const { isDistributionAutomatic, simulationIterationsCount } = this.props.settings;
+
+    if (enabled) {
+      if (isDistributionAutomatic) {
+        this.intervalId = setInterval(() => { this.handleNextStepClick(); }, 1500);
+        this.setState({ simulation: { ...this.state.simulation, enabled, label: "stop" } });
+        return;
+      }
+
+      let iterations = 0;
+
+      this.intervalId = setInterval(() => {
+        this.handleNextStepClick();
+
+        if (iterations++ === +simulationIterationsCount) {
+          clearInterval(this.intervalId);
+          this.setState({ simulation: { ...this.state.simulation, enabled: false, label: "simulate" } });
+        }
+      }, 200);
+
+      this.setState({ simulation: { ...this.state.simulation, enabled, label: "stop" } });
+    }
+    else {
+      // refresh timeout
+      clearInterval(this.intervalId);
+
+      this.setState({ simulation: { ...this.state.simulation, enabled: false, label: "simulate" } });
+    }
   }
 
 
@@ -399,7 +435,8 @@ export default class Tools extends React.Component {
 
   render() {
     const { vertexFrom, vertexTo } = this.props.logger.routesInfo;
-    const { isBottomDrawerOpened, canvasMode, trafficSimulationAlgorithm } = this.state;
+    const { isBottomDrawerOpened, canvasMode, simulation } = this.state;
+    const { trafficSimulationAlgorithm, label, enabled } = simulation;
 
     return (
       <div className={"tools tools-wrapper " + (this.state.isBottomDrawerOpened ? "tools-wrapper-opened" : "")}>
@@ -421,7 +458,7 @@ export default class Tools extends React.Component {
               <DropDownMenu
                 value={trafficSimulationAlgorithm}
                 iconStyle={{ fill: "#666" }}
-                onChange={(event, index, value) => this.setState({ trafficSimulationAlgorithm: value })}
+                onChange={(event, index, value) => this.setState({ simulation: { ...this.state.simulation, trafficSimulationAlgorithm: value } })}
               >
                 <MenuItem value={"default"} primaryText="Default algorithm" />
                 <MenuItem value={"custom"} primaryText="Custom algorithm" />
@@ -451,11 +488,11 @@ export default class Tools extends React.Component {
                 label="Next step"
               />
               <RaisedButton
-                onTouchTap={() => ({})}
+                onTouchTap={() => this.handleSimulationClick(!enabled)}
                 style={{ margin: 20 }}
                 className="custom-btn-default"
                 primary={true}
-                label="Simulate"
+                label={label}
               />
               <IconButton
                 touch={true}

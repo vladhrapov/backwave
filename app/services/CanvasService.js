@@ -189,7 +189,7 @@ export default class CanvasService {
                     shape.stroke = color;
                   }
                   else {
-                    if (route.safety > 0.75) {
+                    if (route.isSafe) {
                       shape.fill = "green";
                       shape.stroke = "green";
                     }
@@ -206,7 +206,7 @@ export default class CanvasService {
                     shape.stroke = color;
                   }
                   else {
-                    if (route.safety > 0.75) {
+                    if (route.isSafe) {
                       shape.fill = "green";
                       shape.stroke = "green";
                     }
@@ -298,17 +298,19 @@ export default class CanvasService {
       this.updateVertexCharacteristics();
     }
 
-    const updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo));
+    let updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo));
 
     // Step 1: move existing packets to the next vertices.
     // should be a call of traffic simulation service with packets param
-    let packets = this.simulationService.doNextIteration({
+    let iterationResult = this.simulationService.doNextIteration({
       packetsInfo: [...packetsInfo],
       routesInfo: updatedRoutes,
       packetCounter,
       distributionAlgorithm,
       dataType
     });
+    let { packets } = iterationResult;
+    updatedRoutes = iterationResult.updatedRoutes;
     console.log("CanvasService - doNextIteration: ", packets);
     // last one will be that needs to be added
     this.updatePacketsCharacteristics(packets);
@@ -322,6 +324,8 @@ export default class CanvasService {
       packetIndex: packetCounter,
       color: dataType.color
     });
+
+    updatedRoutes = this.updateRouteCharacteristics(updatedRoutes);
 
     this.canvas.packetCounter += 1;
 
@@ -363,6 +367,9 @@ export default class CanvasService {
       }, 1);
 
       routesInfo.routes[index].safety = sum;
+      routesInfo.routes[index].isSafe = sum > 0.75 ? true : false;
+      routesInfo.routes[index].capacity = routesInfo.routes[index].capacity || 1000;
+      routesInfo.routes[index].maxCapacity = 1000;
     });
 
     console.log(routesInfo);

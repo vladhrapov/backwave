@@ -1,14 +1,21 @@
 import TrafficDistributionDefault from "./TrafficDistributionDefault";
 import TrafficDistributionCustom from "./TrafficDistributionCustom";
+import GraphSimulation from "./GraphSimulation";
 import { ALGORITHM_DEFAULT, ALGORITHM_CUSTOM } from "./constants";
 
 export default class TrafficSimulationService {
   constructor() {
-    this.distributionDefaultService = new TrafficDistributionDefault();
-    this.distributionCustomService = new TrafficDistributionCustom();
+    this.distributionDefault = new TrafficDistributionDefault();
+    this.distributionCustom = new TrafficDistributionCustom();
+    this.graphSimulation = new GraphSimulation();
   }
 
   doNextIteration({ packetsInfo: packets, routesInfo, packetCounter, distributionAlgorithm, dataType }) {
+    // update routes capacity
+    //if (packets && packets.length) {
+    const updatedRoutes = this.graphSimulation.updateRoutesCapacity(routesInfo, packets);
+    //}
+
     // get first packet
     const packet = this.getNextPacketFromQueue({
       index: packetCounter,
@@ -25,7 +32,7 @@ export default class TrafficSimulationService {
     packets.push(packet);
 
     // should return [] updated packets
-    return packets;
+    return { packets, updatedRoutes };
   }
 
   getNextPacketFromQueue({ routesInfo, currentVertex, index, distributionAlgorithm, dataType }) {
@@ -38,6 +45,7 @@ export default class TrafficSimulationService {
       },
       iteration: index,
       priority: dataType.priority,
+      amount: dataType.amount,
       isFinishVertex: false
     };
 
@@ -53,10 +61,10 @@ export default class TrafficSimulationService {
   getDistributionService(distributionAlgorithm) {
     switch (distributionAlgorithm) {
       case ALGORITHM_DEFAULT:
-        return this.distributionDefaultService;
+        return this.distributionDefault;
       case ALGORITHM_CUSTOM:
       default:
-        return this.distributionCustomService;
+        return this.distributionCustom;
     }
   }
 

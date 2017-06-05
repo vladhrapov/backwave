@@ -518,6 +518,6 @@ export default class BackwaveAlgorithmService {
 
     return this.getRoutes()
       .filter(route => !!route)
-      .map(route => ({ path: route }));
+      .map((route, index) => ({ path: route, index }));
   }
 }
