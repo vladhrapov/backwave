@@ -29,22 +29,22 @@ export default class TrafficDistributionCustom extends TrafficDistributionBase {
     else {
       let routeInd;
 
-      let unsafeRoutes = routesInfo.routes
-        .filter(route => !route.isSafe && route.capacity > 0)
+      // get safe route
+      let safeRoutes = routesInfo.routes
+        .filter(route => route.isSafe)
         .sort((prevRoute, nextRoute) => -(prevRoute.capacity - nextRoute.capacity));
 
-      if (!unsafeRoutes.length) {
-        // get safe route
-        let safeRoutes = routesInfo.routes
-          .filter(route => route.isSafe)
+      if (!safeRoutes.length) {
+        let unsafeRoutes = routesInfo.routes
+          .filter(route => !route.isSafe && route.capacity > 0)
           .sort((prevRoute, nextRoute) => -(prevRoute.capacity - nextRoute.capacity));
 
-        routeInd = safeRoutes[0].index;
+        routeInd = unsafeRoutes[0].index;
 
         return routeInd;
       }
 
-      routeInd = unsafeRoutes[0].index;
+      routeInd = safeRoutes[0].index;
 
       return routeInd;
     }

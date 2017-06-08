@@ -5,6 +5,7 @@ import ShapesService from "./ShapesService";
 import WaveAlgorithmService from "./WaveAlgorithmService";
 import BackwaveAlgorithmService from "./BackwaveAlgorithmService";
 import { TrafficSimulationService, TrafficGenerator } from "./traffic";
+import { ChartsMapper } from "./charts";
 
 // Constants
 import { COLORS } from "../constants/Colors";
@@ -298,7 +299,7 @@ export default class CanvasService {
       this.updateVertexCharacteristics();
     }
 
-    let updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo));
+    let updatedRoutes = this.updateRouteCharacteristics(_.cloneDeep(routesInfo), distributionAlgorithm);
 
     // Step 1: move existing packets to the next vertices.
     // should be a call of traffic simulation service with packets param
@@ -309,6 +310,26 @@ export default class CanvasService {
       distributionAlgorithm,
       dataType
     });
+
+    this.canvas._objects
+      .filter(shape => shape.customProps.type === "vertex")
+      .forEach(vertex => {
+        let { name, safety } = vertex.customProps;
+
+        if (iterationResult.packets.length) {
+          iterationResult.packets.forEach((packet, index) => {
+            if (packet.currentVertex.name == name) {
+              if (!iterationResult.packets[index].characteristics) {
+                iterationResult.packets[index].characteristics = [];
+              }
+              else {
+                iterationResult.packets[index].characteristics = _.cloneDeep(iterationResult.packets[index].characteristics.concat(safety));
+              }
+            }
+          });
+        }
+      });
+
     let { packets } = iterationResult;
     updatedRoutes = iterationResult.updatedRoutes;
     console.log("CanvasService - doNextIteration: ", packets);
@@ -353,7 +374,7 @@ export default class CanvasService {
     });
   }
 
-  updateRouteCharacteristics(routesInfo) {
+  updateRouteCharacteristics(routesInfo, distributionAlgorithm) {
     console.log("routesInfo: ", routesInfo);
     const vertices = this.canvas._objects.filter(shape => shape.customProps.type === "vertex");
 
@@ -370,6 +391,20 @@ export default class CanvasService {
       routesInfo.routes[index].isSafe = sum > 0.75 ? true : false;
       routesInfo.routes[index].capacity = routesInfo.routes[index].capacity || 1000;
       routesInfo.routes[index].maxCapacity = 1000;
+      if (distributionAlgorithm) {
+        if (!routesInfo.routes[index].characteristics) {
+          routesInfo.routes[index].characteristics = [];
+        }
+        else {
+          routesInfo.routes[index].characteristics.push({
+            safety: sum,
+            isSafe: sum > 0.75 ? true : false,
+            capacity: routesInfo.routes[index].capacity || 1000,
+            distributionAlgorithm
+          });
+        }
+
+      }
     });
 
     console.log(routesInfo);
@@ -682,6 +717,10 @@ export default class CanvasService {
     }
 
     return this.trafficGenerator.initTrafficQueue(dataTypes);
+  }
+
+  mapCharts(logger) {
+    return new ChartsMapper(logger, this.getRandomInt).mapping;
   }
 
 }
