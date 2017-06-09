@@ -12,9 +12,10 @@ export default class ChartsMapper {
     // const { packetsInfo, routesInfo } = logger;
 
     console.log("lost packets: ", this.lostPackets);
-    let { lostPackets } = this;
+    console.log("routesCapacity: ", this.routesCapacity);
+    let { lostPackets, routesCapacity } = this;
 
-    return { ...lostPackets };
+    return { ...lostPackets, routesCapacity };
   }
 
   get lostPackets() {
@@ -28,6 +29,19 @@ export default class ChartsMapper {
         default: this.getLostPacketsSortedByAlgorithm(lostPackets, "default"),
         custom: this.getLostPacketsSortedByAlgorithm(lostPackets, "custom")
       }
+    }
+  }
+
+  get routesCapacity() {
+    const { routesInfo } = this.logger;
+
+    if (routesInfo.routes && routesInfo.routes.length) {
+      return routesInfo.routes.map((route, index) => {
+        return {
+          default: route.characteristics.filter(({ distributionAlgorithm }) => distributionAlgorithm === "default").map(({ capacity }) => capacity),
+          custom: route.characteristics.filter(({ distributionAlgorithm }) => distributionAlgorithm === "custom").map(({ capacity }) => capacity)
+        };
+      });
     }
   }
 
