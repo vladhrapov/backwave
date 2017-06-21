@@ -9,10 +9,11 @@ import FontIcon from 'material-ui/FontIcon';
 import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
 import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
+import ActionInfo from 'material-ui/svg-icons/action/info';
 import { browserHistory } from 'react-router';
 
-const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
-const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
+const recentsIcon = <FontIcon className="muidocs-icon-action-home">Global</FontIcon>;
+const favoritesIcon = <FontIcon className="material-icons">Data types</FontIcon>;
 const nearbyIcon = <IconLocationOn />;
 
 
@@ -38,20 +39,20 @@ export default class Settings extends Component {
         <Paper zDepth={1} className="bottom-navigation">
           <BottomNavigation>
             <BottomNavigationItem
+              icon={<ActionInfo />}
               label="Global"
-              icon={recentsIcon}
               onTouchTap={(event) => this.select("global")}
             />
             <BottomNavigationItem
+              icon={nearbyIcon}
               label="Data types"
-              icon={favoritesIcon}
               onTouchTap={() => this.select("data_types")}
             />
-            <BottomNavigationItem
+            {/*<BottomNavigationItem
               label="Logger"
               icon={nearbyIcon}
               onTouchTap={(event) => this.select("logger")}
-            />
+            />*/}
           </BottomNavigation>
         </Paper>
 

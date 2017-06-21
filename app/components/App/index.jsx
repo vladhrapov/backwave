@@ -9,6 +9,7 @@ import { compose, withHandlers } from 'recompose'
 import Modal from "./Modal";
 import Navigation from "./Navigation";
 import Header from "./Header";
+import Spinner from "./Spinner";
 
 // Actions
 import * as SettingsActions from "../../actions/SettingsActions";
@@ -53,6 +54,7 @@ function App({ children, onToggle }) {
       <Modal
         canvasSrv={canvasSrv}
       />
+      <Spinner />
     </div>
   );
 }

@@ -7,6 +7,8 @@ import * as DataTypesActions from "../../../actions/DataTypesActions";
 
 import Grid from "./Grid";
 
+import "./assets/_styles.scss";
+
 function mapStateToProps(state, ownProps) {
   return {
     dataTypes: state.dataTypes
@@ -131,7 +133,7 @@ export default class DataTypes extends Component {
     } = this;
 
     return (
-      <div>
+      <div className="data-types">
         <Grid
           {...this.state}
           {...this.props}
@@ -139,7 +141,7 @@ export default class DataTypes extends Component {
           handleAddNewDataType={handleAddNewDataType}
           handleRemoveDataType={handleRemoveDataType}
         />
-        <RaisedButton label="Save" primary={true} onTouchTap={this.handleSaveClick} />
+        <RaisedButton className="save" label="Save" primary={true} onTouchTap={this.handleSaveClick} />
       </div>
     );
   }

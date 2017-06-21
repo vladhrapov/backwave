@@ -4,6 +4,8 @@ export const toggleDialog = payload => ({ type: types.TOGGLE_DIALOG, payload });
 
 export const toggleDrawer = payload => ({ type: types.TOGGLE_DRAWER, payload });
 
+export const toggleSpinner = payload => ({ type: "TOGGLE_SPINNER", payload });
+
 export const refreshCanvasSchema = payload => ({ type: "REFRESH_CANVAS_SCHEMA", payload });
 
 export const loadSettings = () => ({ type: "LOAD_SETTINGS" });

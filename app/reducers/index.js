@@ -10,6 +10,8 @@ export const initialState = {
   settings: {
     isDrawerOpened: false,
     isDialogOpened: false,
+    isSpinnerOpened: false,
+    lastIteration: 0,
     dialogType: "",
     canvasLoadedSchema: ""
   },

@@ -130,7 +130,7 @@ export default class CanvasService {
       algorithm = "wave";
     }
     else if (algorithmType === 2) {
-      algorithmService = new BackwaveAlgorithmService(this.state.vertexFrom - 1, this.state.vertexTo - 1);
+      algorithmService = new BackwaveAlgorithmService(vertexFrom - 1, vertexTo - 1);
       algorithm = "backwave";
     }
 
@@ -534,9 +534,10 @@ export default class CanvasService {
     }
   }
 
-  enableConnectionMode(canvas) {
+  enableConnectionMode() {
     let x1, y1, x2, y2, vertexFrom, vertexTo,
       line, label, isDown;
+    let { canvas } = this;
 
     canvas.on("mouse:down", (o) => {
       let pointer = canvas.getPointer(o.e);
@@ -622,17 +623,18 @@ export default class CanvasService {
 
   }
 
-  disableConnectionMode(canvas) {
-    canvas.off("mouse:down");
-    canvas.off("mouse:move");
-    canvas.off("mouse:up");
+  disableConnectionMode() {
+    this.canvas.off("mouse:down");
+    this.canvas.off("mouse:move");
+    this.canvas.off("mouse:up");
 
-    canvas._objects.forEach((item) => {
+    this.canvas._objects.forEach((item) => {
       this.setObjectMigration(item, false);
     });
   }
 
-  enableMigrationMode(canvas) {
+  enableMigrationMode() {
+    let { canvas } = this;
     canvas.on("object:moving", (o) => {
       let {
         left,
@@ -671,8 +673,9 @@ export default class CanvasService {
     });
   }
 
-  disableMigrationMode(canvas) {
-    canvas._objects.forEach((item) => {
+  disableMigrationMode() {
+    let { canvas } = this;
+    this.canvas._objects.forEach((item) => {
       this.setObjectMigration(item, true);
     });
   }

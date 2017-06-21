@@ -27,7 +27,7 @@ const renderMenu = ({ navigateTo }) => {
   });
 };
 
-export default function MenuDrawer({ 
+export default function MenuDrawer({
   navigateTo,
   onToggle,
   settings,
@@ -47,7 +47,7 @@ export default function MenuDrawer({
 
       {renderMenu({ navigateTo })}
 
-      <MenuItem
+      {/*<MenuItem
         primaryText="Case Tools"
         rightIcon={<ArrowDropRight />}
         menuItems={[
@@ -84,7 +84,7 @@ export default function MenuDrawer({
         label="Toggled by default"
         defaultToggled={true}
         className="toggle"
-      />
+      />*/}
     </Drawer>
   );
 };

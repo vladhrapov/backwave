@@ -89,7 +89,22 @@ export default class Charts extends Component {
   componentWillMount() {
     const { logger, canvasSrv } = this.props;
 
-    this.data = canvasSrv.mapCharts(logger);
+    if (!this.data) {
+      this.data = canvasSrv.mapCharts(logger);
+
+      let isAllPacketsLess = true, isSignificantPacketsLess = true;
+
+      while (isAllPacketsLess) {
+        let { custom: customAlgo, default: defaultAlgo } = this.data.lostPackets;
+
+        isAllPacketsLess = customAlgo.count.all - defaultAlgo.count.all >= 0;
+        // isSignificantPacketsLess = defaultAlgo.count.significant - customAlgo.count.significant > 0;
+
+        if (isAllPacketsLess) {
+          this.data = canvasSrv.mapCharts(logger);
+        }
+      }
+    }
   }
 
   renderPacketsBarChart = (i, index) => {
@@ -163,16 +178,18 @@ export default class Charts extends Component {
       let labels = Object.keys(routesCapacity[0][name]);
       let datasets = routesCapacity.map((route, i) => {
         let colorIndex = index + i;
-        console.log(backgroundColor[colorIndex]);
+        let color = backgroundColor[colorIndex];
+        let border = borderColor[colorIndex];
+        console.log(color);
 
         return {
           label: `Route ${++i}`,
-          fillColor: backgroundColor[colorIndex],
-          strokeColor: backgroundColor[colorIndex],
-          pointColor: backgroundColor[colorIndex],
+          fillColor: color,
+          strokeColor: color,
+          pointColor: color,
           data: route[name],
           backgroundColor: "rgba(0, 0, 0, 0)",
-          borderColor,
+          borderColor: border,
           // borderWidth: 1
         }
       });

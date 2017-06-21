@@ -164,10 +164,12 @@ export default class Tools extends React.Component {
         if (iterations++ === +simulationIterationsCount) {
           clearInterval(this.intervalId);
           this.setState({ simulation: { ...this.state.simulation, enabled: false, label: "simulate" } });
+          this.props.settingsActions.toggleSpinner({ isSpinnerOpened: false, lastIteration: this.props.logger.packetsInfo.pending.slice(-1)[0].iteration });
         }
       }, 200);
 
       this.setState({ simulation: { ...this.state.simulation, enabled, label: "stop" } });
+      this.props.settingsActions.toggleSpinner({ isSpinnerOpened: true });
     }
     else {
       // refresh timeout

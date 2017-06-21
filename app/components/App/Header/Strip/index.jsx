@@ -32,7 +32,7 @@ const renderMenuItems = ({ handleMenuItemClick }) => {
     return (
       <MenuItem
         key={index}
-        primaryText={primaryText} 
+        primaryText={primaryText}
         onClick={(e) => handleMenuItemClick(e, dialogType, needsReload)}
       />
     );
@@ -60,7 +60,7 @@ export default function Strip({
   return (
     <AppBar
       showMenuIconButton={true}
-      title="Title"
+      title="Traffic distribution app"
       iconElementRight={renderIconMenu({ handleMenuItemClick })}
       onLeftIconButtonTouchTap={onToggle}
     />

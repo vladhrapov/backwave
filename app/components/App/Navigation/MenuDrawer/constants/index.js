@@ -7,10 +7,10 @@ export const MenuLinks = [
     name: "Charts",
     href: "/charts/"
   },
-  {
-    name: "Reports",
-    href: "/reports/"
-  },
+  // {
+  //   name: "Reports",
+  //   href: "/reports/"
+  // },
   {
     name: "Settings",
     href: "/settings/"

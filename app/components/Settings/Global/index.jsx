@@ -69,13 +69,13 @@ export default class Global extends Component {
     console.log(this.state);
     return (
       <div className="global-container">
-        Global settings
+        {/*Global settings
         1) Vertex naming+
         2) Vertex shape (optional)+
         3) Trafic distribution (step by step or in time)+
         4) Algorithm type+
         5) Bind canvas vertices to first/last+
-        6) Random value for line (from - to)+
+        6) Random value for line (from - to)+*/}
 
         <Schema
           {...this.state}

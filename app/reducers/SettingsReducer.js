@@ -28,6 +28,11 @@ export default function settingsReducer(state = initialState.settings, action) {
         ...state,
         ...action.payload
       };
+    case "TOGGLE_SPINNER":
+      return {
+        ...state,
+        ...action.payload
+      };
     default:
       return state;
   }
